@@ -20,23 +20,23 @@ import Lexer
         Klaauf_Gesch {TOKEN_KLAAUF_GESCH}
         Klaauf_Rund {TOKEN_KLAAUF_RUND}
         Klazu_Rund {TOKEN_KLAZU_RUND}
-        Klaauf_Eckig {TOKEN_KLAAUF_ECKIG}
-        Klazu_Eckig {TOKEN_KLAZU_ECKIG}
-        Operator {TOKEN_OPERATOR $$}
-        String {TOKEN_STRING}
-        String_Literal {TOKEN_STRING_LITERAL $$}
+        --Klaauf_Eckig {TOKEN_KLAAUF_ECKIG}
+        --Klazu_Eckig {TOKEN_KLAZU_ECKIG}
+        --Operator {TOKEN_OPERATOR $$}
+       -- String {TOKEN_STRING}
+       -- String_Literal {TOKEN_STRING_LITERAL $$}
         Integer {TOKEN_INTEGER}
         Integer_Literal {TOKEN_INTEGER_LITERAL $$}
         Char {TOKEN_CHAR}
         Char_Literal {TOKEN_CHAR_LITERAL $$}
-        Abstract {TOKEN_ABSTRACT}
+        --Abstract {TOKEN_ABSTRACT}
         Zugriffsrecht {TOKEN_ZUGRIFFSRECHT $$}
-        Static {TOKEN_STATIC}
-        Komma {TOKEN_KOMMA}
+        --Static {TOKEN_STATIC}
+        --Komma {TOKEN_KOMMA}
         Void {TOKEN_VOID}
-        New {TOKEN_NEW}
+        --New {TOKEN_NEW}
         Return {TOKEN_RETURN}
-        Akzessor {TOKEN_AKZESSOR}
+        --Akzessor {TOKEN_AKZESSOR}
         Bool {TOKEN_BOOL}
         Bool_Literal {TOKEN_BOOL_LITERAL $$}
         Gleich {TOKEN_GLEICH}
@@ -46,17 +46,25 @@ import Lexer
         Kleiner_Gleich {TOKEN_KLEINER_GLEICH}
         Inkrementieren {TOKEN_INKREMENTIEREN}
         Dekrementieren {TOKEN_DEKREMENTIEREN}
-        Switch {TOKEN_SWTICH}
-        Case {TOKEN_CASE}
-        Break {TOKEN_BREAK}
-        Default {TOKEN_DEFAULT}
-        Doppelpunkt {TOKEN_DOPPELPUNKT}
+        --Switch {TOKEN_SWTICH}
+        --Case {TOKEN_CASE}
+        --Break {TOKEN_BREAK}
+        --Default {TOKEN_DEFAULT}
+        --Doppelpunkt {TOKEN_DOPPELPUNKT}
 
 %%
-javaClass : Zugriffsrecht Klasse Bezeichner Klaauf_Gesch javaStatements Klazu_Gesch { Class_ ($1, $3, $5) }
+javaClass : Zugriffsrecht Klasse Bezeichner Klaauf_Gesch javaAusdrucks Klazu_Gesch { Class_ ($1, $3, $5) }
 
-javaStatements : { (Empty_:[]) }   --> Basisfall um eine Liste an Statements zu generieren
+javaStatements : { [] }   --> Basisfall um eine Liste an Statements zu generieren
                | javaStatement javaStatements { ($1:$2) } --> Generiert die Liste an Statements
+			   
+javaAusdruck :  methode  {$1}
+	     |  attribut {$1}
+		
+		
+javaAusdrucks : { [] }   --> Basisfall um eine Liste an attributen oder methoden zu generieren
+               | javaAusdruck  javaAusdrucks { ($1:$2) } --> Generiert die Liste an Statements
+
 
 javaStatement :  Semikolon { Semikolon_ }
               | While Klaauf_Rund bExpression Klazu_Rund Klaauf_Gesch javaStatements Klazu_Gesch { While_ ($3, $6) }
@@ -75,7 +83,8 @@ decInc  : Inkrementieren { Inc_ }
 
 literal       : Integer_Literal { ILit_ ($1)}
               | Char_Literal { CLit_ ($1)}
-              | String_Literal { SLit_ ($1)}
+            --  | String_Literal { SLit_ ($1)}
+              | Bool_Literal { BLit_ ($1)}
 
 binaryOp  : Gleich { EQ_ }
           | Groesser { GT_ }
@@ -83,23 +92,37 @@ binaryOp  : Gleich { EQ_ }
           | Kleiner_Gleich { LE_ }
           | Groesser_Gleich { GE_ }
  
-{
+methode : Zugriffsrecht attributType Bezeichner Klaauf_Rund Klazu_Rund Klaauf_Gesch javaStatements Klazu_Gesch {Meth_($1, $2, $3, $7)}
+        | Zugriffsrecht Void Bezeichner Klaauf_Rund Klazu_Rund Klaauf_Gesch javaStatements Klazu_Gesch {Meth_($1, Void_, $3, $7)}
 
-data Klasse_ = Class_ (String, String, [Statement_])
+attribut : Zugriffsrecht attributType Bezeichner Zuweisung literal Semikolon {Attri_ ($1, $2, $3, $5)}
+
+attributType : Integer {Int_}
+          -- | String {String_}
+           | Char {Char_}
+           | Bool {Bool_}
+
+--Abstrakte Syntax
+{
+data Klasse_ = Class_ (String, String, [JavaAusdruck_])
               deriving (Eq, Show) 
+			  
+data JavaAusdruck_ = Attri_ (String, AttributType_, String, Literal_)
+	           | Meth_ (String, AttributType_, String, [Statement_])
+                deriving (Eq, Show)
 
 data Statement_ = If_ (BExpression_, [Statement_], Maybe [Statement_])
                | While_ (BExpression_, [Statement_]) --while
                | For_ (String, Int, BExpression_, DecInc_, [Statement_])
                | Block_ ([Statement_])
                | Semikolon_
-               | Empty_
                | Return_ (Maybe Literal_)
                deriving (Eq, Show)
 
 data Literal_  = ILit_ (Int)
-               | SLit_ (String)
-               | CLit_ (Char) 
+            --   | SLit_ (String)
+               | CLit_ (Char)
+               | BLit_ (Bool)
                deriving (Eq, Show)
 
 data BExpression_ = Bexp_ (String, BinaryOp_, Int)
@@ -117,6 +140,12 @@ data BinaryOp_  = EQ_
                 | LE_
            deriving (Eq, Show)
 
+data AttributType_ = Int_
+                 --  | String_
+                   | Bool_
+                   | Char_
+                   | Void_                              -- inkonsistenz in Logik aber nur so funktioniert es 
+           deriving (Eq, Show)
 
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
