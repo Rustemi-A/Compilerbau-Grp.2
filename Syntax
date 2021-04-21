@@ -1,0 +1,33 @@
+public
+private
+protected
+static 
+class
+int
+boolean
+char
+.
+{}
+()
+void
+final
+=
++ - * / % == && ||  < > <= >= !=  --// << >> ^ & | ~ ! ++ -- += -= *= /= %= <<= >>= &= |= ?
+bezeichner
+;
+switch
+case
+:
+break
+return
+while
+if
+else
+true
+false
+int-Lit
+char-Lit
+for
+do
+/
+/* */
