@@ -1,33 +1,39 @@
-public
-private
-protected
-static 
-class
-int
-boolean
-char
-.
-{}
-()
-void
-final
-=
-+ - * / % == && ||  < > <= >= !=  --// << >> ^ & | ~ ! ++ -- += -= *= /= %= <<= >>= &= |= ?
-bezeichner
-;
-switch
-case
-:
-break
-return
-while
-if
-else
-true
-false
-int-Lit
-char-Lit
-for
-do
-/
-/* */
+x public 
+x private
+x protected
+x static 
+x class
+x int
+x boolean
+x char
+x .
+x ,
+x {}
+x ()
+x void
+x final
+x =
+x + - * / % 
+x == 
+x && 
+x || 
+x <
+x > 
+x <=
+x >= 
+x != 
+x bezeichner
+x ;
+x break
+x return
+x while
+x if
+x else
+x true
+x false
+x int-Lit
+x char-Lit
+x for
+x do
+x //
+x new

@@ -10,7 +10,8 @@ data Token = TOKEN_KLASSE --
            | TOKEN_ELSE --
            | TOKEN_ZUWEISUNG --
            | TOKEN_SEMIKOLON --
-           | TOKEN_OPERATOR Char --
+           | TOKEN_ARITHMETISCHEOPERATOR Char --
+           | TOKEN_LOGIKOPERATOR String
            | TOKEN_KLAAUF_RUND --
            | TOKEN_KLAZU_RUND --
            | TOKEN_KLAAUF_GESCH --
@@ -31,19 +32,22 @@ data Token = TOKEN_KLASSE --
            | TOKEN_AKZESSOR --
            | TOKEN_BOOL --
            | TOKEN_BOOL_LITERAL Bool --
-           | TOKEN_GLEICH --
+           | TOKEN_VERGLEICH --
            | TOKEN_GROESSER --
            | TOKEN_KLEINER --
            | TOKEN_GROESSER_GLEICH --
            | TOKEN_KLEINER_GLEICH --
-           | TOKEN_INKREMENTIEREN --
-           | TOKEN_DEKREMENTIEREN --
-           | TOKEN_SWTICH --
-           | TOKEN_CASE --
+           -- | TOKEN_INKREMENTIEREN --
+           -- | TOKEN_DEKREMENTIEREN --
+           -- | TOKEN_SWTICH --
+           -- | TOKEN_CASE --
            | TOKEN_BREAK --
            | TOKEN_DEFAULT --
-           | TOKEN_DOPPELPUNKT --
+           -- | TOKEN_DOPPELPUNKT --
            | TOKEN_FINAL --
+           | TOKEN_UNGLEICH
+           | TOKEN_DO
+           | TOKEN_KOMMENTAR String
   deriving (Eq,Show)
 
 lexer :: String -> [Token]
@@ -52,15 +56,27 @@ lexer (c:cs)
       | isSpace c = lexer cs
       | isAlpha c = lexChars (c:cs)
       | isDigit c = lexNum (c:cs)
-lexer ('+':'+':cs) = TOKEN_INKREMENTIEREN : lexer cs
-lexer ('-':'-':cs) = TOKEN_DEKREMENTIEREN : lexer cs
-lexer ('=':'=':cs) = TOKEN_GLEICH : lexer cs
+lexer ('/':'/':cs) = TOKEN_KOMMENTAR c : lexer rest
+        where (c, rest) = 
+                        let 
+                              getKommentar('\n':xs) = []
+                              getKommentar(x:xs)  = x : getKommentar xs
+                              getTail ('\n':xs) = xs
+                              getTail (x:xs) = getTail xs
+                        in (getKommentar cs ,getTail cs )      
+lexer ('&':'&':cs) = TOKEN_LOGIKOPERATOR "&&" : lexer cs
+lexer ('|':'|':cs) = TOKEN_LOGIKOPERATOR "||" : lexer cs
+lexer ('!':'=':cs) = TOKEN_UNGLEICH : lexer cs
+-- lexer ('+':'+':cs) = TOKEN_INKREMENTIEREN : lexer cs
+-- lexer ('-':'-':cs) = TOKEN_DEKREMENTIEREN : lexer cs
+lexer ('=':'=':cs) = TOKEN_VERGLEICH : lexer cs
 lexer ('<':'=':cs) = TOKEN_KLEINER_GLEICH : lexer cs
 lexer ('>':'=':cs) = TOKEN_GROESSER_GLEICH : lexer cs
-lexer ('+':cs) = TOKEN_OPERATOR '+' : lexer cs
-lexer ('-':cs) = TOKEN_OPERATOR '-' : lexer cs
-lexer ('*':cs) = TOKEN_OPERATOR '*' : lexer cs
-lexer ('/':cs) = TOKEN_OPERATOR '/' : lexer cs
+lexer ('+':cs) = TOKEN_ARITHMETISCHEOPERATOR '+' : lexer cs
+lexer ('-':cs) = TOKEN_ARITHMETISCHEOPERATOR '-' : lexer cs
+lexer ('*':cs) = TOKEN_ARITHMETISCHEOPERATOR '*' : lexer cs
+lexer ('/':cs) = TOKEN_ARITHMETISCHEOPERATOR '/' : lexer cs
+lexer ('%':cs) = TOKEN_ARITHMETISCHEOPERATOR '%' : lexer cs
 lexer ('=':cs) = TOKEN_ZUWEISUNG : lexer cs
 lexer ('(':cs) = TOKEN_KLAAUF_RUND : lexer cs
 lexer (')':cs) = TOKEN_KLAZU_RUND : lexer cs
@@ -70,7 +86,7 @@ lexer ('{':cs) = TOKEN_KLAAUF_GESCH : lexer cs
 lexer ('}':cs) = TOKEN_KLAZU_GESCH : lexer cs
 lexer ('<':cs) = TOKEN_KLEINER : lexer cs
 lexer ('>':cs) = TOKEN_GROESSER : lexer cs
-lexer (':':cs) = TOKEN_DOPPELPUNKT : lexer cs
+--lexer (':':cs) = TOKEN_DOPPELPUNKT : lexer cs
 lexer ('\'':c:'\'':cs) = TOKEN_CHAR_LITERAL c : lexer cs
 --lexer ('"':cs) = TOKEN_STRING_LITERAL c : lexer rest
 --        where (c, rest) = 
@@ -80,6 +96,7 @@ lexer ('\'':c:'\'':cs) = TOKEN_CHAR_LITERAL c : lexer cs
 --                                getTail ('"':xs) = xs
 --                                getTail (x:xs) = getTail xs
 --                           in (getString cs ,getTail cs )
+
 lexer ('.':cs) = TOKEN_AKZESSOR : lexer cs
 
 lexNum cs = TOKEN_INTEGER_LITERAL (read integeAsString) : lexer rest
@@ -108,9 +125,14 @@ lexChars cs =
       ("Boolean",rest)  -> TOKEN_BOOL : lexer rest
       ("false",rest)  -> TOKEN_BOOL_LITERAL False : lexer rest
       ("true",rest)  -> TOKEN_BOOL_LITERAL True : lexer rest
-      ("switch",rest)  -> TOKEN_SWTICH : lexer rest
-      ("case",rest)  -> TOKEN_CASE : lexer rest
+ --     ("switch",rest)  -> TOKEN_SWTICH : lexer rest
+ --     ("case",rest)  -> TOKEN_CASE : lexer rest
       ("break",rest)  -> TOKEN_BREAK : lexer rest
       ("default",rest)  -> TOKEN_DEFAULT : lexer rest
       ("final",rest)  -> TOKEN_FINAL : lexer rest
+      ("do",rest)  -> TOKEN_DO : lexer rest
       (var,rest)   -> TOKEN_BEZEICHNER var : lexer rest
+
+-- main = do
+--      s <- getContents
+--      print (lexer s)
