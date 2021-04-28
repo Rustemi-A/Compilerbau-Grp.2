@@ -1,4 +1,4 @@
-module AbstrakteSyntax2
+module ScannerParser.AbstrakteSyntax2
   ( Class,
     FieldDecl,
     MethodDecl,
@@ -11,20 +11,20 @@ module AbstrakteSyntax2
   )
 where
 
-import HappyParser
+type Type = String
 
-data Class = Class ([Modifier], Type, [FieldDecl], [MethodDecl]) -- public class A{}
+newtype Class = Class ([Modifier], Type, [FieldDecl], [MethodDecl]) -- public class A{}
   deriving (Eq, Show)
 
-data FieldDecl = FieldDecl ([Modifier], Type, String) -- int v
+newtype FieldDecl = FieldDecl ([Modifier], Type, String) -- int v
   deriving (Eq, Show)
 
-data MethodDecl = Method ([Modifier], Type, String, [(Type, String)], Stmt) -- void methode(int x, char c){}
+newtype MethodDecl = Method ([Modifier], Type, String, [(Type, String)], Stmt) -- void methode(int x, char c){}
   deriving (Eq, Show)
 
 data Expr
   = This
-  | LocalOrFieldVar String -- int i
+  | LocalOrFieldVar String -- i
   | InstVar (Expr, String) -- object.var
   | Unary (UnaryOp, Expr) -- i++
   | Binary (BinaryOp, Expr, Expr) -- i + j
@@ -37,7 +37,7 @@ data Expr
   deriving (Eq, Show)
 
 data StmtExpr
-  = Assign (Expr, Expr) -- i = 1
+  = Assign (Expr, Expr) -- int i = 1
   | New (Type, [Expr]) -- new A(params);
   | MethodCall (Expr, String, [Expr]) -- a.methode(x,c)
   deriving (Eq, Show)
@@ -52,31 +52,32 @@ data Stmt
   deriving (Eq, Show)
 
 data Modifier
-  = Public
-  | Private
-  | Static
-  | Final
+  = Public -- public
+  | Private -- private
+  | Static -- static
+  | Final -- final
   deriving (Eq, Show)
 
 data BinaryOp
-  = EQ
-  | LT
-  | GT
-  | GE
-  | LE
-  | Plus
-  | Minus
-  | Mult
-  | Div
-  | Modulo
-  | AND
+  = EQ -- ==
+  | LT -- <
+  | GT -- >
+  | GE -- >=
+  | LE -- <=
+  | Plus -- +
+  | Minus -- -
+  | Mult --  *
+  | Div -- /
+  | Modulo -- %
+  | AND -- &&
   | OR
-  | BitwiseAND
-  | BitwiseOR
+  | -- | |
+    BitwiseAND -- &
+  | BitwiseOR --  |
   deriving (Eq, Show)
 
 data UnaryOp
-  = Neg
-  | Plus
-  | Minus
+  = Negation -- !
+  | Positiv -- +
+  | Negativ -- -
   deriving (Eq, Show)
