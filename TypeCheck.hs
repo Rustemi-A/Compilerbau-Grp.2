@@ -1,15 +1,46 @@
 module TypeCheck where
 
-import JavaParser_mit_Typen
+--import JavaParser_mit_Typen
+import ScannerParser.AbstrakteSyntax2
 import qualified TypedAST as T
 
-class TypeCheckable u t where
-  typeCheck :: u -> [(String, Type)] -> [Class] -> t
+--class TypeCheckable u t where
+--  typeCheck :: u -> [(String, Type)] -> [Class] -> t
 
 --getType :: (TypeCheckable u t) -> Type
 --getType (Type _ typ) = typ
 
-instance TypeCheckable Stmt where
+type TypeChecker u t = [(Type, String)] -> [Class] -> u -> t
+
+typeCheckClass :: TypeChecker Class T.TClass
+typeCheckClass symtab classes (Class (modifier, typ, fields, methods)) =
+  let syms =
+        symtab
+          ++ map (\(FieldDecl (_, ftyp, fname)) -> (ftyp, fname)) fields
+          ++ map (\(Method (_, mtyp, mname, _, _)) -> (mtyp, mname)) methods
+      tfields = map (typeCheckField syms classes) fields
+      tmeths = map (typeCheckMethod syms classes) methods
+   in T.Class (modifier, typ, tfields, tmeths)
+
+typeCheckMethod :: TypeChecker MethodDecl T.TMethodDecl
+typeCheckMethod symtab classes (Method (modifier, typ, name, args, stmt)) =
+  let syms = symtab ++ args --Todo replace existing entries
+      tstmt = typeCheckStmt syms classes stmt
+   in T.Method (modifier, typ, name, args, tstmt)
+
+typeCheckField :: TypeChecker FieldDecl T.TFieldDecl
+typeCheckField _ _ (FieldDecl (modifier, typ, name)) = FieldDecl (modifier, typ, name)
+
+typeCheckStmt :: TypeChecker Stmt (T.TStmt (*))
+typeCheckStmt symtab classes (Block [stmt]) = typeCheckStmt symtab classes stmt
+typeCheckStmt symtab classes (Block [stmt:stmts]) =
+  let
+    tstmt = typeCheckStmt symtab classes stmt
+    tstmts = typeCheckStmt symtab classes stmts
+  in
+
+{-
+instance TypeCheckable Stmt T.TStmt (*) where
   typeCheck (If (be, ifs, Nothing)) symtab cls =
     let bexp = typeCheck be symtab cls
         ifstmt = typeCheck ifs symtab cls
@@ -54,9 +85,16 @@ instance TypeCheckable BExpr where
 instance TypeCheckable Expr where
   typeCheck One symtab cls = TypedExpr (One, "integer")
   getType (TypedExpr (_, typ)) = typ
+-}
 
-main = do
-  s <- readFile "fst.stmt"
-  --s <- readFile "if.stmt"
-  print (parser s)
-  print (typeCheck (parser s) [] [])
+emptyClass = Class ([Public], "Empty", [], [])
+
+x = typeCheckClass emptyClass [] []
+
+--main = do
+--  s <- readFile "fst.stmt"
+--  print s
+
+--s <- readFile "if.stmt"
+-- print (parser s)
+--print (typeCheck (parser s) [] [])

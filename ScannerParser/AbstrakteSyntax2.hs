@@ -1,13 +1,14 @@
 module ScannerParser.AbstrakteSyntax2
-  ( Class,
-    FieldDecl,
-    MethodDecl,
+  ( Class (..),
+    FieldDecl (..),
+    MethodDecl (..),
     Expr (..),
     StmtExpr (..),
     Stmt (..),
     Modifier (..),
     BinaryOp (..),
     UnaryOp (..),
+    Type,
   )
 where
 
@@ -44,7 +45,7 @@ data StmtExpr
 
 data Stmt
   = Block [Stmt] -- {}
-  | Return Expr -- return x
+  | Return (Maybe Expr) -- return x
   | While (Expr, Stmt) -- while(boolean) {...}
   | LocalVarDecl (Type, String) -- int i = 1;
   | If (Expr, Stmt, Maybe Stmt) -- if(boolean){...}else {...}
