@@ -1,0 +1,22 @@
+module Test.AbstractTranslations.ArithUnary where
+
+import ScannerParser.AbstrakteSyntax2
+
+arithUnaryAbstractSyntax = 
+    Class(
+        [Public], 
+        "ArithUnary", 
+        [],
+        [Method(
+            [], 
+            "int", 
+            "foo", 
+            [("int","x")], 
+            Return(
+                Unary (
+                    Negation,
+                    LocalOrFieldVar "x")))])
+
+-- arithUnaryAbstractTypedSyntax
+
+-- arithUnaryAbstractByteCode

@@ -36,6 +36,7 @@ data Stmt = Block [Stmt]                      -- {}
             | LocalVarDecl( Type, String )    -- int i = 1;
             | If( Expr, Stmt , Maybe Stmt )   -- if(boolean){...}else {...}
             | StmtExprStmt StmtExpr           -- StmtExpr zu Stmt "casten"
+            | Empty                           -- kein Statement oder nur ;
            deriving (Eq, Show)
 
 data Modifier =  Public    -- public
@@ -44,7 +45,7 @@ data Modifier =  Public    -- public
                 |Final     -- final
            deriving (Eq, Show)
 
-data BinaryOp  = EQ            -- ==
+data BinaryOp  = Equals        -- ==
                 | LT           -- <
                 | GT           -- >
                 | GE           -- >=
