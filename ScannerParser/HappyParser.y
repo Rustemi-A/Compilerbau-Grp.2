@@ -32,8 +32,10 @@ import AbstrakteSyntax
         Char {TOKEN_CHAR}
         Char_Literal {TOKEN_CHAR_LITERAL $$}
         --Abstract {TOKEN_ABSTRACT}
-        Zugriffsrecht {TOKEN_ZUGRIFFSRECHT $$}
-        --- Static {TOKEN_STATIC}
+        Public {TOKEN_PUBLIC}
+        Private {TOKEN_PRIVATE}
+        Static {TOKEN_STATIC}
+        Final {TOKEN_FINAL}
         --- Komma {TOKEN_KOMMA}
         Void {TOKEN_VOID}
         ---New {TOKEN_NEW}
@@ -59,19 +61,21 @@ import AbstrakteSyntax
         --Doppelpunkt {TOKEN_DOPPELPUNKT}
 
 %%
-javaClass : Zugriffsrecht Klasse Bezeichner Klaauf_Gesch javaAusdrucks Klazu_Gesch { Class_ ($1, $3, $5) }
+javaClass : modifier Klasse Bezeichner Klaauf_Gesch attribute methoden Klazu_Gesch { Class($1, $3, $5, $6) }
+
+modifier: Public { Public:[] }
+        | Private { Private:[] }
+        | Public Final { Public:Final:[]}
+        | Public Static { Public:Static:[]}
+        | Public Final Static { Public:Final:Static:[] }
+        | Private Final { Private:Final:[]}
+        | Private Static {Private:Static:[]}
+        | Private Final Static { Private:Final:Static:[] }
+        
 
 javaStatements : { [] }   --> Basisfall um eine Liste an Statements zu generieren
                | javaStatement javaStatements { ($1:$2) } --> Generiert die Liste an Statements
 			   
-javaAusdruck :  methode  {$1}
-	     |  attribut {$1}
-		
-		
-javaAusdrucks : { [] }   --> Basisfall um eine Liste an attributen oder methoden zu generieren
-               | javaAusdruck  javaAusdrucks { ($1:$2) } --> Generiert die Liste an Statements
-
-
 javaStatement :  Semikolon { Semikolon_ }
               | While Klaauf_Rund bExpression Klazu_Rund Klaauf_Gesch javaStatements Klazu_Gesch { While_ ($3, $6) }
               | If Klaauf_Rund bExpression Klazu_Rund Klaauf_Gesch javaStatements Klazu_Gesch { If_ ($3, $6, Nothing) }
@@ -87,10 +91,7 @@ bExpression : Bezeichner binaryOp Integer_Literal {Bexp_ ($1, $2, $3)}
 -- decInc  : Inkrementieren { Inc_ }
 --        | Dekrementieren { Dec_ }
 
-literal       : Integer_Literal { ILit_ ($1)}
-              | Char_Literal { CLit_ ($1)}
-            --  | String_Literal { SLit_ ($1)}
-              | Bool_Literal { BLit_ ($1)}
+
 
 binaryOp  : Vergleich { EQ_ }
           | Groesser { GT_ }
@@ -98,15 +99,28 @@ binaryOp  : Vergleich { EQ_ }
           | Kleiner_Gleich { LE_ }
           | Groesser_Gleich { GE_ }
  
-methode : Zugriffsrecht attributType Bezeichner Klaauf_Rund Klazu_Rund Klaauf_Gesch javaStatements Klazu_Gesch {Meth_($1, $2, $3, $7)}
-        | Zugriffsrecht Void Bezeichner Klaauf_Rund Klazu_Rund Klaauf_Gesch javaStatements Klazu_Gesch {Meth_($1, Void_, $3, $7)}
+methode : modifier attributType Bezeichner Klaauf_Rund Klazu_Rund Klaauf_Gesch javaStatements Klazu_Gesch {Meth_($1, $2, $3, $7)}
+        | modifier Void Bezeichner Klaauf_Rund Klazu_Rund Klaauf_Gesch javaStatements Klazu_Gesch {Meth_($1, Void_, $3, $7)}
 
-attribut : Zugriffsrecht attributType Bezeichner Zuweisung literal Semikolon {Attri_ ($1, $2, $3, $5)}
+attribute : { [] }
+attribute : attribut attribute { $1:$2 }
 
-attributType : Integer {Int_}
-          -- | String {String_}
-           | Char {Char_}
-           | Bool {Bool_}
+attribut : modifier attributType Bezeichner Semikolon {LocalVarDecl ($2 ,$3)}
+attribut : modifier attributType Bezeichner Zuweisung literal Semikolon { Assign(LocalVarDecl ($2, $3), $5)}
+
+attributType : Integer {"int"}
+             | Char {"char"}
+             | Bool {"boolean"}
+             --ToDo
+             -- | String {String_}
+
+-- ToDo
+literal       : Integer_Literal { Integer ($1)}
+              | Char_Literal { Char ($1)}
+              | Bool_Literal { Bool ($1)}
+              -- ToDo
+            --  | String_Literal { SLit_ ($1)}
+            -- null
 
 {
 parseError :: [Token] -> a

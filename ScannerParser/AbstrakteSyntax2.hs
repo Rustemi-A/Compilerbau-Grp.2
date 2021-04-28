@@ -13,7 +13,7 @@ data MethodDecl = Method([Modifier], Type, String,[(Type, String)], Stmt) -- voi
 
 data Expr = This
 --            | Super
-            | LocalOrFieldVar(String)      -- int i
+            | LocalOrFieldVar(String)      -- i
             | InstVar(Expr, String)        -- object.var
             | Unary(UnaryOp, Expr)         -- i++
             | Binary(BinaryOp, Expr, Expr) -- i + j
@@ -25,7 +25,7 @@ data Expr = This
             | StmtExprExpr(StmtExpr)       -- StmtExpr zu Expr "casten"
            deriving (Eq, Show)
 
-data StmtExpr = Assign(Expr, Expr)                  -- i = 1
+data StmtExpr = Assign(Expr, Expr)                  -- int i = 1
                 | New(Type, [Expr])                 -- new A(params);
                 | MethodCall(Expr, String, [Expr])  -- a.methode(x,c)
            deriving (Eq, Show)
@@ -38,7 +38,7 @@ data Stmt = Block([Stmt])                     -- {}
             | StmtExprStmt(StmtExpr)          -- StmtExpr zu Stmt "casten"
            deriving (Eq, Show)
 
-data Modifier = Public 
+data Modifier =  Public 
                 |Private 
                 |Static 
                 |Final
