@@ -49,6 +49,7 @@ data Stmt
   | While (Expr, Stmt) -- while(boolean) {...}
   | LocalVarDecl (Type, String) -- int i = 1;
   | If (Expr, Stmt, Maybe Stmt) -- if(boolean){...}else {...}
+  | Empty -- kein Statement oder nur ;
   | StmtExprStmt StmtExpr -- StmtExpr zu Stmt "casten"
   deriving (Eq, Show)
 
@@ -60,7 +61,7 @@ data Modifier
   deriving (Eq, Show)
 
 data BinaryOp
-  = EQ -- ==
+  = Equals -- ==
   | LT -- <
   | GT -- >
   | GE -- >=
