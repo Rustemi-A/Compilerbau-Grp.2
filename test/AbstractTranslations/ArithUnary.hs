@@ -11,11 +11,21 @@ arithUnaryAbstractSyntax =
             [], 
             "int", 
             "foo", 
-            [("int","x")], 
-            Return(
-                Unary (
-                    Negation,
-                    LocalOrFieldVar "x")))])
+            [
+                ("int","x")
+            ],
+            Block [
+                Return(
+                    Just (
+                        Unary (
+                            Negation,
+                            LocalOrFieldVar "x"
+                        )
+                    )
+                )
+            ] 
+        )]
+    )
 
 -- arithUnaryAbstractTypedSyntax
 

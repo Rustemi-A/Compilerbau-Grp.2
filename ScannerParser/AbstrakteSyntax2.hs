@@ -38,7 +38,7 @@ data Expr
   deriving (Eq, Show)
 
 data StmtExpr
-  = Assign (Expr, Expr) -- int i = 1
+  = Assign (Expr, Expr) -- i = 1
   | New (Type, [Expr]) -- new A(params);
   | MethodCall (Expr, String, [Expr]) -- a.methode(x,c)
   deriving (Eq, Show)
@@ -72,9 +72,8 @@ data BinaryOp
   | Div -- /
   | Modulo -- %
   | AND -- &&
-  | OR
-  | -- | |
-    BitwiseAND -- &
+  | OR  -- ||
+  | BitwiseAND -- &
   | BitwiseOR --  |
   deriving (Eq, Show)
 

@@ -11,15 +11,22 @@ comparisonBinaryAbstractSyntax =
             [], 
             "void", 
             "foo", 
-            [("int", "x"),
-            ("int", "y")],
-            If (
-                Binary (
-                    Equals, 
-                    LocalOrFieldVar "x", 
-                    LocalOrFieldVar "y"), 
-                Empty , 
-                Nothing ))])
+            [
+                ("int", "x"),
+                ("int", "y")
+            ],
+            Block [
+                If (
+                    Binary (
+                        Equals, 
+                        LocalOrFieldVar "x", 
+                        LocalOrFieldVar "y"), 
+                    Empty , 
+                    Nothing 
+                )
+            ]
+        )]
+    )
 
 -- comparisonBinaryAbstractTypedSyntax
 

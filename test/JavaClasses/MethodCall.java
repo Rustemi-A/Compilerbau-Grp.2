@@ -1,8 +1,9 @@
 
 public class MethodCall {
-	MethodIntZeroReturn o = new MethodIntZeroReturn();
+	MethodIntZeroReturn o;
 	
 	int foo() {
+		o = new MethodIntZeroReturn();
 		return o.foo();
 	}
 }

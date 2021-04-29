@@ -12,7 +12,11 @@ blockAbstractSyntax =
             "void", 
             "foo", 
             [],
-            Block [])])
+            Block [
+                Block []
+            ]
+        )]
+    )
 
 -- blockAbstractTypedSyntax
 

@@ -6,18 +6,23 @@ attrisAbstractSyntax =
     Class(
         [Public], 
         "Attris", 
-        [FieldDecl(
-            [], 
-            "int", 
-            "i"),
-        FieldDecl(
-            [], 
-            "char", 
-            "c"),
-        FieldDecl(
-            [], 
-            "boolean", 
-            "x")],
+        [
+            FieldDecl(
+                [], 
+                "int", 
+                "i"
+            ),
+            FieldDecl(
+                [], 
+                "char", 
+                "c"
+            ),
+            FieldDecl(
+                [], 
+                "boolean", 
+                "x"
+            )
+        ],
         [])
 
 -- attrisAbstractTypedSyntax

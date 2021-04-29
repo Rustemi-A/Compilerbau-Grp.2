@@ -1,4 +1,8 @@
-//ToDo wie macht man die Initialisierung zu Beginn? In Konstruktor packen?!
+
 public class FinalAttri {
-	final int x = 42;
+	final int x;
+	//Wie Konstruktor machen?!
+	public FinalAttri(){
+		x = 42;
+	}
 }

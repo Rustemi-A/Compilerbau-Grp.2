@@ -6,8 +6,29 @@ finalAttriAbstractSyntax =
     Class(
         [Public], 
         "FinalAttri", 
-        [FieldDecl ([Final], "int", "x")],
-        [])
+        [
+            FieldDecl ([
+                Final],
+                 "int", 
+                 "x"
+            )
+        ],
+        [Method (
+            -- stimmt der Konstruktor so?!
+            [Public ], 
+            "void", 
+            "FinalAttri", 
+            [],
+            Block [
+                StmtExprStmt (
+                    Assign (
+                        LocalOrFieldVar "x",
+                        Integer 1
+                    )
+                )
+            ]
+        )]
+    )
 
 -- finalAttriAbstractTypedSyntax
 
