@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs #-}
 
 module TypedAST
-  ( Type (..),
+  ( Typed (..),
     Class (..),
     Field (..),
     Method (..),
@@ -9,72 +9,55 @@ module TypedAST
     StmtExpr (..),
     Stmt (..),
     --   BinaryOp (..),
-    UnaryOp (..),
+    --UnaryOp (..),
   )
 where
 
 import qualified ScannerParser.AbstrakteSyntax2 as U
 
-data Type t where
-  TBool :: Type Bool
-  TInt :: Type Int
-  TObj :: String -> TObj
-  TVoid :: Type ()
-
--- deriving (Show, Eq)
-
-instance Show (Type t) where
-  show TBool = "boolean"
-  show TInt = "int"
-  show (TObj o) = o
-  show TVoid = "void"
-
-instance Eq (Type t) where
-  TBool == TBool = True
-  TInt == TInt = True
-  (TObj o1) == (TObj o2) = o1 == o2
-  TVoid == TVoid = True
-
-type TObj = Type String
-
-data Class = Class [U.Modifier] TObj [Field *] [Method *] -- public class A{}
+data Typed ast = Typed U.Type ast
   deriving (Eq, Show)
 
-data Field t = Field [U.Modifier] (Type t) String -- int v
+data Class = Class [U.Modifier] U.Type [Typed Field] [Typed Method] -- public class A{}
   deriving (Eq, Show)
 
-data Method t = Method [U.Modifier] (Type t) String [(Type t, String)] (Stmt t) -- void methode(int x, char c){}
+data Field = Field [U.Modifier] U.Type String -- int v
   deriving (Eq, Show)
 
-data Expr t
+data Method = Method [U.Modifier] U.Type String [(U.Type, String)] Stmt -- void methode(int x, char c){}
+  deriving (Eq, Show)
+
+data Expr
   = This
   | LocalOrFieldVar String -- i
-  | InstVar (Expr t) String -- object.var
-  | Unary (UnaryOp t) (Expr t) -- !i
-  | Binary (Expr *) U.BinaryOp (Expr *) -- i + j
+  | InstVar (Typed Expr) String -- object.var
+  | Unary U.UnaryOp (Typed Expr) -- !i
+  | Binary (Typed Expr) U.BinaryOp (Typed Expr) -- i + j
   | Int Integer
   | Bool Bool
   | Char Char -- 'a'
   | String String -- "Hello World"
   | Jnull -- null
-  | StmtExprExpr (StmtExpr t) -- StmtExpr zu Expr "casten"
+  | StmtExprExpr (Typed StmtExpr) -- StmtExpr zu Expr "casten"
   deriving (Eq, Show)
 
-data StmtExpr t
-  = Assign (Expr t) (Expr t) -- i = 1
-  | New TObj [Expr *] -- new A(params);
-  | MethodCall (Expr *) String [Expr *] -- a.methode(x,c)
+data StmtExpr
+  = Assign (Typed Expr) (Typed Expr) -- i = 1
+  | New U.Type [Typed Expr] -- new A(params);
+  | MethodCall (Typed Expr) String [Typed Expr] -- a.methode(x,c)
   deriving (Eq, Show)
 
-data Stmt t
-  = Block [Stmt *] -- {}
-  | Return (Maybe (Expr t)) -- return x
-  | While (Expr (Type Bool)) (Stmt t) -- while(boolean) {...}
-  | LocalVarDecl (Type t) String -- int i = 1;
-  | If (Expr (Type Bool)) (Stmt t) (Maybe (Stmt t)) -- if(boolean){...}else {...}
-  | StmtExprStmt (StmtExpr t) -- StmtExpr zu Stmt "casten"
+data Stmt
+  = Block [Typed Stmt] -- {}
+  | Return (Maybe (Typed Expr)) -- return x
+  | While (Typed Expr) (Typed Stmt) -- while(boolean) {...}
+  | LocalVarDecl U.Type String -- int i = 1;
+  | If (Typed Expr) (Typed Stmt) (Maybe (Typed Stmt)) -- if(boolean){...}else {...}
+  | Empty
+  | StmtExprStmt (Typed StmtExpr) -- StmtExpr zu Stmt "casten"
   deriving (Eq, Show)
 
+{-
 data UnaryOp t where
   Neg :: UnaryOp Bool
   Plus :: UnaryOp Int
@@ -90,7 +73,7 @@ instance Eq (UnaryOp t) where
   Plus == Plus = True
   Minus == Minus = True
   _ == _ = False
-
+-}
 --  deriving (Eq, Show)
 {-data Modifier
   = Public
