@@ -4,7 +4,7 @@ import ScannerParser.AbstrakteSyntax2
 
 ifThenElsenAbstractSyntax = 
     Class(
-        [Public,Final], 
+        [Public], 
         "IfThenElse", 
         [],
         [Method (

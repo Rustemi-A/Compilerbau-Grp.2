@@ -4,7 +4,7 @@ import ScannerParser.AbstrakteSyntax2
 
 localVarDeclAbstractSyntax = 
     Class(
-        [Public,Final], 
+        [Public], 
         "LocalVarDecl", 
         [],
         [Method (

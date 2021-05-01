@@ -4,7 +4,7 @@ import ScannerParser.AbstrakteSyntax2
 
 logicBinaryAbstractSyntax = 
     Class(
-        [Public,Final], 
+        [Public], 
         "LogicBinary", 
         [],
         [Method (
