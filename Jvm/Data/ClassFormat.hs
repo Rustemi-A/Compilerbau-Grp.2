@@ -58,8 +58,8 @@ data CP_Info =
                 }
         | MethodRef_Info 
                 { tag_cp                :: Tag
-                , index_name_cp         :: Index_Constant_Pool
-                , index_nameandtype_cp  :: Index_Constant_Pool
+                , index_name_cp         :: Index_Constant_Pool  -- klasse
+                , index_nameandtype_cp  :: Index_Constant_Pool  -- name und typ
                 , desc                  :: String
                 }
         | InterfaceMethodRef_Info 
