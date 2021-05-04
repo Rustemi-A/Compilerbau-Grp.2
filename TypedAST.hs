@@ -1,5 +1,3 @@
-{-# LANGUAGE GADTs #-}
-
 module TypedAST
   ( Typed (..),
     Class (..),
@@ -8,8 +6,6 @@ module TypedAST
     Expr (..),
     StmtExpr (..),
     Stmt (..),
-    --   BinaryOp (..),
-    --UnaryOp (..),
   )
 where
 
@@ -24,7 +20,7 @@ data Class = Class [U.Modifier] U.Type [Typed Field] [Typed Method] -- public cl
 data Field = Field [U.Modifier] U.Type String -- int v
   deriving (Eq, Show)
 
-data Method = Method [U.Modifier] U.Type String [(U.Type, String)] Stmt -- void methode(int x, char c){}
+data Method = Method [U.Modifier] U.Type String [(U.Type, String)] (Typed Stmt) -- void methode(int x, char c){}
   deriving (Eq, Show)
 
 data Expr
@@ -56,46 +52,3 @@ data Stmt
   | Empty
   | StmtExprStmt (Typed StmtExpr) -- StmtExpr zu Stmt "casten"
   deriving (Eq, Show)
-
-{-
-data UnaryOp t where
-  Neg :: UnaryOp Bool
-  Plus :: UnaryOp Int
-  Minus :: UnaryOp Int
-
-instance Show (UnaryOp t) where
-  show Neg = "!"
-  show Plus = "+"
-  show Minus = "-"
-
-instance Eq (UnaryOp t) where
-  Neg == Neg = True
-  Plus == Plus = True
-  Minus == Minus = True
-  _ == _ = False
--}
---  deriving (Eq, Show)
-{-data Modifier
-  = Public
-  | Private
-  | Static
-  | Final
-  deriving (Eq, Show)
-
-data BinaryOp =
-  EQ :: BinaryOp Bool *
-  LT :: BinaryOp Bool Int
-  GT :: BinaryOp Bool Int
-  GE :: BinaryOp Bool Int
-  LE :: BinaryOp Bool Int
-  Add :: BinaryOp Int Int
-  Sub :: BinaryOp Int Int
-  Mult :: BinaryOp Int Int
-  Div :: BinaryOp Int Int
-  Modulo :: BinaryOp Int Int
-  AND :: BinaryOp Bool Bool
-  OR :: BinaryOp Bool Bool
-  BitwiseAND :: BinaryOp Int Int
-  BitwiseOR :: BinaryOp Int Int
---  deriving (Eq, Show)
--}
