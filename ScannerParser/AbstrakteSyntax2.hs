@@ -47,9 +47,8 @@ data Stmt
   = Block [Stmt] -- {}
   | Return (Maybe Expr) -- return x
   | While (Expr, Stmt) -- while(boolean) {...}
-  | LocalVarDecl (Type, String) -- int i = 1;
+  | LocalVarDecl (Type, String) -- int i;
   | If (Expr, Stmt, Maybe Stmt) -- if(boolean){...}else {...}
-  | Empty -- kein Statement oder nur ;
   | StmtExprStmt StmtExpr -- StmtExpr zu Stmt "casten"
   deriving (Eq, Show)
 

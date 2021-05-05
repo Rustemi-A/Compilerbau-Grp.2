@@ -77,7 +77,7 @@ typeCheckStmt symtab cls (While (cond, stmt)) =
 typeCheckStmt symtab cls (LocalVarDecl (typ, name)) =
   error "Todo"
 --Empty
-typeCheckStmt symtab cls Empty = T.Typed "void" T.Empty
+--typeCheckStmt symtab cls Empty = T.Typed "void" T.Empty
 -- StmtExprExpr
 typeCheckStmt symtab cls (StmtExprStmt expr) =
   error "Todo"

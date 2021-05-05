@@ -14,9 +14,8 @@ finalAttriAbstractSyntax =
             )
         ],
         [Method (
-            -- stimmt der Konstruktor so?!
             [Public ], 
-            "void", 
+            "", 
             "FinalAttri", 
             [],
             Block [

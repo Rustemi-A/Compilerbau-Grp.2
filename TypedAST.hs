@@ -53,7 +53,7 @@ data Stmt
   | While (Typed Expr) (Typed Stmt) -- while(boolean) {...}
   | LocalVarDecl U.Type String -- int i = 1;
   | If (Typed Expr) (Typed Stmt) (Maybe (Typed Stmt)) -- if(boolean){...}else {...}
-  | Empty
+ -- Empty Anmerkung: habe ich aus dem AST gelöscht - Etienne
   | StmtExprStmt (Typed StmtExpr) -- StmtExpr zu Stmt "casten"
   deriving (Eq, Show)
 
