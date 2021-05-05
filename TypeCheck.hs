@@ -4,13 +4,6 @@ module TypeCheckStmt where
 import ScannerParser.AbstrakteSyntax
 import qualified TypedAST as T
 
---class TypeCheckable u t where
---  typeCheckStmt :: u -> [(String, Type)] -> [Class] -> t
-
---getType :: (TypeCheckable u t) -> Type
---getType (Type _ typ) = typ
-
---getAST :: Typed ast -> ast t
 getAST (T.Typed _ ast) = ast
 
 getType (T.Typed typ _) = typ
@@ -30,8 +23,8 @@ typeCheckClass symtab classes (Class (modifier, typ, fields, methods)) =
 typeCheckMethod :: TypeChecker MethodDecl T.Method
 typeCheckMethod symtab classes (Method (modifier, typ, name, args, stmt)) =
   let syms = symtab ++ args --Todo replace existing entries
-      T.Typed returntyp tstmt = typeCheckStmt syms classes stmt
-   in if returntyp == typ
+      tstmt = typeCheckStmt syms classes stmt
+   in if getType tstmt == typ
         then T.Typed typ $ T.Method modifier typ name args tstmt
         else error "Returntyp und Methodentyp stimmen nicht überein"
 
@@ -42,7 +35,8 @@ typeCheckStmt :: TypeChecker Stmt T.Stmt
 -- Block
 typeCheckStmt symtab classes (Block [stmt]) = typeCheckStmt symtab classes stmt
 typeCheckStmt symtab classes (Block (us : uss)) =
-  let T.Typed htyp ts = typeCheckStmt symtab classes us
+  let ts = typeCheckStmt symtab classes us
+      htyp = getType ts
       T.Typed ttyp (T.Block tss) = typeCheckStmt symtab classes $ Block uss
    in if htyp == ttyp || htyp == "void"
         then T.Typed ttyp $ T.Block (ts : tss)
@@ -51,27 +45,28 @@ typeCheckStmt _ _ (Block []) = T.Typed "void" $ T.Block []
 -- Return
 typeCheckStmt _ _ (Return Nothing) = T.Typed "void" (T.Return Nothing)
 typeCheckStmt symtab cls (Return (Just e)) =
-  let T.Typed typ texpr = typeCheckExpr symtab cls e
-   in T.Typed typ $ T.Return (Just texpr)
+  let texpr = typeCheckExpr symtab cls e
+   in T.Typed (getType texpr) (T.Return $ Just texpr)
 -- If
 typeCheckStmt symtab cls (If (cond, ifs, elses)) =
-  let T.Typed condtyp tcond = typeCheckExpr symtab cls cond
-      T.Typed iftyp tifs = typeCheckStmt symtab cls ifs
+  let tcond = typeCheckExpr symtab cls cond
+      tifs = typeCheckStmt symtab cls ifs
+      iftyp = getType tifs
       telse = fmap (typeCheckStmt symtab cls) elses
-   in if condtyp == "boolean"
+   in if getType tcond == "boolean"
         then case telse of
-          Just (T.Typed elsetyp telses) ->
-            if elsetyp == iftyp
-              then T.Typed iftyp $ T.If tcond tifs $ Just telses
+          Just telse ->
+            if getType telse == iftyp
+              then T.Typed iftyp $ T.If tcond tifs $ Just telse
               else error "If und Else haben verschiedene Typen."
           Nothing -> T.Typed iftyp $ T.If tcond tifs Nothing
         else error "If-Bedingung muss boolean sein"
 -- While
 typeCheckStmt symtab cls (While (cond, stmt)) =
-  let T.Typed condtyp tcond = typeCheckExpr symtab cls cond
-      T.Typed styp tstmt = typeCheckStmt symtab cls stmt
-   in if condtyp == "boolean"
-        then T.Typed styp $ T.While tcond tstmt
+  let tcond = typeCheckExpr symtab cls cond
+      tstmt = typeCheckStmt symtab cls stmt
+   in if getType tcond == "boolean"
+        then T.Typed (getType tstmt) $ T.While tcond tstmt
         else error "While-Bedingung muss boolean sein"
 -- LocalVarDecl
 typeCheckStmt symtab cls (LocalVarDecl (typ, name)) =
