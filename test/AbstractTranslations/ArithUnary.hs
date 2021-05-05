@@ -7,7 +7,12 @@ arithUnaryAbstractSyntax =
         [Public], 
         "ArithUnary", 
         [],
-        [],
+        [Method (
+            [Public], 
+            "", 
+            "ArithUnary", 
+            [], 
+            Block [])],
         [Method(
             [], 
             "int", 

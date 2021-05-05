@@ -8,6 +8,12 @@ methodVoidTwoEmptyAbstractSyntax =
         "MethodVoidTwoEmpty", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "MethodVoidTwoEmpty", 
+            [], 
+            Block [])],
+        [Method (
             [], 
             "void", 
             "foo", 

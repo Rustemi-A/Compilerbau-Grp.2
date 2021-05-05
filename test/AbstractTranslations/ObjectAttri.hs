@@ -16,6 +16,12 @@ objectAttriAbstractSyntax =
             "String", 
             "y"
         )],
+        [Method (
+            [Public], 
+            "", 
+            "ObjectAttri", 
+            [], 
+            Block [])],
         []
     )
 

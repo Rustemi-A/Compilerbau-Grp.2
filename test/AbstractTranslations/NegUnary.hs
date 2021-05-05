@@ -8,6 +8,12 @@ negUnaryAbstractSyntax =
         "NegUnary", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "NegUnary", 
+            [], 
+            Block [])],
+        [Method (
             [], 
             "void", 
             "foo", 

@@ -8,6 +8,12 @@ logicBinaryAbstractSyntax =
         "LogicBinary", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "LogicalBinary", 
+            [], 
+            Block [])],
+        [Method (
             [], 
             "void", 
             "foo", 

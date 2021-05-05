@@ -23,6 +23,12 @@ attrisAbstractSyntax =
                 "x"
             )
         ],
+        [Method (
+            [Public], 
+            "", 
+            "Attris", 
+            [], 
+            Block [])],
         [])
 
 -- attrisAbstractTypedSyntax

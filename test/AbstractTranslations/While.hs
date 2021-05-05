@@ -8,6 +8,12 @@ whileAbstractSyntax =
         "While", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "While", 
+            [], 
+            Block [])],
+        [Method (
             [], 
             "void", 
             "foo", 

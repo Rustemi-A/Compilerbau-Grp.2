@@ -21,6 +21,12 @@ staticAttriAbstractSyntax =
             "boolean", 
             "x"
         )],
+        [Method (
+            [Public], 
+            "", 
+            "StaticAttri", 
+            [], 
+            Block [])],
         []
     )
 

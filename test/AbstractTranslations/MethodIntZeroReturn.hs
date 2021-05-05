@@ -8,6 +8,12 @@ methodIntZeroReturnAbstractSyntax =
         "MethodIntZeroReturn", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "MethodIntZeroReturn", 
+            [], 
+            Block [])],
+        [Method (
             [], 
             "int", 
             "foo", 

@@ -8,6 +8,12 @@ localVarDeclAbstractSyntax =
         "LocalVarDecl", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "LocalVarDecl", 
+            [], 
+            Block [])],
+        [Method (
             [], 
             "void", 
             "foo", 

@@ -7,6 +7,12 @@ comparisonBinaryAbstractSyntax =
         [Public], 
         "ComparisonBinary", 
         [],
+        [Method (
+            [Public], 
+            "", 
+            "ComparisonBinary", 
+            [], 
+            Block [])],
         [Method(
             [], 
             "void", 

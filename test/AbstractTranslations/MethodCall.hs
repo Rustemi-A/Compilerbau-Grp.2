@@ -12,6 +12,12 @@ methodCallAbstractSyntax =
             "o"
         )],
         [Method (
+            [Public], 
+            "", 
+            "MethodCall", 
+            [], 
+            Block [])],
+        [Method (
             [], 
             "int", 
             "foo", 

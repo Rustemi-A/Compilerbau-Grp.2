@@ -13,7 +13,12 @@ finalAttriAbstractSyntax =
                  "x"
             )
         ],
-        [],
+        [Method (
+            [Public], 
+            "", 
+            "FinalAttri", 
+            [], 
+            Block [])],
         [Method (
             [Public ], 
             "", 

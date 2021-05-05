@@ -7,6 +7,12 @@ blockAbstractSyntax =
         [Public], 
         "Block", 
         [],
+        [Method (
+            [Public], 
+            "", 
+            "Block", 
+            [], 
+            Block [])],
         [Method(
             [], 
             "void", 

@@ -8,6 +8,12 @@ ifThenElsenAbstractSyntax =
         "IfThenElse", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "IfThenElse", 
+            [], 
+            Block [])],
+        [Method (
             [], 
             "void", 
             "foo", 

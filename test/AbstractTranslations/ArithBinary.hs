@@ -7,7 +7,12 @@ arithBinaryAbstractSyntax =
         [Public], 
         "ArithBinary", 
         [],
-        [],
+        [Method (
+            [Public], 
+            "", 
+            "ArithBinary", 
+            [], 
+            Block [])],
         [Method(
             [], 
             "int", 

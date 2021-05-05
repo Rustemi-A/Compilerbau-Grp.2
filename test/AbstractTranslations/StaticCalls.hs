@@ -8,6 +8,12 @@ staticCallsAbstractSyntax =
         "StaticCalls", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "StaticCalls", 
+            [], 
+            Block [])],
+        [Method (
             [], 
             "int", 
             "foo", 
