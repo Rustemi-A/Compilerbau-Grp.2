@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.MethodVoidOneEmpty where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 methodVoidOneEmptyAbstractSyntax = 
     Class(

@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.ComparisonBinary where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 comparisonBinaryAbstractSyntax = 
     Class(
@@ -21,7 +21,7 @@ comparisonBinaryAbstractSyntax =
                         Equals, 
                         LocalOrFieldVar "x", 
                         LocalOrFieldVar "y"), 
-                    Empty , 
+                    Block [], 
                     Nothing 
                 )
             ]

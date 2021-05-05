@@ -1,44 +1,84 @@
-module AbstrakteSyntax where
+module ScannerParser.AbstrakteSyntax
+  ( Class (..),
+    FieldDecl (..),
+    MethodDecl (..),
+    Expr (..),
+    StmtExpr (..),
+    Stmt (..),
+    Modifier (..),
+    BinaryOp (..),
+    UnaryOp (..),
+    Type,
+  )
+where
 
-data Klasse_ = Class_ (String, String, [JavaAusdruck_])
-              deriving (Eq, Show)
+type Type = String
 
-data JavaAusdruck_ = Attri_ (String, AttributType_, String, Literal_)
-	           | Meth_ (String, AttributType_, String, [Statement_])
-                deriving (Eq, Show)
+newtype Class = Class ([Modifier], Type, [FieldDecl], [MethodDecl]) -- public class A{}
+  deriving (Eq, Show)
 
-data Statement_ = If_ (BExpression_, [Statement_], Maybe [Statement_])
-               | While_ (BExpression_, [Statement_]) --while
-               | For_ (String, Int, BExpression_, DecInc_, [Statement_])
-               | Block_ ([Statement_])
-               | Semikolon_
-               | Return_ (Maybe Literal_)
-               deriving (Eq, Show)
+newtype FieldDecl = FieldDecl ([Modifier], Type, String) -- int v
+  deriving (Eq, Show)
 
-data Literal_  = ILit_ (Int)
-            --   | SLit_ (String)
-               | CLit_ (Char)
-               | BLit_ (Bool)
-               deriving (Eq, Show)
+newtype MethodDecl = Method ([Modifier], Type, String, [(Type, String)], Stmt) -- void methode(int x, char c){}
+  deriving (Eq, Show)
 
-data BExpression_ = Bexp_ (String, BinaryOp_, Int)
-                  | Boolean_ (Bool)
-           deriving (Eq, Show)
+data Expr
+  = This
+  | LocalOrFieldVar String -- i
+  | InstVar (Expr, String) -- object.var
+  | Unary (UnaryOp, Expr) -- i++
+  | Binary (BinaryOp, Expr, Expr) -- i + j
+  | Integer Integer -- 1
+  | Bool Bool -- true
+  | Char Char -- 'a'
+  | String String -- "Hello World"
+  | Jnull -- null
+  | StmtExprExpr StmtExpr -- StmtExpr zu Expr "casten"
+  deriving (Eq, Show)
 
-data DecInc_ = Dec_
-             | Inc_ 
-           deriving (Eq, Show)
+data StmtExpr
+  = Assign (Expr, Expr) -- i = 1
+  | New (Type, [Expr]) -- new A(params);
+  | MethodCall (Expr, String, [Expr]) -- a.methode(x,c)
+  deriving (Eq, Show)
 
-data BinaryOp_  = EQ_ 
-                | LT_
-                | GT_
-                | GE_
-                | LE_
-           deriving (Eq, Show)
-           
-data AttributType_ = Int_
-                 --  | String_
-                   | Bool_
-                   | Char_
-                   | Void_                              -- inkonsistenz in Logik aber nur so funktioniert es 
-           deriving (Eq, Show)
+data Stmt
+  = Block [Stmt] -- {}
+  | Return (Maybe Expr) -- return x
+--  | Break
+  | While (Expr, Stmt) -- while(boolean) {...}
+  | LocalVarDecl (Type, String) -- int i;
+  | If (Expr, Stmt, Maybe Stmt) -- if(boolean){...}else {...}
+  | StmtExprStmt StmtExpr -- StmtExpr zu Stmt "casten"
+  deriving (Eq, Show)
+
+data Modifier
+  = Public -- public
+  | Private -- private
+  | Static -- static
+  | Final -- final
+  deriving (Eq, Show)
+
+data BinaryOp
+  = Equals -- ==
+  | LT -- <
+  | GT -- >
+  | GE -- >=
+  | LE -- <=
+  | Plus -- +
+  | Minus -- -
+  | Mult --  *
+  | Div -- /
+  | Modulo -- %
+  | AND -- &&
+  | OR  -- ||
+  | BitwiseAND -- &
+  | BitwiseOR --  |
+  deriving (Eq, Show)
+
+data UnaryOp
+  = Negation -- !
+  | Positiv -- +
+  | Negativ -- -
+  deriving (Eq, Show)

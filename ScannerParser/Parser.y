@@ -1,7 +1,7 @@
 {
 module Parser where
 import Lexer
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 }
 
 %name class 
@@ -81,7 +81,8 @@ methodModifier: { [] }
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
 
-methode: methodModifier typ Bezeichner Klaauf_Rund methodParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, $2 $3, $5, Block $8) }
+methode: methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, $2 $3, $5, Block $8) }
+methode: methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, "void" $3, $5, Block $8) }
 
 attribute: { [] }
 attribute: attribut attribute { $1:$2 }
@@ -131,8 +132,8 @@ typ: Integer { "int" }
         | Bool { "boolean" }
         | Bezeichner { $1 }
 
--- [(Type, String)] Typ bon methodParams
-methodParams: 
+-- [(Type, String)] Typ bon methodDeclParams
+methodDeclParams:
 
 literal: expression
 

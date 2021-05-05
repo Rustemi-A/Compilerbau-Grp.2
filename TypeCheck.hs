@@ -1,7 +1,7 @@
 module TypeCheckStmt where
 
 --import JavaParser_mit_Typen
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 import qualified TypedAST as T
 
 --class TypeCheckable u t where

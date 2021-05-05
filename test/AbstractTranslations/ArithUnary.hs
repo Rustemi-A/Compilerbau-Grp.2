@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.ArithUnary where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 arithUnaryAbstractSyntax = 
     Class(

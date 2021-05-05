@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.MethodCall where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 methodCallAbstractSyntax = 
     Class(
