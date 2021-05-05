@@ -1,6 +1,5 @@
 module TypeCheckStmt where
 
---import JavaParser_mit_Typen
 import ScannerParser.AbstrakteSyntax
 import qualified TypedAST as T
 
@@ -128,7 +127,7 @@ instance TypeCheckable Expr where
   getType (TypedExpr (_, typ)) = typ
 -}
 
-emptyClass = Class ([Public], "Empty", [], [] ,[])
+emptyClass = Class ([Public], "Empty", [], [], [])
 
 arithBinaryAbstractSyntax =
   Class
@@ -156,6 +155,18 @@ arithBinaryAbstractSyntax =
     )
 
 x = typeCheckClass [] [] emptyClass
+
+as :: [Int]
+as = []
+
+aa :: [String]
+aa = []
+
+y :: [String]
+y = aa ++ concatMap f as
+
+f :: Int -> [String]
+f _ = []
 
 --main = do
 --  s <- readFile "fst.stmt"
