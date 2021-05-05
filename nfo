@@ -6,41 +6,9 @@ state 8 contains 2 shift/reduce conflicts.
 state 12 contains 2 shift/reduce conflicts.
 state 13 contains 2 shift/reduce conflicts.
 state 23 contains 2 shift/reduce conflicts.
-state 102 contains 1 shift/reduce conflicts.
-
-rule 64 is unused
-rule 65 is unused
-rule 66 is unused
-rule 67 is unused
-rule 68 is unused
-rule 69 is unused
-rule 70 is unused
-rule 71 is unused
-rule 72 is unused
-rule 73 is unused
-rule 74 is unused
-rule 75 is unused
-rule 76 is unused
-rule 77 is unused
-rule 78 is unused
-rule 79 is unused
-rule 80 is unused
-
-terminal Geteilt is unused
-terminal Mal is unused
-terminal Plu is unused
-terminal Minu is unused
-terminal Modul is unused
-terminal An is unused
-terminal O is unused
-terminal BitOR is unused
-terminal BitAND is unused
-terminal Vergleich is unused
-terminal Groesser is unused
-terminal Kleiner is unused
-terminal Groesser_Gleich is unused
-terminal Kleiner_Gleich is unused
-terminal Not is unused
+state 98 contains 15 shift/reduce conflicts.
+state 119 contains 15 shift/reduce conflicts.
+state 121 contains 15 shift/reduce conflicts.
 
 -----------------------------------------------------------------------------
 Grammar
@@ -80,17 +48,17 @@ Grammar
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch   (32)
 	statement -> stmtExpr Semikolon                    (33)
 	statement -> Semikolon                             (34)
-	expression -> expressionMain                       (35)
-	expressionMain -> expressionCore                   (36)
-	expressionCore -> Thi                              (37)
-	expressionCore -> Integer_Literal                  (38)
-	expressionCore -> Bool_Literal                     (39)
-	expressionCore -> Char_Literal                     (40)
-	expressionCore -> String_Literal                   (41)
-	expressionCore -> Null                             (42)
-	expressionCore -> stmtExpr                         (43)
-	expressionCore -> Bezeichner                       (44)
-	expressionCore -> expression Akzessor Bezeichner   (45)
+	expression -> Thi                                  (35)
+	expression -> Integer_Literal                      (36)
+	expression -> Bool_Literal                         (37)
+	expression -> Char_Literal                         (38)
+	expression -> String_Literal                       (39)
+	expression -> Null                                 (40)
+	expression -> stmtExpr                             (41)
+	expression -> Bezeichner                           (42)
+	expression -> expression Akzessor Bezeichner       (43)
+	expression -> expression binaryOp expression       (44)
+	expression -> unaryOp expression                   (45)
 	stmtExpr -> Bezeichner Zuweisung literal           (46)
 	stmtExpr -> Neww Bezeichner Klaauf_Rund params Klazu_Rund   (47)
 	stmtExpr -> expression Akzessor Bezeichner Klaauf_Rund params Klazu_Rund   (48)
@@ -192,9 +160,7 @@ Non-terminals
 	konstruktor     rule  23
 	statements      rules 24, 25
 	statement       rules 26, 27, 28, 29, 30, 31, 32, 33, 34
-	expression      rule  35
-	expressionMain  rule  36
-	expressionCore  rules 37, 38, 39, 40, 41, 42, 43, 44, 45
+	expression      rules 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45
 	stmtExpr        rules 46, 47, 48
 	typ             rules 49, 50, 51, 52
 	methodDeclParams rules 53, 54
@@ -786,14 +752,14 @@ State 58
 
 	methode -> methodModifier Void Bezeichner Klaauf_Rund methodDeclParams . Klazu_Rund Klaauf_Gesch statements Klazu_Gesch    (rule 17)
 
-	Klazu_Rund     shift, and enter state 83
+	Klazu_Rund     shift, and enter state 86
 
 
 State 59
 
 	methode -> methodModifier typ Bezeichner Klaauf_Rund methodDeclParams . Klazu_Rund Klaauf_Gesch statements Klazu_Gesch    (rule 16)
 
-	Klazu_Rund     shift, and enter state 82
+	Klazu_Rund     shift, and enter state 85
 
 
 State 60
@@ -806,25 +772,28 @@ State 60
 	Semikolon      shift, and enter state 72
 	Klazu_Gesch    reduce using rule 24
 	Klaauf_Gesch   shift, and enter state 73
-	String_Literal shift, and enter state 74
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
 	Integer        shift, and enter state 28
-	Integer_Literalshift, and enter state 75
+	Integer_Literalshift, and enter state 77
 	Char           shift, and enter state 29
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Return         shift, and enter state 78
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Return         shift, and enter state 80
 	Bool           shift, and enter state 30
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
 	statements     goto state 62
 	statement      goto state 63
 	expression     goto state 64
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 67
-	typ            goto state 68
+	stmtExpr       goto state 65
+	typ            goto state 66
+	unaryOp        goto state 67
+	op             goto state 68
 
 State 61
 
@@ -837,7 +806,7 @@ State 62
 
 	konstruktor -> konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements . Klazu_Gesch    (rule 23)
 
-	Klazu_Gesch    shift, and enter state 99
+	Klazu_Gesch    shift, and enter state 117
 
 
 State 63
@@ -850,86 +819,152 @@ State 63
 	Semikolon      shift, and enter state 72
 	Klazu_Gesch    reduce using rule 24
 	Klaauf_Gesch   shift, and enter state 73
-	String_Literal shift, and enter state 74
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
 	Integer        shift, and enter state 28
-	Integer_Literalshift, and enter state 75
+	Integer_Literalshift, and enter state 77
 	Char           shift, and enter state 29
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Return         shift, and enter state 78
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Return         shift, and enter state 80
 	Bool           shift, and enter state 30
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	statements     goto state 98
+	statements     goto state 116
 	statement      goto state 63
 	expression     goto state 64
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 67
-	typ            goto state 68
+	stmtExpr       goto state 65
+	typ            goto state 66
+	unaryOp        goto state 67
+	op             goto state 68
 
 State 64
 
-	expressionCore -> expression . Akzessor Bezeichner    (rule 45)
+	expression -> expression . Akzessor Bezeichner      (rule 43)
+	expression -> expression . binaryOp expression      (rule 44)
 	stmtExpr -> expression . Akzessor Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
 
-	Akzessor       shift, and enter state 97
+	Geteilt        shift, and enter state 103
+	Mal            shift, and enter state 104
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	Modul          shift, and enter state 105
+	An             shift, and enter state 106
+	O              shift, and enter state 107
+	BitOR          shift, and enter state 108
+	BitAND         shift, and enter state 109
+	Akzessor       shift, and enter state 110
+	Vergleich      shift, and enter state 111
+	Groesser       shift, and enter state 112
+	Kleiner        shift, and enter state 113
+	Groesser_Gleichshift, and enter state 114
+	Kleiner_Gleich shift, and enter state 115
 
+	binaryOp       goto state 101
+	op             goto state 102
 
 State 65
 
-	expression -> expressionMain .                      (rule 35)
+	statement -> stmtExpr . Semikolon                   (rule 33)
+	expression -> stmtExpr .                            (rule 41)
 
-	Semikolon      reduce using rule 35
-	Klazu_Rund     reduce using rule 35
-	Akzessor       reduce using rule 35
-	Komma          reduce using rule 35
+	Semikolon      shift, and enter state 100
+	Geteilt        reduce using rule 41
+	Mal            reduce using rule 41
+	Plu            reduce using rule 41
+	Minu           reduce using rule 41
+	Modul          reduce using rule 41
+	An             reduce using rule 41
+	O              reduce using rule 41
+	BitOR          reduce using rule 41
+	BitAND         reduce using rule 41
+	Akzessor       reduce using rule 41
+	Vergleich      reduce using rule 41
+	Groesser       reduce using rule 41
+	Kleiner        reduce using rule 41
+	Groesser_Gleichreduce using rule 41
+	Kleiner_Gleich reduce using rule 41
 
 
 State 66
 
-	expressionMain -> expressionCore .                  (rule 36)
+	statement -> typ . Bezeichner Semikolon             (rule 30)
 
-	Semikolon      reduce using rule 36
-	Klazu_Rund     reduce using rule 36
-	Akzessor       reduce using rule 36
-	Komma          reduce using rule 36
+	Bezeichner     shift, and enter state 99
 
 
 State 67
 
-	statement -> stmtExpr . Semikolon                   (rule 33)
-	expressionCore -> stmtExpr .                        (rule 43)
+	expression -> unaryOp . expression                  (rule 45)
 
-	Semikolon      shift, and enter state 96
-	Akzessor       reduce using rule 43
+	Bezeichner     shift, and enter state 91
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
+	Integer_Literalshift, and enter state 77
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
+	expression     goto state 98
+	stmtExpr       goto state 90
+	unaryOp        goto state 67
+	op             goto state 68
 
 State 68
 
-	statement -> typ . Bezeichner Semikolon             (rule 30)
+	unaryOp -> op .                                     (rule 78)
 
-	Bezeichner     shift, and enter state 95
+	Bezeichner     reduce using rule 78
+	Plu            reduce using rule 78
+	Minu           reduce using rule 78
+	String_Literal reduce using rule 78
+	Integer_Literalreduce using rule 78
+	Char_Literal   reduce using rule 78
+	Neww           reduce using rule 78
+	Bool_Literal   reduce using rule 78
+	Null           reduce using rule 78
+	Not            reduce using rule 78
+	Thi            reduce using rule 78
 
 
 State 69
 
-	expressionCore -> Bezeichner .                      (rule 44)
+	expression -> Bezeichner .                          (rule 42)
 	stmtExpr -> Bezeichner . Zuweisung literal          (rule 46)
 	typ -> Bezeichner .                                 (rule 52)
 
 	Bezeichner     reduce using rule 52
-	Zuweisung      shift, and enter state 94
-	Akzessor       reduce using rule 44
+	Zuweisung      shift, and enter state 97
+	Geteilt        reduce using rule 42
+	Mal            reduce using rule 42
+	Plu            reduce using rule 42
+	Minu           reduce using rule 42
+	Modul          reduce using rule 42
+	An             reduce using rule 42
+	O              reduce using rule 42
+	BitOR          reduce using rule 42
+	BitAND         reduce using rule 42
+	Akzessor       reduce using rule 42
+	Vergleich      reduce using rule 42
+	Groesser       reduce using rule 42
+	Kleiner        reduce using rule 42
+	Groesser_Gleichreduce using rule 42
+	Kleiner_Gleich reduce using rule 42
 
 
 State 70
 
 	statement -> While . Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch    (rule 29)
 
-	Klaauf_Rund    shift, and enter state 93
+	Klaauf_Rund    shift, and enter state 96
 
 
 State 71
@@ -937,7 +972,7 @@ State 71
 	statement -> If . Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch    (rule 31)
 	statement -> If . Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch    (rule 32)
 
-	Klaauf_Rund    shift, and enter state 92
+	Klaauf_Rund    shift, and enter state 95
 
 
 State 72
@@ -950,6 +985,8 @@ State 72
 	Semikolon      reduce using rule 34
 	Klazu_Gesch    reduce using rule 34
 	Klaauf_Gesch   reduce using rule 34
+	Plu            reduce using rule 34
+	Minu           reduce using rule 34
 	String_Literal reduce using rule 34
 	Integer        reduce using rule 34
 	Integer_Literalreduce using rule 34
@@ -960,6 +997,7 @@ State 72
 	Bool           reduce using rule 34
 	Bool_Literal   reduce using rule 34
 	Null           reduce using rule 34
+	Not            reduce using rule 34
 	Thi            reduce using rule 34
 
 
@@ -973,128 +1011,269 @@ State 73
 	Semikolon      shift, and enter state 72
 	Klazu_Gesch    reduce using rule 24
 	Klaauf_Gesch   shift, and enter state 73
-	String_Literal shift, and enter state 74
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
 	Integer        shift, and enter state 28
-	Integer_Literalshift, and enter state 75
+	Integer_Literalshift, and enter state 77
 	Char           shift, and enter state 29
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Return         shift, and enter state 78
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Return         shift, and enter state 80
 	Bool           shift, and enter state 30
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	statements     goto state 91
+	statements     goto state 94
 	statement      goto state 63
 	expression     goto state 64
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 67
-	typ            goto state 68
+	stmtExpr       goto state 65
+	typ            goto state 66
+	unaryOp        goto state 67
+	op             goto state 68
 
 State 74
 
-	expressionCore -> String_Literal .                  (rule 41)
+	op -> Plu .                                         (rule 79)
 
-	Semikolon      reduce using rule 41
-	Klazu_Rund     reduce using rule 41
-	Akzessor       reduce using rule 41
-	Komma          reduce using rule 41
+	Bezeichner     reduce using rule 79
+	Plu            reduce using rule 79
+	Minu           reduce using rule 79
+	String_Literal reduce using rule 79
+	Integer_Literalreduce using rule 79
+	Char_Literal   reduce using rule 79
+	Neww           reduce using rule 79
+	Bool_Literal   reduce using rule 79
+	Null           reduce using rule 79
+	Not            reduce using rule 79
+	Thi            reduce using rule 79
 
 
 State 75
 
-	expressionCore -> Integer_Literal .                 (rule 38)
+	op -> Minu .                                        (rule 80)
 
-	Semikolon      reduce using rule 38
-	Klazu_Rund     reduce using rule 38
-	Akzessor       reduce using rule 38
-	Komma          reduce using rule 38
+	Bezeichner     reduce using rule 80
+	Plu            reduce using rule 80
+	Minu           reduce using rule 80
+	String_Literal reduce using rule 80
+	Integer_Literalreduce using rule 80
+	Char_Literal   reduce using rule 80
+	Neww           reduce using rule 80
+	Bool_Literal   reduce using rule 80
+	Null           reduce using rule 80
+	Not            reduce using rule 80
+	Thi            reduce using rule 80
 
 
 State 76
 
-	expressionCore -> Char_Literal .                    (rule 40)
+	expression -> String_Literal .                      (rule 39)
 
-	Semikolon      reduce using rule 40
-	Klazu_Rund     reduce using rule 40
-	Akzessor       reduce using rule 40
-	Komma          reduce using rule 40
+	Semikolon      reduce using rule 39
+	Klazu_Rund     reduce using rule 39
+	Geteilt        reduce using rule 39
+	Mal            reduce using rule 39
+	Plu            reduce using rule 39
+	Minu           reduce using rule 39
+	Modul          reduce using rule 39
+	An             reduce using rule 39
+	O              reduce using rule 39
+	BitOR          reduce using rule 39
+	BitAND         reduce using rule 39
+	Akzessor       reduce using rule 39
+	Vergleich      reduce using rule 39
+	Groesser       reduce using rule 39
+	Kleiner        reduce using rule 39
+	Groesser_Gleichreduce using rule 39
+	Kleiner_Gleich reduce using rule 39
+	Komma          reduce using rule 39
 
 
 State 77
 
-	stmtExpr -> Neww . Bezeichner Klaauf_Rund params Klazu_Rund    (rule 47)
+	expression -> Integer_Literal .                     (rule 36)
 
-	Bezeichner     shift, and enter state 90
+	Semikolon      reduce using rule 36
+	Klazu_Rund     reduce using rule 36
+	Geteilt        reduce using rule 36
+	Mal            reduce using rule 36
+	Plu            reduce using rule 36
+	Minu           reduce using rule 36
+	Modul          reduce using rule 36
+	An             reduce using rule 36
+	O              reduce using rule 36
+	BitOR          reduce using rule 36
+	BitAND         reduce using rule 36
+	Akzessor       reduce using rule 36
+	Vergleich      reduce using rule 36
+	Groesser       reduce using rule 36
+	Kleiner        reduce using rule 36
+	Groesser_Gleichreduce using rule 36
+	Kleiner_Gleich reduce using rule 36
+	Komma          reduce using rule 36
 
 
 State 78
 
-	statement -> Return . Semikolon                     (rule 27)
-	statement -> Return . expression Semikolon          (rule 28)
+	expression -> Char_Literal .                        (rule 38)
 
-	Bezeichner     shift, and enter state 88
-	Semikolon      shift, and enter state 89
-	String_Literal shift, and enter state 74
-	Integer_Literalshift, and enter state 75
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Semikolon      reduce using rule 38
+	Klazu_Rund     reduce using rule 38
+	Geteilt        reduce using rule 38
+	Mal            reduce using rule 38
+	Plu            reduce using rule 38
+	Minu           reduce using rule 38
+	Modul          reduce using rule 38
+	An             reduce using rule 38
+	O              reduce using rule 38
+	BitOR          reduce using rule 38
+	BitAND         reduce using rule 38
+	Akzessor       reduce using rule 38
+	Vergleich      reduce using rule 38
+	Groesser       reduce using rule 38
+	Kleiner        reduce using rule 38
+	Groesser_Gleichreduce using rule 38
+	Kleiner_Gleich reduce using rule 38
+	Komma          reduce using rule 38
 
-	expression     goto state 86
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 87
 
 State 79
 
-	expressionCore -> Bool_Literal .                    (rule 39)
+	stmtExpr -> Neww . Bezeichner Klaauf_Rund params Klazu_Rund    (rule 47)
 
-	Semikolon      reduce using rule 39
-	Klazu_Rund     reduce using rule 39
-	Akzessor       reduce using rule 39
-	Komma          reduce using rule 39
+	Bezeichner     shift, and enter state 93
 
 
 State 80
 
-	expressionCore -> Null .                            (rule 42)
+	statement -> Return . Semikolon                     (rule 27)
+	statement -> Return . expression Semikolon          (rule 28)
 
-	Semikolon      reduce using rule 42
-	Klazu_Rund     reduce using rule 42
-	Akzessor       reduce using rule 42
-	Komma          reduce using rule 42
+	Bezeichner     shift, and enter state 91
+	Semikolon      shift, and enter state 92
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
+	Integer_Literalshift, and enter state 77
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
+	expression     goto state 89
+	stmtExpr       goto state 90
+	unaryOp        goto state 67
+	op             goto state 68
 
 State 81
 
-	expressionCore -> Thi .                             (rule 37)
+	expression -> Bool_Literal .                        (rule 37)
 
 	Semikolon      reduce using rule 37
 	Klazu_Rund     reduce using rule 37
+	Geteilt        reduce using rule 37
+	Mal            reduce using rule 37
+	Plu            reduce using rule 37
+	Minu           reduce using rule 37
+	Modul          reduce using rule 37
+	An             reduce using rule 37
+	O              reduce using rule 37
+	BitOR          reduce using rule 37
+	BitAND         reduce using rule 37
 	Akzessor       reduce using rule 37
+	Vergleich      reduce using rule 37
+	Groesser       reduce using rule 37
+	Kleiner        reduce using rule 37
+	Groesser_Gleichreduce using rule 37
+	Kleiner_Gleich reduce using rule 37
 	Komma          reduce using rule 37
 
 
 State 82
 
-	methode -> methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund . Klaauf_Gesch statements Klazu_Gesch    (rule 16)
+	expression -> Null .                                (rule 40)
 
-	Klaauf_Gesch   shift, and enter state 85
+	Semikolon      reduce using rule 40
+	Klazu_Rund     reduce using rule 40
+	Geteilt        reduce using rule 40
+	Mal            reduce using rule 40
+	Plu            reduce using rule 40
+	Minu           reduce using rule 40
+	Modul          reduce using rule 40
+	An             reduce using rule 40
+	O              reduce using rule 40
+	BitOR          reduce using rule 40
+	BitAND         reduce using rule 40
+	Akzessor       reduce using rule 40
+	Vergleich      reduce using rule 40
+	Groesser       reduce using rule 40
+	Kleiner        reduce using rule 40
+	Groesser_Gleichreduce using rule 40
+	Kleiner_Gleich reduce using rule 40
+	Komma          reduce using rule 40
 
 
 State 83
 
-	methode -> methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund . Klaauf_Gesch statements Klazu_Gesch    (rule 17)
+	unaryOp -> Not .                                    (rule 77)
 
-	Klaauf_Gesch   shift, and enter state 84
+	Bezeichner     reduce using rule 77
+	Plu            reduce using rule 77
+	Minu           reduce using rule 77
+	String_Literal reduce using rule 77
+	Integer_Literalreduce using rule 77
+	Char_Literal   reduce using rule 77
+	Neww           reduce using rule 77
+	Bool_Literal   reduce using rule 77
+	Null           reduce using rule 77
+	Not            reduce using rule 77
+	Thi            reduce using rule 77
 
 
 State 84
+
+	expression -> Thi .                                 (rule 35)
+
+	Semikolon      reduce using rule 35
+	Klazu_Rund     reduce using rule 35
+	Geteilt        reduce using rule 35
+	Mal            reduce using rule 35
+	Plu            reduce using rule 35
+	Minu           reduce using rule 35
+	Modul          reduce using rule 35
+	An             reduce using rule 35
+	O              reduce using rule 35
+	BitOR          reduce using rule 35
+	BitAND         reduce using rule 35
+	Akzessor       reduce using rule 35
+	Vergleich      reduce using rule 35
+	Groesser       reduce using rule 35
+	Kleiner        reduce using rule 35
+	Groesser_Gleichreduce using rule 35
+	Kleiner_Gleich reduce using rule 35
+	Komma          reduce using rule 35
+
+
+State 85
+
+	methode -> methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund . Klaauf_Gesch statements Klazu_Gesch    (rule 16)
+
+	Klaauf_Gesch   shift, and enter state 88
+
+
+State 86
+
+	methode -> methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund . Klaauf_Gesch statements Klazu_Gesch    (rule 17)
+
+	Klaauf_Gesch   shift, and enter state 87
+
+
+State 87
 
 	methode -> methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch . statements Klazu_Gesch    (rule 17)
 
@@ -1104,27 +1283,30 @@ State 84
 	Semikolon      shift, and enter state 72
 	Klazu_Gesch    reduce using rule 24
 	Klaauf_Gesch   shift, and enter state 73
-	String_Literal shift, and enter state 74
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
 	Integer        shift, and enter state 28
-	Integer_Literalshift, and enter state 75
+	Integer_Literalshift, and enter state 77
 	Char           shift, and enter state 29
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Return         shift, and enter state 78
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Return         shift, and enter state 80
 	Bool           shift, and enter state 30
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	statements     goto state 110
+	statements     goto state 129
 	statement      goto state 63
 	expression     goto state 64
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 67
-	typ            goto state 68
+	stmtExpr       goto state 65
+	typ            goto state 66
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 85
+State 88
 
 	methode -> methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch . statements Klazu_Gesch    (rule 16)
 
@@ -1134,59 +1316,107 @@ State 85
 	Semikolon      shift, and enter state 72
 	Klazu_Gesch    reduce using rule 24
 	Klaauf_Gesch   shift, and enter state 73
-	String_Literal shift, and enter state 74
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
 	Integer        shift, and enter state 28
-	Integer_Literalshift, and enter state 75
+	Integer_Literalshift, and enter state 77
 	Char           shift, and enter state 29
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Return         shift, and enter state 78
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Return         shift, and enter state 80
 	Bool           shift, and enter state 30
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	statements     goto state 109
+	statements     goto state 128
 	statement      goto state 63
 	expression     goto state 64
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 67
-	typ            goto state 68
-
-State 86
-
-	statement -> Return expression . Semikolon          (rule 28)
-	expressionCore -> expression . Akzessor Bezeichner    (rule 45)
-	stmtExpr -> expression . Akzessor Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
-
-	Semikolon      shift, and enter state 108
-	Akzessor       shift, and enter state 97
-
-
-State 87
-
-	expressionCore -> stmtExpr .                        (rule 43)
-
-	Semikolon      reduce using rule 43
-	Klazu_Rund     reduce using rule 43
-	Akzessor       reduce using rule 43
-	Komma          reduce using rule 43
-
-
-State 88
-
-	expressionCore -> Bezeichner .                      (rule 44)
-	stmtExpr -> Bezeichner . Zuweisung literal          (rule 46)
-
-	Zuweisung      shift, and enter state 94
-	Semikolon      reduce using rule 44
-	Klazu_Rund     reduce using rule 44
-	Akzessor       reduce using rule 44
-	Komma          reduce using rule 44
-
+	stmtExpr       goto state 65
+	typ            goto state 66
+	unaryOp        goto state 67
+	op             goto state 68
 
 State 89
+
+	statement -> Return expression . Semikolon          (rule 28)
+	expression -> expression . Akzessor Bezeichner      (rule 43)
+	expression -> expression . binaryOp expression      (rule 44)
+	stmtExpr -> expression . Akzessor Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
+
+	Semikolon      shift, and enter state 127
+	Geteilt        shift, and enter state 103
+	Mal            shift, and enter state 104
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	Modul          shift, and enter state 105
+	An             shift, and enter state 106
+	O              shift, and enter state 107
+	BitOR          shift, and enter state 108
+	BitAND         shift, and enter state 109
+	Akzessor       shift, and enter state 110
+	Vergleich      shift, and enter state 111
+	Groesser       shift, and enter state 112
+	Kleiner        shift, and enter state 113
+	Groesser_Gleichshift, and enter state 114
+	Kleiner_Gleich shift, and enter state 115
+
+	binaryOp       goto state 101
+	op             goto state 102
+
+State 90
+
+	expression -> stmtExpr .                            (rule 41)
+
+	Semikolon      reduce using rule 41
+	Klazu_Rund     reduce using rule 41
+	Geteilt        reduce using rule 41
+	Mal            reduce using rule 41
+	Plu            reduce using rule 41
+	Minu           reduce using rule 41
+	Modul          reduce using rule 41
+	An             reduce using rule 41
+	O              reduce using rule 41
+	BitOR          reduce using rule 41
+	BitAND         reduce using rule 41
+	Akzessor       reduce using rule 41
+	Vergleich      reduce using rule 41
+	Groesser       reduce using rule 41
+	Kleiner        reduce using rule 41
+	Groesser_Gleichreduce using rule 41
+	Kleiner_Gleich reduce using rule 41
+	Komma          reduce using rule 41
+
+
+State 91
+
+	expression -> Bezeichner .                          (rule 42)
+	stmtExpr -> Bezeichner . Zuweisung literal          (rule 46)
+
+	Zuweisung      shift, and enter state 97
+	Semikolon      reduce using rule 42
+	Klazu_Rund     reduce using rule 42
+	Geteilt        reduce using rule 42
+	Mal            reduce using rule 42
+	Plu            reduce using rule 42
+	Minu           reduce using rule 42
+	Modul          reduce using rule 42
+	An             reduce using rule 42
+	O              reduce using rule 42
+	BitOR          reduce using rule 42
+	BitAND         reduce using rule 42
+	Akzessor       reduce using rule 42
+	Vergleich      reduce using rule 42
+	Groesser       reduce using rule 42
+	Kleiner        reduce using rule 42
+	Groesser_Gleichreduce using rule 42
+	Kleiner_Gleich reduce using rule 42
+	Komma          reduce using rule 42
+
+
+State 92
 
 	statement -> Return Semikolon .                     (rule 27)
 
@@ -1196,6 +1426,8 @@ State 89
 	Semikolon      reduce using rule 27
 	Klazu_Gesch    reduce using rule 27
 	Klaauf_Gesch   reduce using rule 27
+	Plu            reduce using rule 27
+	Minu           reduce using rule 27
 	String_Literal reduce using rule 27
 	Integer        reduce using rule 27
 	Integer_Literalreduce using rule 27
@@ -1206,87 +1438,156 @@ State 89
 	Bool           reduce using rule 27
 	Bool_Literal   reduce using rule 27
 	Null           reduce using rule 27
+	Not            reduce using rule 27
 	Thi            reduce using rule 27
 
 
-State 90
+State 93
 
 	stmtExpr -> Neww Bezeichner . Klaauf_Rund params Klazu_Rund    (rule 47)
 
-	Klaauf_Rund    shift, and enter state 107
+	Klaauf_Rund    shift, and enter state 126
 
 
-State 91
+State 94
 
 	statement -> Klaauf_Gesch statements . Klazu_Gesch    (rule 26)
 
-	Klazu_Gesch    shift, and enter state 106
+	Klazu_Gesch    shift, and enter state 125
 
 
-State 92
+State 95
 
 	statement -> If Klaauf_Rund . expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch    (rule 31)
 	statement -> If Klaauf_Rund . expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch    (rule 32)
 
-	Bezeichner     shift, and enter state 88
-	String_Literal shift, and enter state 74
-	Integer_Literalshift, and enter state 75
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bezeichner     shift, and enter state 91
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
+	Integer_Literalshift, and enter state 77
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	expression     goto state 105
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 87
+	expression     goto state 124
+	stmtExpr       goto state 90
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 93
+State 96
 
 	statement -> While Klaauf_Rund . expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch    (rule 29)
 
-	Bezeichner     shift, and enter state 88
-	String_Literal shift, and enter state 74
-	Integer_Literalshift, and enter state 75
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bezeichner     shift, and enter state 91
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
+	Integer_Literalshift, and enter state 77
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	expression     goto state 104
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 87
+	expression     goto state 123
+	stmtExpr       goto state 90
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 94
+State 97
 
 	stmtExpr -> Bezeichner Zuweisung . literal          (rule 46)
 
-	Bezeichner     shift, and enter state 88
-	String_Literal shift, and enter state 74
-	Integer_Literalshift, and enter state 75
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bezeichner     shift, and enter state 91
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
+	Integer_Literalshift, and enter state 77
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	expression     goto state 102
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 87
-	literal        goto state 103
+	expression     goto state 121
+	stmtExpr       goto state 90
+	literal        goto state 122
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 95
+State 98
+
+	expression -> expression . Akzessor Bezeichner      (rule 43)
+	expression -> expression . binaryOp expression      (rule 44)
+	expression -> unaryOp expression .                  (rule 45)
+	stmtExpr -> expression . Akzessor Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
+
+	Semikolon      reduce using rule 45
+	Klazu_Rund     reduce using rule 45
+	Geteilt        shift, and enter state 103
+			(reduce using rule 45)
+
+	Mal            shift, and enter state 104
+			(reduce using rule 45)
+
+	Plu            shift, and enter state 74
+			(reduce using rule 45)
+
+	Minu           shift, and enter state 75
+			(reduce using rule 45)
+
+	Modul          shift, and enter state 105
+			(reduce using rule 45)
+
+	An             shift, and enter state 106
+			(reduce using rule 45)
+
+	O              shift, and enter state 107
+			(reduce using rule 45)
+
+	BitOR          shift, and enter state 108
+			(reduce using rule 45)
+
+	BitAND         shift, and enter state 109
+			(reduce using rule 45)
+
+	Akzessor       shift, and enter state 110
+			(reduce using rule 45)
+
+	Vergleich      shift, and enter state 111
+			(reduce using rule 45)
+
+	Groesser       shift, and enter state 112
+			(reduce using rule 45)
+
+	Kleiner        shift, and enter state 113
+			(reduce using rule 45)
+
+	Groesser_Gleichshift, and enter state 114
+			(reduce using rule 45)
+
+	Kleiner_Gleich shift, and enter state 115
+			(reduce using rule 45)
+
+	Komma          reduce using rule 45
+
+	binaryOp       goto state 101
+	op             goto state 102
+
+State 99
 
 	statement -> typ Bezeichner . Semikolon             (rule 30)
 
-	Semikolon      shift, and enter state 101
+	Semikolon      shift, and enter state 120
 
 
-State 96
+State 100
 
 	statement -> stmtExpr Semikolon .                   (rule 33)
 
@@ -1296,6 +1597,8 @@ State 96
 	Semikolon      reduce using rule 33
 	Klazu_Gesch    reduce using rule 33
 	Klaauf_Gesch   reduce using rule 33
+	Plu            reduce using rule 33
+	Minu           reduce using rule 33
 	String_Literal reduce using rule 33
 	Integer        reduce using rule 33
 	Integer_Literalreduce using rule 33
@@ -1306,25 +1609,268 @@ State 96
 	Bool           reduce using rule 33
 	Bool_Literal   reduce using rule 33
 	Null           reduce using rule 33
+	Not            reduce using rule 33
 	Thi            reduce using rule 33
 
 
-State 97
+State 101
 
-	expressionCore -> expression Akzessor . Bezeichner    (rule 45)
+	expression -> expression binaryOp . expression      (rule 44)
+
+	Bezeichner     shift, and enter state 91
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
+	Integer_Literalshift, and enter state 77
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
+
+	expression     goto state 119
+	stmtExpr       goto state 90
+	unaryOp        goto state 67
+	op             goto state 68
+
+State 102
+
+	binaryOp -> op .                                    (rule 76)
+
+	Bezeichner     reduce using rule 76
+	Plu            reduce using rule 76
+	Minu           reduce using rule 76
+	String_Literal reduce using rule 76
+	Integer_Literalreduce using rule 76
+	Char_Literal   reduce using rule 76
+	Neww           reduce using rule 76
+	Bool_Literal   reduce using rule 76
+	Null           reduce using rule 76
+	Not            reduce using rule 76
+	Thi            reduce using rule 76
+
+
+State 103
+
+	binaryOp -> Geteilt .                               (rule 70)
+
+	Bezeichner     reduce using rule 70
+	Plu            reduce using rule 70
+	Minu           reduce using rule 70
+	String_Literal reduce using rule 70
+	Integer_Literalreduce using rule 70
+	Char_Literal   reduce using rule 70
+	Neww           reduce using rule 70
+	Bool_Literal   reduce using rule 70
+	Null           reduce using rule 70
+	Not            reduce using rule 70
+	Thi            reduce using rule 70
+
+
+State 104
+
+	binaryOp -> Mal .                                   (rule 69)
+
+	Bezeichner     reduce using rule 69
+	Plu            reduce using rule 69
+	Minu           reduce using rule 69
+	String_Literal reduce using rule 69
+	Integer_Literalreduce using rule 69
+	Char_Literal   reduce using rule 69
+	Neww           reduce using rule 69
+	Bool_Literal   reduce using rule 69
+	Null           reduce using rule 69
+	Not            reduce using rule 69
+	Thi            reduce using rule 69
+
+
+State 105
+
+	binaryOp -> Modul .                                 (rule 71)
+
+	Bezeichner     reduce using rule 71
+	Plu            reduce using rule 71
+	Minu           reduce using rule 71
+	String_Literal reduce using rule 71
+	Integer_Literalreduce using rule 71
+	Char_Literal   reduce using rule 71
+	Neww           reduce using rule 71
+	Bool_Literal   reduce using rule 71
+	Null           reduce using rule 71
+	Not            reduce using rule 71
+	Thi            reduce using rule 71
+
+
+State 106
+
+	binaryOp -> An .                                    (rule 72)
+
+	Bezeichner     reduce using rule 72
+	Plu            reduce using rule 72
+	Minu           reduce using rule 72
+	String_Literal reduce using rule 72
+	Integer_Literalreduce using rule 72
+	Char_Literal   reduce using rule 72
+	Neww           reduce using rule 72
+	Bool_Literal   reduce using rule 72
+	Null           reduce using rule 72
+	Not            reduce using rule 72
+	Thi            reduce using rule 72
+
+
+State 107
+
+	binaryOp -> O .                                     (rule 73)
+
+	Bezeichner     reduce using rule 73
+	Plu            reduce using rule 73
+	Minu           reduce using rule 73
+	String_Literal reduce using rule 73
+	Integer_Literalreduce using rule 73
+	Char_Literal   reduce using rule 73
+	Neww           reduce using rule 73
+	Bool_Literal   reduce using rule 73
+	Null           reduce using rule 73
+	Not            reduce using rule 73
+	Thi            reduce using rule 73
+
+
+State 108
+
+	binaryOp -> BitOR .                                 (rule 74)
+
+	Bezeichner     reduce using rule 74
+	Plu            reduce using rule 74
+	Minu           reduce using rule 74
+	String_Literal reduce using rule 74
+	Integer_Literalreduce using rule 74
+	Char_Literal   reduce using rule 74
+	Neww           reduce using rule 74
+	Bool_Literal   reduce using rule 74
+	Null           reduce using rule 74
+	Not            reduce using rule 74
+	Thi            reduce using rule 74
+
+
+State 109
+
+	binaryOp -> BitAND .                                (rule 75)
+
+	Bezeichner     reduce using rule 75
+	Plu            reduce using rule 75
+	Minu           reduce using rule 75
+	String_Literal reduce using rule 75
+	Integer_Literalreduce using rule 75
+	Char_Literal   reduce using rule 75
+	Neww           reduce using rule 75
+	Bool_Literal   reduce using rule 75
+	Null           reduce using rule 75
+	Not            reduce using rule 75
+	Thi            reduce using rule 75
+
+
+State 110
+
+	expression -> expression Akzessor . Bezeichner      (rule 43)
 	stmtExpr -> expression Akzessor . Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
 
-	Bezeichner     shift, and enter state 100
+	Bezeichner     shift, and enter state 118
 
 
-State 98
+State 111
+
+	binaryOp -> Vergleich .                             (rule 64)
+
+	Bezeichner     reduce using rule 64
+	Plu            reduce using rule 64
+	Minu           reduce using rule 64
+	String_Literal reduce using rule 64
+	Integer_Literalreduce using rule 64
+	Char_Literal   reduce using rule 64
+	Neww           reduce using rule 64
+	Bool_Literal   reduce using rule 64
+	Null           reduce using rule 64
+	Not            reduce using rule 64
+	Thi            reduce using rule 64
+
+
+State 112
+
+	binaryOp -> Groesser .                              (rule 66)
+
+	Bezeichner     reduce using rule 66
+	Plu            reduce using rule 66
+	Minu           reduce using rule 66
+	String_Literal reduce using rule 66
+	Integer_Literalreduce using rule 66
+	Char_Literal   reduce using rule 66
+	Neww           reduce using rule 66
+	Bool_Literal   reduce using rule 66
+	Null           reduce using rule 66
+	Not            reduce using rule 66
+	Thi            reduce using rule 66
+
+
+State 113
+
+	binaryOp -> Kleiner .                               (rule 65)
+
+	Bezeichner     reduce using rule 65
+	Plu            reduce using rule 65
+	Minu           reduce using rule 65
+	String_Literal reduce using rule 65
+	Integer_Literalreduce using rule 65
+	Char_Literal   reduce using rule 65
+	Neww           reduce using rule 65
+	Bool_Literal   reduce using rule 65
+	Null           reduce using rule 65
+	Not            reduce using rule 65
+	Thi            reduce using rule 65
+
+
+State 114
+
+	binaryOp -> Groesser_Gleich .                       (rule 67)
+
+	Bezeichner     reduce using rule 67
+	Plu            reduce using rule 67
+	Minu           reduce using rule 67
+	String_Literal reduce using rule 67
+	Integer_Literalreduce using rule 67
+	Char_Literal   reduce using rule 67
+	Neww           reduce using rule 67
+	Bool_Literal   reduce using rule 67
+	Null           reduce using rule 67
+	Not            reduce using rule 67
+	Thi            reduce using rule 67
+
+
+State 115
+
+	binaryOp -> Kleiner_Gleich .                        (rule 68)
+
+	Bezeichner     reduce using rule 68
+	Plu            reduce using rule 68
+	Minu           reduce using rule 68
+	String_Literal reduce using rule 68
+	Integer_Literalreduce using rule 68
+	Char_Literal   reduce using rule 68
+	Neww           reduce using rule 68
+	Bool_Literal   reduce using rule 68
+	Null           reduce using rule 68
+	Not            reduce using rule 68
+	Thi            reduce using rule 68
+
+
+State 116
 
 	statements -> statement statements .                (rule 25)
 
 	Klazu_Gesch    reduce using rule 25
 
 
-State 99
+State 117
 
 	konstruktor -> konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch .    (rule 23)
 
@@ -1333,19 +1879,92 @@ State 99
 	Priv           reduce using rule 23
 
 
-State 100
+State 118
 
-	expressionCore -> expression Akzessor Bezeichner .    (rule 45)
+	expression -> expression Akzessor Bezeichner .      (rule 43)
 	stmtExpr -> expression Akzessor Bezeichner . Klaauf_Rund params Klazu_Rund    (rule 48)
 
-	Semikolon      reduce using rule 45
-	Klaauf_Rund    shift, and enter state 119
-	Klazu_Rund     reduce using rule 45
-	Akzessor       reduce using rule 45
-	Komma          reduce using rule 45
+	Semikolon      reduce using rule 43
+	Klaauf_Rund    shift, and enter state 138
+	Klazu_Rund     reduce using rule 43
+	Geteilt        reduce using rule 43
+	Mal            reduce using rule 43
+	Plu            reduce using rule 43
+	Minu           reduce using rule 43
+	Modul          reduce using rule 43
+	An             reduce using rule 43
+	O              reduce using rule 43
+	BitOR          reduce using rule 43
+	BitAND         reduce using rule 43
+	Akzessor       reduce using rule 43
+	Vergleich      reduce using rule 43
+	Groesser       reduce using rule 43
+	Kleiner        reduce using rule 43
+	Groesser_Gleichreduce using rule 43
+	Kleiner_Gleich reduce using rule 43
+	Komma          reduce using rule 43
 
 
-State 101
+State 119
+
+	expression -> expression . Akzessor Bezeichner      (rule 43)
+	expression -> expression . binaryOp expression      (rule 44)
+	expression -> expression binaryOp expression .      (rule 44)
+	stmtExpr -> expression . Akzessor Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
+
+	Semikolon      reduce using rule 44
+	Klazu_Rund     reduce using rule 44
+	Geteilt        shift, and enter state 103
+			(reduce using rule 44)
+
+	Mal            shift, and enter state 104
+			(reduce using rule 44)
+
+	Plu            shift, and enter state 74
+			(reduce using rule 44)
+
+	Minu           shift, and enter state 75
+			(reduce using rule 44)
+
+	Modul          shift, and enter state 105
+			(reduce using rule 44)
+
+	An             shift, and enter state 106
+			(reduce using rule 44)
+
+	O              shift, and enter state 107
+			(reduce using rule 44)
+
+	BitOR          shift, and enter state 108
+			(reduce using rule 44)
+
+	BitAND         shift, and enter state 109
+			(reduce using rule 44)
+
+	Akzessor       shift, and enter state 110
+			(reduce using rule 44)
+
+	Vergleich      shift, and enter state 111
+			(reduce using rule 44)
+
+	Groesser       shift, and enter state 112
+			(reduce using rule 44)
+
+	Kleiner        shift, and enter state 113
+			(reduce using rule 44)
+
+	Groesser_Gleichshift, and enter state 114
+			(reduce using rule 44)
+
+	Kleiner_Gleich shift, and enter state 115
+			(reduce using rule 44)
+
+	Komma          reduce using rule 44
+
+	binaryOp       goto state 101
+	op             goto state 102
+
+State 120
 
 	statement -> typ Bezeichner Semikolon .             (rule 30)
 
@@ -1355,6 +1974,8 @@ State 101
 	Semikolon      reduce using rule 30
 	Klazu_Gesch    reduce using rule 30
 	Klaauf_Gesch   reduce using rule 30
+	Plu            reduce using rule 30
+	Minu           reduce using rule 30
 	String_Literal reduce using rule 30
 	Integer        reduce using rule 30
 	Integer_Literalreduce using rule 30
@@ -1365,55 +1986,149 @@ State 101
 	Bool           reduce using rule 30
 	Bool_Literal   reduce using rule 30
 	Null           reduce using rule 30
+	Not            reduce using rule 30
 	Thi            reduce using rule 30
 
 
-State 102
+State 121
 
-	expressionCore -> expression . Akzessor Bezeichner    (rule 45)
+	expression -> expression . Akzessor Bezeichner      (rule 43)
+	expression -> expression . binaryOp expression      (rule 44)
 	stmtExpr -> expression . Akzessor Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
 	literal -> expression .                             (rule 58)
 
 	Semikolon      reduce using rule 58
 	Klazu_Rund     reduce using rule 58
-	Akzessor       shift, and enter state 97
+	Geteilt        shift, and enter state 103
+			(reduce using rule 58)
+
+	Mal            shift, and enter state 104
+			(reduce using rule 58)
+
+	Plu            shift, and enter state 74
+			(reduce using rule 58)
+
+	Minu           shift, and enter state 75
+			(reduce using rule 58)
+
+	Modul          shift, and enter state 105
+			(reduce using rule 58)
+
+	An             shift, and enter state 106
+			(reduce using rule 58)
+
+	O              shift, and enter state 107
+			(reduce using rule 58)
+
+	BitOR          shift, and enter state 108
+			(reduce using rule 58)
+
+	BitAND         shift, and enter state 109
+			(reduce using rule 58)
+
+	Akzessor       shift, and enter state 110
+			(reduce using rule 58)
+
+	Vergleich      shift, and enter state 111
+			(reduce using rule 58)
+
+	Groesser       shift, and enter state 112
+			(reduce using rule 58)
+
+	Kleiner        shift, and enter state 113
+			(reduce using rule 58)
+
+	Groesser_Gleichshift, and enter state 114
+			(reduce using rule 58)
+
+	Kleiner_Gleich shift, and enter state 115
 			(reduce using rule 58)
 
 	Komma          reduce using rule 58
 
+	binaryOp       goto state 101
+	op             goto state 102
 
-State 103
+State 122
 
 	stmtExpr -> Bezeichner Zuweisung literal .          (rule 46)
 
 	Semikolon      reduce using rule 46
 	Klazu_Rund     reduce using rule 46
+	Geteilt        reduce using rule 46
+	Mal            reduce using rule 46
+	Plu            reduce using rule 46
+	Minu           reduce using rule 46
+	Modul          reduce using rule 46
+	An             reduce using rule 46
+	O              reduce using rule 46
+	BitOR          reduce using rule 46
+	BitAND         reduce using rule 46
 	Akzessor       reduce using rule 46
+	Vergleich      reduce using rule 46
+	Groesser       reduce using rule 46
+	Kleiner        reduce using rule 46
+	Groesser_Gleichreduce using rule 46
+	Kleiner_Gleich reduce using rule 46
 	Komma          reduce using rule 46
 
 
-State 104
+State 123
 
 	statement -> While Klaauf_Rund expression . Klazu_Rund Klaauf_Gesch statements Klazu_Gesch    (rule 29)
-	expressionCore -> expression . Akzessor Bezeichner    (rule 45)
+	expression -> expression . Akzessor Bezeichner      (rule 43)
+	expression -> expression . binaryOp expression      (rule 44)
 	stmtExpr -> expression . Akzessor Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
 
-	Klazu_Rund     shift, and enter state 118
-	Akzessor       shift, and enter state 97
+	Klazu_Rund     shift, and enter state 137
+	Geteilt        shift, and enter state 103
+	Mal            shift, and enter state 104
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	Modul          shift, and enter state 105
+	An             shift, and enter state 106
+	O              shift, and enter state 107
+	BitOR          shift, and enter state 108
+	BitAND         shift, and enter state 109
+	Akzessor       shift, and enter state 110
+	Vergleich      shift, and enter state 111
+	Groesser       shift, and enter state 112
+	Kleiner        shift, and enter state 113
+	Groesser_Gleichshift, and enter state 114
+	Kleiner_Gleich shift, and enter state 115
 
+	binaryOp       goto state 101
+	op             goto state 102
 
-State 105
+State 124
 
 	statement -> If Klaauf_Rund expression . Klazu_Rund Klaauf_Gesch statements Klazu_Gesch    (rule 31)
 	statement -> If Klaauf_Rund expression . Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch    (rule 32)
-	expressionCore -> expression . Akzessor Bezeichner    (rule 45)
+	expression -> expression . Akzessor Bezeichner      (rule 43)
+	expression -> expression . binaryOp expression      (rule 44)
 	stmtExpr -> expression . Akzessor Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
 
-	Klazu_Rund     shift, and enter state 117
-	Akzessor       shift, and enter state 97
+	Klazu_Rund     shift, and enter state 136
+	Geteilt        shift, and enter state 103
+	Mal            shift, and enter state 104
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	Modul          shift, and enter state 105
+	An             shift, and enter state 106
+	O              shift, and enter state 107
+	BitOR          shift, and enter state 108
+	BitAND         shift, and enter state 109
+	Akzessor       shift, and enter state 110
+	Vergleich      shift, and enter state 111
+	Groesser       shift, and enter state 112
+	Kleiner        shift, and enter state 113
+	Groesser_Gleichshift, and enter state 114
+	Kleiner_Gleich shift, and enter state 115
 
+	binaryOp       goto state 101
+	op             goto state 102
 
-State 106
+State 125
 
 	statement -> Klaauf_Gesch statements Klazu_Gesch .    (rule 26)
 
@@ -1423,6 +2138,8 @@ State 106
 	Semikolon      reduce using rule 26
 	Klazu_Gesch    reduce using rule 26
 	Klaauf_Gesch   reduce using rule 26
+	Plu            reduce using rule 26
+	Minu           reduce using rule 26
 	String_Literal reduce using rule 26
 	Integer        reduce using rule 26
 	Integer_Literalreduce using rule 26
@@ -1433,32 +2150,36 @@ State 106
 	Bool           reduce using rule 26
 	Bool_Literal   reduce using rule 26
 	Null           reduce using rule 26
+	Not            reduce using rule 26
 	Thi            reduce using rule 26
 
 
-State 107
+State 126
 
 	stmtExpr -> Neww Bezeichner Klaauf_Rund . params Klazu_Rund    (rule 47)
 
-	Bezeichner     shift, and enter state 88
+	Bezeichner     shift, and enter state 91
 	Klazu_Rund     reduce using rule 59
-	String_Literal shift, and enter state 74
-	Integer_Literalshift, and enter state 75
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
+	Integer_Literalshift, and enter state 77
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	expression     goto state 113
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 87
-	params         goto state 114
-	paramss        goto state 115
-	param          goto state 116
+	expression     goto state 132
+	stmtExpr       goto state 90
+	params         goto state 133
+	paramss        goto state 134
+	param          goto state 135
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 108
+State 127
 
 	statement -> Return expression Semikolon .          (rule 28)
 
@@ -1468,6 +2189,8 @@ State 108
 	Semikolon      reduce using rule 28
 	Klazu_Gesch    reduce using rule 28
 	Klaauf_Gesch   reduce using rule 28
+	Plu            reduce using rule 28
+	Minu           reduce using rule 28
 	String_Literal reduce using rule 28
 	Integer        reduce using rule 28
 	Integer_Literalreduce using rule 28
@@ -1478,24 +2201,25 @@ State 108
 	Bool           reduce using rule 28
 	Bool_Literal   reduce using rule 28
 	Null           reduce using rule 28
+	Not            reduce using rule 28
 	Thi            reduce using rule 28
 
 
-State 109
+State 128
 
 	methode -> methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements . Klazu_Gesch    (rule 16)
 
-	Klazu_Gesch    shift, and enter state 112
+	Klazu_Gesch    shift, and enter state 131
 
 
-State 110
+State 129
 
 	methode -> methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements . Klazu_Gesch    (rule 17)
 
-	Klazu_Gesch    shift, and enter state 111
+	Klazu_Gesch    shift, and enter state 130
 
 
-State 111
+State 130
 
 	methode -> methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch .    (rule 17)
 
@@ -1504,7 +2228,7 @@ State 111
 	Priv           reduce using rule 17
 
 
-State 112
+State 131
 
 	methode -> methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch .    (rule 16)
 
@@ -1513,85 +2237,105 @@ State 112
 	Priv           reduce using rule 16
 
 
-State 113
+State 132
 
-	expressionCore -> expression . Akzessor Bezeichner    (rule 45)
+	expression -> expression . Akzessor Bezeichner      (rule 43)
+	expression -> expression . binaryOp expression      (rule 44)
 	stmtExpr -> expression . Akzessor Bezeichner Klaauf_Rund params Klazu_Rund    (rule 48)
 	param -> expression .                               (rule 63)
 
 	Klazu_Rund     reduce using rule 63
-	Akzessor       shift, and enter state 97
+	Geteilt        shift, and enter state 103
+	Mal            shift, and enter state 104
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	Modul          shift, and enter state 105
+	An             shift, and enter state 106
+	O              shift, and enter state 107
+	BitOR          shift, and enter state 108
+	BitAND         shift, and enter state 109
+	Akzessor       shift, and enter state 110
+	Vergleich      shift, and enter state 111
+	Groesser       shift, and enter state 112
+	Kleiner        shift, and enter state 113
+	Groesser_Gleichshift, and enter state 114
+	Kleiner_Gleich shift, and enter state 115
 	Komma          reduce using rule 63
 
+	binaryOp       goto state 101
+	op             goto state 102
 
-State 114
+State 133
 
 	stmtExpr -> Neww Bezeichner Klaauf_Rund params . Klazu_Rund    (rule 47)
 
-	Klazu_Rund     shift, and enter state 124
+	Klazu_Rund     shift, and enter state 143
 
 
-State 115
+State 134
 
 	params -> paramss .                                 (rule 60)
 
 	Klazu_Rund     reduce using rule 60
 
 
-State 116
+State 135
 
 	paramss -> param .                                  (rule 61)
 	paramss -> param . Komma paramss                    (rule 62)
 
 	Klazu_Rund     reduce using rule 61
-	Komma          shift, and enter state 123
+	Komma          shift, and enter state 142
 
 
-State 117
+State 136
 
 	statement -> If Klaauf_Rund expression Klazu_Rund . Klaauf_Gesch statements Klazu_Gesch    (rule 31)
 	statement -> If Klaauf_Rund expression Klazu_Rund . Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch    (rule 32)
 
-	Klaauf_Gesch   shift, and enter state 122
+	Klaauf_Gesch   shift, and enter state 141
 
 
-State 118
+State 137
 
 	statement -> While Klaauf_Rund expression Klazu_Rund . Klaauf_Gesch statements Klazu_Gesch    (rule 29)
 
-	Klaauf_Gesch   shift, and enter state 121
+	Klaauf_Gesch   shift, and enter state 140
 
 
-State 119
+State 138
 
 	stmtExpr -> expression Akzessor Bezeichner Klaauf_Rund . params Klazu_Rund    (rule 48)
 
-	Bezeichner     shift, and enter state 88
+	Bezeichner     shift, and enter state 91
 	Klazu_Rund     reduce using rule 59
-	String_Literal shift, and enter state 74
-	Integer_Literalshift, and enter state 75
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
+	Integer_Literalshift, and enter state 77
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	expression     goto state 113
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 87
-	params         goto state 120
-	paramss        goto state 115
-	param          goto state 116
+	expression     goto state 132
+	stmtExpr       goto state 90
+	params         goto state 139
+	paramss        goto state 134
+	param          goto state 135
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 120
+State 139
 
 	stmtExpr -> expression Akzessor Bezeichner Klaauf_Rund params . Klazu_Rund    (rule 48)
 
-	Klazu_Rund     shift, and enter state 128
+	Klazu_Rund     shift, and enter state 147
 
 
-State 121
+State 140
 
 	statement -> While Klaauf_Rund expression Klazu_Rund Klaauf_Gesch . statements Klazu_Gesch    (rule 29)
 
@@ -1601,27 +2345,30 @@ State 121
 	Semikolon      shift, and enter state 72
 	Klazu_Gesch    reduce using rule 24
 	Klaauf_Gesch   shift, and enter state 73
-	String_Literal shift, and enter state 74
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
 	Integer        shift, and enter state 28
-	Integer_Literalshift, and enter state 75
+	Integer_Literalshift, and enter state 77
 	Char           shift, and enter state 29
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Return         shift, and enter state 78
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Return         shift, and enter state 80
 	Bool           shift, and enter state 30
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	statements     goto state 127
+	statements     goto state 146
 	statement      goto state 63
 	expression     goto state 64
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 67
-	typ            goto state 68
+	stmtExpr       goto state 65
+	typ            goto state 66
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 122
+State 141
 
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch . statements Klazu_Gesch    (rule 31)
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch . statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch    (rule 32)
@@ -1632,89 +2379,123 @@ State 122
 	Semikolon      shift, and enter state 72
 	Klazu_Gesch    reduce using rule 24
 	Klaauf_Gesch   shift, and enter state 73
-	String_Literal shift, and enter state 74
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
 	Integer        shift, and enter state 28
-	Integer_Literalshift, and enter state 75
+	Integer_Literalshift, and enter state 77
 	Char           shift, and enter state 29
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Return         shift, and enter state 78
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Return         shift, and enter state 80
 	Bool           shift, and enter state 30
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	statements     goto state 126
+	statements     goto state 145
 	statement      goto state 63
 	expression     goto state 64
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 67
-	typ            goto state 68
+	stmtExpr       goto state 65
+	typ            goto state 66
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 123
+State 142
 
 	paramss -> param Komma . paramss                    (rule 62)
 
-	Bezeichner     shift, and enter state 88
-	String_Literal shift, and enter state 74
-	Integer_Literalshift, and enter state 75
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bezeichner     shift, and enter state 91
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
+	Integer_Literalshift, and enter state 77
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	expression     goto state 113
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 87
-	paramss        goto state 125
-	param          goto state 116
+	expression     goto state 132
+	stmtExpr       goto state 90
+	paramss        goto state 144
+	param          goto state 135
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 124
+State 143
 
 	stmtExpr -> Neww Bezeichner Klaauf_Rund params Klazu_Rund .    (rule 47)
 
 	Semikolon      reduce using rule 47
 	Klazu_Rund     reduce using rule 47
+	Geteilt        reduce using rule 47
+	Mal            reduce using rule 47
+	Plu            reduce using rule 47
+	Minu           reduce using rule 47
+	Modul          reduce using rule 47
+	An             reduce using rule 47
+	O              reduce using rule 47
+	BitOR          reduce using rule 47
+	BitAND         reduce using rule 47
 	Akzessor       reduce using rule 47
+	Vergleich      reduce using rule 47
+	Groesser       reduce using rule 47
+	Kleiner        reduce using rule 47
+	Groesser_Gleichreduce using rule 47
+	Kleiner_Gleich reduce using rule 47
 	Komma          reduce using rule 47
 
 
-State 125
+State 144
 
 	paramss -> param Komma paramss .                    (rule 62)
 
 	Klazu_Rund     reduce using rule 62
 
 
-State 126
+State 145
 
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements . Klazu_Gesch    (rule 31)
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements . Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch    (rule 32)
 
-	Klazu_Gesch    shift, and enter state 130
+	Klazu_Gesch    shift, and enter state 149
 
 
-State 127
+State 146
 
 	statement -> While Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements . Klazu_Gesch    (rule 29)
 
-	Klazu_Gesch    shift, and enter state 129
+	Klazu_Gesch    shift, and enter state 148
 
 
-State 128
+State 147
 
 	stmtExpr -> expression Akzessor Bezeichner Klaauf_Rund params Klazu_Rund .    (rule 48)
 
 	Semikolon      reduce using rule 48
 	Klazu_Rund     reduce using rule 48
+	Geteilt        reduce using rule 48
+	Mal            reduce using rule 48
+	Plu            reduce using rule 48
+	Minu           reduce using rule 48
+	Modul          reduce using rule 48
+	An             reduce using rule 48
+	O              reduce using rule 48
+	BitOR          reduce using rule 48
+	BitAND         reduce using rule 48
 	Akzessor       reduce using rule 48
+	Vergleich      reduce using rule 48
+	Groesser       reduce using rule 48
+	Kleiner        reduce using rule 48
+	Groesser_Gleichreduce using rule 48
+	Kleiner_Gleich reduce using rule 48
 	Komma          reduce using rule 48
 
 
-State 129
+State 148
 
 	statement -> While Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch .    (rule 29)
 
@@ -1724,6 +2505,8 @@ State 129
 	Semikolon      reduce using rule 29
 	Klazu_Gesch    reduce using rule 29
 	Klaauf_Gesch   reduce using rule 29
+	Plu            reduce using rule 29
+	Minu           reduce using rule 29
 	String_Literal reduce using rule 29
 	Integer        reduce using rule 29
 	Integer_Literalreduce using rule 29
@@ -1734,10 +2517,11 @@ State 129
 	Bool           reduce using rule 29
 	Bool_Literal   reduce using rule 29
 	Null           reduce using rule 29
+	Not            reduce using rule 29
 	Thi            reduce using rule 29
 
 
-State 130
+State 149
 
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch .    (rule 31)
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch . Else Klaauf_Gesch statements Klazu_Gesch    (rule 32)
@@ -1745,10 +2529,12 @@ State 130
 	Bezeichner     reduce using rule 31
 	While          reduce using rule 31
 	If             reduce using rule 31
-	Else           shift, and enter state 131
+	Else           shift, and enter state 150
 	Semikolon      reduce using rule 31
 	Klazu_Gesch    reduce using rule 31
 	Klaauf_Gesch   reduce using rule 31
+	Plu            reduce using rule 31
+	Minu           reduce using rule 31
 	String_Literal reduce using rule 31
 	Integer        reduce using rule 31
 	Integer_Literalreduce using rule 31
@@ -1759,17 +2545,18 @@ State 130
 	Bool           reduce using rule 31
 	Bool_Literal   reduce using rule 31
 	Null           reduce using rule 31
+	Not            reduce using rule 31
 	Thi            reduce using rule 31
 
 
-State 131
+State 150
 
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else . Klaauf_Gesch statements Klazu_Gesch    (rule 32)
 
-	Klaauf_Gesch   shift, and enter state 132
+	Klaauf_Gesch   shift, and enter state 151
 
 
-State 132
+State 151
 
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch . statements Klazu_Gesch    (rule 32)
 
@@ -1779,34 +2566,37 @@ State 132
 	Semikolon      shift, and enter state 72
 	Klazu_Gesch    reduce using rule 24
 	Klaauf_Gesch   shift, and enter state 73
-	String_Literal shift, and enter state 74
+	Plu            shift, and enter state 74
+	Minu           shift, and enter state 75
+	String_Literal shift, and enter state 76
 	Integer        shift, and enter state 28
-	Integer_Literalshift, and enter state 75
+	Integer_Literalshift, and enter state 77
 	Char           shift, and enter state 29
-	Char_Literal   shift, and enter state 76
-	Neww           shift, and enter state 77
-	Return         shift, and enter state 78
+	Char_Literal   shift, and enter state 78
+	Neww           shift, and enter state 79
+	Return         shift, and enter state 80
 	Bool           shift, and enter state 30
-	Bool_Literal   shift, and enter state 79
-	Null           shift, and enter state 80
-	Thi            shift, and enter state 81
+	Bool_Literal   shift, and enter state 81
+	Null           shift, and enter state 82
+	Not            shift, and enter state 83
+	Thi            shift, and enter state 84
 
-	statements     goto state 133
+	statements     goto state 152
 	statement      goto state 63
 	expression     goto state 64
-	expressionMain goto state 65
-	expressionCore goto state 66
-	stmtExpr       goto state 67
-	typ            goto state 68
+	stmtExpr       goto state 65
+	typ            goto state 66
+	unaryOp        goto state 67
+	op             goto state 68
 
-State 133
+State 152
 
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements . Klazu_Gesch    (rule 32)
 
-	Klazu_Gesch    shift, and enter state 134
+	Klazu_Gesch    shift, and enter state 153
 
 
-State 134
+State 153
 
 	statement -> If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch .    (rule 32)
 
@@ -1816,6 +2606,8 @@ State 134
 	Semikolon      reduce using rule 32
 	Klazu_Gesch    reduce using rule 32
 	Klaauf_Gesch   reduce using rule 32
+	Plu            reduce using rule 32
+	Minu           reduce using rule 32
 	String_Literal reduce using rule 32
 	Integer        reduce using rule 32
 	Integer_Literalreduce using rule 32
@@ -1826,6 +2618,7 @@ State 134
 	Bool           reduce using rule 32
 	Bool_Literal   reduce using rule 32
 	Null           reduce using rule 32
+	Not            reduce using rule 32
 	Thi            reduce using rule 32
 
 
@@ -1834,5 +2627,5 @@ Grammar Totals
 -----------------------------------------------------------------------------
 Number of rules: 81
 Number of terminals: 44
-Number of non-terminals: 29
-Number of states: 135
+Number of non-terminals: 27
+Number of states: 154

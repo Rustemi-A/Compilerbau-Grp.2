@@ -72,7 +72,7 @@ methodModifier: konstModifier { $1 }
 --ToDo des Empty macht 10 R:R Conflicts
 konstModifier: Pub { Public:[] }
         | Priv { Private:[] }
---        |  { Public:[] }
+--        |  { Public:[] }  -- Kein S:R wenn auskommentiert, funktioniert aber trotzdem --> kann weggelassen werde, da es gleich wie public ist?!
 
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
@@ -92,8 +92,7 @@ konstruktor: konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Kl
 
 statements: { [] }
 statements: statement statements { $1:$2 }
-
--- Empty noch hinzufügen oder umgehen?!	   
+   
 statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | Return Semikolon { Return Nothing}
         | Return expression Semikolon { Return (Just ($2))}
@@ -105,13 +104,7 @@ statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | Semikolon { Empty }        
 
 --ToDo expression "Circle" ausbessern
-expression: expressionMain { $1 }
-       -- | expressionMain binaryOp expression { Binary ($2, $1, $3) }
-
-expressionMain: expressionCore { $1 }
-        --| unaryOp expressionCore { Unary ($1, $2) }
-
-expressionCore: Thi { This }
+expression: Thi { This }
         | Integer_Literal { Integer $1 }
         | Bool_Literal { Bool $1 }
         | Char_Literal { Char $1 }
@@ -120,6 +113,8 @@ expressionCore: Thi { This }
         | stmtExpr { StmtExprExpr $1 }
         | Bezeichner { LocalOrFieldVar $1 }
         | expression Akzessor Bezeichner { InstVar ($1, $3) }
+        | expression binaryOp expression { Binary ($2, $1, $3) }
+        | unaryOp expression { Unary ($1, $2) }
 
 stmtExpr: Bezeichner Zuweisung literal { Assign(LocalOrFieldVar $1,$3) }
         | Neww Bezeichner Klaauf_Rund params Klazu_Rund { New ($2, $4) }
