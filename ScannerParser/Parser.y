@@ -35,12 +35,12 @@ import ScannerParser.AbstrakteSyntax
         Integer_Literal {TOKEN_INTEGER_LITERAL $$}
         Char {TOKEN_CHAR}
         Char_Literal {TOKEN_CHAR_LITERAL $$}
-        Public {TOKEN_PUBLIC}
-        Private {TOKEN_PRIVATE}
-        Static {TOKEN_STATIC}
-        Final {TOKEN_FINAL}
+        Pub {TOKEN_PUBLIC}
+        Priv {TOKEN_PRIVATE}
+        Stat {TOKEN_STATIC}
+        Fin {TOKEN_FINAL}
         Void {TOKEN_VOID}
-        New {TOKEN_NEW}
+        Neww {TOKEN_NEW}
         Return {TOKEN_RETURN}
         Akzessor {TOKEN_AKZESSOR}
         Bool {TOKEN_BOOL}
@@ -51,32 +51,35 @@ import ScannerParser.AbstrakteSyntax
         Groesser_Gleich {TOKEN_GROESSER_GLEICH}
         Kleiner_Gleich {TOKEN_KLEINER_GLEICH}
         Ungleich {TOKEN_UNGLEICH}
-        Final {TOKEN_FINAL}
         Null {TOKEN_NULL}
         Not {TOKEN_NOT}
         Komma {TOKEN_KOMMA}
         Thi {TOKEN_THIS}
 %%
-class : classModifier Klasse Bezeichner Klaauf_Gesch attribute maybeKonstruktor methoden Klazu_Gesch { Class($1, $3, $5, $6:$7) }
+class : classModifier Klasse Bezeichner Klaauf_Gesch attribute konstruktoren methoden Klazu_Gesch { Class($1, $3, $5, $6, $7) }
 
-classModifier: Public { Public:[] }
-        | Public Final { Public:Final:[] }
+classModifier: Pub { Public:[] }
+        | Pub Fin { Public:Final:[] }
 
 attriModifier: { [] }
-        | Public { Public:[] }
-        | Private { Private:[] }
-        | Public Final { Public:Final:[] }
-        | Public Static { Public:Static:[] }
-        | Public Final Static { Public:Final:Static:[] }
-        | Private Final { Private:Final:[] }
-        | Private Static {Private:Static:[] }
-        | Private Final Static { Private:Final:Static:[] }
+        | Pub { Public:[] }
+        | Priv { Private:[] }
+        | Pub Fin { Public:Final:[] }
+        | Pub Stat { Public:Static:[] }
+        | Pub Fin Stat { Public:Final:Static:[] }
+        | Priv Fin { Private:Final:[] }
+        | Priv Stat {Private:Static:[] }
+        | Priv Fin Stat { Private:Final:Static:[] }
 
 methodModifier: { [] }
-        | Public { Public:[] }
-        | Private { Private:[] }
-        | Public Static { Public:Static:[] }
-        | Private Static { Private:Static:[] }
+        | Pub { Public:[] }
+        | Priv { Private:[] }
+        | Pub Stat { Public:Static:[] }
+        | Priv Stat { Private:Static:[] }
+
+konstModifier: { [] }
+        | Pub { Public:[] }
+        | Priv { Private:[] }
 
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
@@ -87,15 +90,12 @@ methode: methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund 
 attribute: { [] }
 attribute: attribut attribute { $1:$2 }
 
-attribut: 
+attribut: attriModifier typ Bezeichner Semikolon { FieldDecl ($1, $2, $3) }
 
-maybeKonstruktor: defaultKonstruktor { $1 }
-        | konstruktoren { $1 }
-
-konstruktoren: konstruktor { $1 }
+konstruktoren: { [] }
 konstruktoren: konstruktor konstruktoren { $1:$2 }
 
-konstruktor: 
+konstruktor: konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, "", $2, $4, Block $7) }
 
 statements: { [] }
 statements: statement statements { $1:$2 }
@@ -124,7 +124,7 @@ expression: Thi { This }
         | stmtExpr { StmtExprExpr $1 }
 
 stmtExpr: Bezeichner Zuweisung literal { Assign($1,$3) }
-        | New Bezeichner Klaauf_Rund params Klazu_Rund { New ($1, $4) }
+        | Neww Bezeichner Klaauf_Rund params Klazu_Rund { New ($1, $4) }
         | expression Akzessor Bezeichner Klaauf_Rund params Klazu_Rund { MethodCall ($1, $3, $5) }
 
 typ: Integer { "int" }
