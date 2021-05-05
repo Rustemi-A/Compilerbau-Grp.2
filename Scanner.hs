@@ -29,7 +29,8 @@ data Token = TOKEN_KLASSE --
            | TOKEN_CHAR --
            | TOKEN_CHAR_LITERAL Char --
            | TOKEN_ABSTRACT --
-           | TOKEN_ZUGRIFFSRECHT String --
+           | TOKEN_PUBLIC --
+           | TOKEN_PRIVATE --
            | TOKEN_STATIC --
            | TOKEN_KOMMA --
            | TOKEN_VOID --
@@ -111,9 +112,8 @@ lexChars cs =
       ("for",rest)  -> TOKEN_FOR : scan rest
       ("while",rest)  -> TOKEN_WHILE : scan rest
       ("abstract",rest)  -> TOKEN_ABSTRACT : scan rest
-      ("public",rest)  -> TOKEN_ZUGRIFFSRECHT "public" : scan rest
-      ("private",rest)  -> TOKEN_ZUGRIFFSRECHT "private" : scan rest
-      ("protected",rest)  -> TOKEN_ZUGRIFFSRECHT "protected" : scan rest
+      ("public",rest)  -> TOKEN_PUBLIC : scan rest
+      ("private",rest)  -> TOKEN_PRIVATE : scan rest
       ("Integer",rest)  -> TOKEN_INTEGER : scan rest
       ("int",rest)  -> TOKEN_INTEGER : scan rest
       ("char",rest)  -> TOKEN_CHAR : scan rest

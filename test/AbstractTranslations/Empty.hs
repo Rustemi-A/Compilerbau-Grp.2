@@ -1,6 +1,6 @@
 module Test.JavaAbstractSyntax.Empty where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 emptyAbstractSyntax = Class([Public], "Empty", [],[])
 

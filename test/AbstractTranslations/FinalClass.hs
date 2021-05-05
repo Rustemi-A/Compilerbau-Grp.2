@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.FinalClass where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 finalClassAbstractSyntax = Class([Public,Final], "FinalClass", [],[])
 

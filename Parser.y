@@ -1,10 +1,10 @@
 {
-module Parser where
+module Parser (parser) where
+import AbstrakteSyntax
 import Scanner
-import ScannerParser.AbstrakteSyntax
 }
 
-%name class 
+%name classPars 
 %tokentype { Token }
 %error { parseError }
   
@@ -54,7 +54,8 @@ import ScannerParser.AbstrakteSyntax
         Komma {TOKEN_KOMMA}
         Thi {TOKEN_THIS}
 %%
-class : classModifier Klasse Bezeichner Klaauf_Gesch attribute konstruktoren methoden Klazu_Gesch { Class($1, $3, $5, $6, $7) }
+--Shift Reduce: Weiß nicht wenn Public oder Private gelesen wird, ob des von attribuet leer und dann ein Konstruktor ist oder ob des ein Attribut selber ist
+classPars : classModifier Klasse Bezeichner Klaauf_Gesch attribute konstruktoren methoden Klazu_Gesch { Class($1, $3, $5, $6, $7) }
 
 classModifier: Pub { Public:[] }
         | Pub Fin { Public:Final:[] }
@@ -71,13 +72,13 @@ methodModifier: konstModifier { $1 }
 --ToDo des Empty macht 10 R:R Conflicts
 konstModifier: Pub { Public:[] }
         | Priv { Private:[] }
-        |  { [] }
+--        |  { Public:[] }
 
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
 
-methode: methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, $2 $3, $5, Block $8) }
-methode: methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, "void" $3, $5, Block $8) }
+methode: methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, $2 $3, $5, Block $8) }
+methode: methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, "void" $3, $5, Block $8) }
 
 attribute: { [] }
 attribute: attribut attribute { $1:$2 }
@@ -87,7 +88,7 @@ attribut: attriModifier typ Bezeichner Semikolon { FieldDecl ($1, $2, $3) }
 konstruktoren: { [] }
 konstruktoren: konstruktor konstruktoren { $1:$2 }
 
-konstruktor: konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, "", $2, $4, Block $7) }
+konstruktor: konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, "", $2, $4, Block $7) }
 
 statements: { [] }
 statements: statement statements { $1:$2 }
@@ -104,11 +105,11 @@ statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | Semikolon { Empty }        
 
 --ToDo expression "Circle" ausbessern
-expression: expressionMain binaryOp expression { Binary ($2, $1, $3) }
-        | expressionMain { $1 }
+expression: expressionMain { $1 }
+       -- | expressionMain binaryOp expression { Binary ($2, $1, $3) }
 
 expressionMain: expressionCore { $1 }
-        | unaryOp expressionCore { Unary ($1, $2) }
+        --| unaryOp expressionCore { Unary ($1, $2) }
 
 expressionCore: Thi { This }
         | Integer_Literal { Integer $1 }
@@ -148,8 +149,8 @@ paramss: param Komma paramss { $1:$3 }
 param: expression { $1 }
 
 binaryOp: Vergleich { Equals }
-        | Kleiner { LT }
-        | Groesser { GT }
+        | Kleiner { LessT }
+        | Groesser { GreaterT }
         | Groesser_Gleich { GE }
         | Kleiner_Gleich { LE }
         | Mal { Mult }
@@ -172,11 +173,11 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 parser :: String -> Class
-parser = constuctor . class . scan
+parser =  classPars . scan
 
-constructor :: Class -> Class
-constructor Class (Modi, Name, Fields, [], Methoden) = Class (Modi, Name, Fields, [MethodDecl([Public], "", Name, [], Block [])] ,Methoden)
-constructor x = x
+defaultConst :: Class -> Class
+defaultConst Class(modi, name, fields, [], meth) = Class(modi, name, fields, [], meth)
+defaultConst _ = _
 
 main = do
   s <- getContents

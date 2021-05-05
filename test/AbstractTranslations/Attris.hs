@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.Attris where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 attrisAbstractSyntax = 
     Class(

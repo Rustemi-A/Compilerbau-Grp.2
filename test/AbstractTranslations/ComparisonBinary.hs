@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.ComparisonBinary where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 comparisonBinaryAbstractSyntax = 
     Class(

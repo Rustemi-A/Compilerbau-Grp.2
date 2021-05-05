@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.StaticCalls where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 staticCallsAbstractSyntax = 
     Class(

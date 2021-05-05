@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.While where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 whileAbstractSyntax = 
     Class(

@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.IfThenElse where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 ifThenElsenAbstractSyntax = 
     Class(

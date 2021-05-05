@@ -1,11 +1,12 @@
 module Test.AbstractTranslations.ArithUnary where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 arithUnaryAbstractSyntax = 
     Class(
         [Public], 
         "ArithUnary", 
+        [],
         [],
         [Method(
             [], 

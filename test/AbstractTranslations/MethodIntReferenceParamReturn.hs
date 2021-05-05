@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.MethodIntReferenceParamReturn where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 methodIntReferenceParamReturnAbstractSyntax = 
     Class(

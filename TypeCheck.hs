@@ -1,6 +1,6 @@
 module TypeCheckStmt where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 import qualified TypedAST as T
 
 getAST (T.Typed _ ast) = ast

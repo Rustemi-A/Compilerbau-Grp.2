@@ -1,11 +1,12 @@
 module Test.AbstractTranslations.ArithBinary where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 arithBinaryAbstractSyntax = 
     Class(
         [Public], 
         "ArithBinary", 
+        [],
         [],
         [Method(
             [], 

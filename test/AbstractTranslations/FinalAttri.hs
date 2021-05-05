@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.FinalAttri where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 finalAttriAbstractSyntax = 
     Class(
