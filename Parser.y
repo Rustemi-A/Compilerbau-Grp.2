@@ -72,7 +72,7 @@ methodModifier: konstModifier { $1 }
 --ToDo des Empty macht 10 R:R Conflicts
 konstModifier: Pub { Public:[] }
         | Priv { Private:[] }
---        |  { Public:[] }  -- Kein S:R wenn auskommentiert, funktioniert aber trotzdem --> kann weggelassen werde, da es gleich wie public ist?!
+        |  { Public:[] }  -- Kein S:R wenn auskommentiert, funktioniert aber trotzdem --> kann weggelassen werde, da es gleich wie public ist?!
 
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
@@ -103,8 +103,11 @@ statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | stmtExpr Semikolon { StmtExprStmt $1 }
         | Semikolon { Empty }        
 
---ToDo expression "Circle" ausbessern
-expression: Thi { This }
+expression: expressionCore { $1 }
+        | expressionCore binaryOp expression { Binary ($2, $1, $3) }
+        | unaryOp expression { Unary ($1, $2) }
+
+ expressionCore: Thi { This }
         | Integer_Literal { Integer $1 }
         | Bool_Literal { Bool $1 }
         | Char_Literal { Char $1 }
@@ -113,8 +116,6 @@ expression: Thi { This }
         | stmtExpr { StmtExprExpr $1 }
         | Bezeichner { LocalOrFieldVar $1 }
         | expression Akzessor Bezeichner { InstVar ($1, $3) }
-        | expression binaryOp expression { Binary ($2, $1, $3) }
-        | unaryOp expression { Unary ($1, $2) }
 
 stmtExpr: Bezeichner Zuweisung literal { Assign(LocalOrFieldVar $1,$3) }
         | Neww Bezeichner Klaauf_Rund params Klazu_Rund { New ($2, $4) }
@@ -155,17 +156,16 @@ binaryOp: Vergleich { Equals }
         | O { OR }
         | BitOR { BitwiseOR }
         | BitAND { BitwiseAND }
-        | op { $1 }
+        | Plu { Plus }
+        | Minu { Minus }
 
 unaryOp: Not { Negation }
-        | op { $1 }
-
-op: Plu { Positiv }
+        | Plu { Positiv }
         | Minu { Negativ }
 
 {
 parseError :: [Token] -> a
-parseError _ = error "Parse error"
+parseError _ = error "Parse error!"
 
 parser :: String -> Class
 parser =  defaultConst . classPars . scan
