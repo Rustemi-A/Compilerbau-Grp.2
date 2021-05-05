@@ -29,7 +29,6 @@ import ScannerParser.AbstrakteSyntax
         O {TOKEN_OR}
         BitOR {TOKEN_BITOR}
         BitAND {TOKEN_BITAND}
-        LogischerOperator {TOKEN_LOGISCHEROPERATOR $$}
         String_Literal {TOKEN_STRING_LITERAL $$}
         Integer {TOKEN_INTEGER}
         Integer_Literal {TOKEN_INTEGER_LITERAL $$}
@@ -50,7 +49,6 @@ import ScannerParser.AbstrakteSyntax
         Kleiner {TOKEN_KLEINER}
         Groesser_Gleich {TOKEN_GROESSER_GLEICH}
         Kleiner_Gleich {TOKEN_KLEINER_GLEICH}
-        Ungleich {TOKEN_UNGLEICH}
         Null {TOKEN_NULL}
         Not {TOKEN_NOT}
         Komma {TOKEN_KOMMA}
@@ -61,25 +59,19 @@ class : classModifier Klasse Bezeichner Klaauf_Gesch attribute konstruktoren met
 classModifier: Pub { Public:[] }
         | Pub Fin { Public:Final:[] }
 
-attriModifier: { [] }
-        | Pub { Public:[] }
-        | Priv { Private:[] }
+attriModifier: methodModifier { $1 }
         | Pub Fin { Public:Final:[] }
-        | Pub Stat { Public:Static:[] }
         | Pub Fin Stat { Public:Final:Static:[] }
         | Priv Fin { Private:Final:[] }
-        | Priv Stat {Private:Static:[] }
         | Priv Fin Stat { Private:Final:Static:[] }
 
-methodModifier: { [] }
-        | Pub { Public:[] }
-        | Priv { Private:[] }
+methodModifier: konstModifier { $1 }
         | Pub Stat { Public:Static:[] }
         | Priv Stat { Private:Static:[] }
-
-konstModifier: { [] }
-        | Pub { Public:[] }
+--ToDo des Empty macht 10 R:R Conflicts
+konstModifier: Pub { Public:[] }
         | Priv { Private:[] }
+        |  { [] }
 
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
@@ -109,19 +101,24 @@ statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { If ($3, Block $6, Nothing) }
         | If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch{ If ($3, Block $6, Just (Block $10)) }
         | stmtExpr Semikolon { StmtExprStmt $1 }
-        | Semikolon { Empty }
+        | Semikolon { Empty }        
 
-expression: Thi { This }
-        | Bezeichner { LocalOrFieldVar $1 }
-        | expression Akzessor Bezeichner { InstVar ($1, $3) }
-        | unaryOp expression { Unary ($1, $2) }
-        | expression binaryOp expression { Binary ($2, $1, $3) }
+--ToDo expression "Circle" ausbessern
+expression: expressionMain binaryOp expression { Binary ($2, $1, $3) }
+        | expressionMain { $1 }
+
+expressionMain: expressionCore { $1 }
+        | unaryOp expressionCore { Unary ($1, $2) }
+
+expressionCore: Thi { This }
         | Integer_Literal { Integer $1 }
         | Bool_Literal { Bool $1 }
         | Char_Literal { Char $1 }
         | String_Literal { String $1 }
         | Null { Jnull }
         | stmtExpr { StmtExprExpr $1 }
+        | Bezeichner { LocalOrFieldVar $1 }
+        | expression Akzessor Bezeichner { InstVar ($1, $3) }
 
 stmtExpr: Bezeichner Zuweisung literal { Assign($1,$3) }
         | Neww Bezeichner Klaauf_Rund params Klazu_Rund { New ($1, $4) }
@@ -132,10 +129,15 @@ typ: Integer { "int" }
         | Bool { "boolean" }
         | Bezeichner { $1 }
 
--- [(Type, String)] Typ bon methodDeclParams
-methodDeclParams:
+methodDeclParams: { [] }
+methodDeclParams: methodDeclParamss { $1 }
 
-literal: expression
+methodDeclParamss: methodDeclParam { $1:[] }
+methodDeclParamss: methodDeclParam Komma methodDeclParamss { $1:$3 }
+
+methodDeclParam: typ Bezeichner { ($1, $2) }
+
+literal: expression { $1 }
 
 params: { [] }
 params: paramss { $1 }
@@ -143,15 +145,13 @@ params: paramss { $1 }
 paramss: param { $1:[] }
 paramss: param Komma paramss { $1:$3 }
 
-param: expression
+param: expression { $1 }
 
 binaryOp: Vergleich { Equals }
         | Kleiner { LT }
         | Groesser { GT }
         | Groesser_Gleich { GE }
         | Kleiner_Gleich { LE }
-        | Plu { Plus }
-        | Minu { Minus }
         | Mal { Mult }
         | Geteilt { Div }
         | Modul { Modulo }
@@ -159,10 +159,13 @@ binaryOp: Vergleich { Equals }
         | O { OR }
         | BitOR { BitwiseOR }
         | BitAND { BitwiseAND }
+        | op { $1 }
 
 unaryOp: Not { Negation }
-        | Plus { Positiv }
-        | Minus { Negativ }
+        | op { $1 }
+
+op: Plu { Positiv }
+        | Minu { Negativ }
 
 {
 parseError :: [Token] -> a
