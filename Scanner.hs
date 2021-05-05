@@ -25,7 +25,7 @@ data Token = TOKEN_KLASSE --
            | TOKEN_KLAZU_GESCH --
            | TOKEN_STRING_LITERAL String --
            | TOKEN_INTEGER --
-           | TOKEN_INTEGER_LITERAL Int --
+           | TOKEN_INTEGER_LITERAL Integer --
            | TOKEN_CHAR --
            | TOKEN_CHAR_LITERAL Char --
            | TOKEN_ABSTRACT --

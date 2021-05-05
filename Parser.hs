@@ -876,7 +876,7 @@ happyReduction_16 (_ `HappyStk`
 	(HappyAbsSyn7  happy_var_1) `HappyStk`
 	happyRest)
 	 = HappyAbsSyn10
-		 (Method(happy_var_1, happy_var_2 happy_var_3, happy_var_5, Block happy_var_8)
+		 (Method(happy_var_1, happy_var_2, happy_var_3, happy_var_5, Block happy_var_8)
 	) `HappyStk` happyRest
 
 happyReduce_17 = happyReduce 9 10 happyReduction_17
@@ -891,7 +891,7 @@ happyReduction_17 (_ `HappyStk`
 	(HappyAbsSyn7  happy_var_1) `HappyStk`
 	happyRest)
 	 = HappyAbsSyn10
-		 (Method(happy_var_1, "void" happy_var_3, happy_var_5, Block happy_var_8)
+		 (Method(happy_var_1, "void", happy_var_3, happy_var_5, Block happy_var_8)
 	) `HappyStk` happyRest
 
 happyReduce_18 = happySpecReduce_0  11 happyReduction_18
@@ -1130,7 +1130,7 @@ happyReduction_46 (HappyAbsSyn25  happy_var_3)
 	_
 	(HappyTerminal (TOKEN_BEZEICHNER happy_var_1))
 	 =  HappyAbsSyn20
-		 (Assign(happy_var_1,happy_var_3)
+		 (Assign(LocalOrFieldVar happy_var_1,happy_var_3)
 	)
 happyReduction_46 _ _ _  = notHappyAtAll 
 
@@ -1138,11 +1138,11 @@ happyReduce_47 = happyReduce 5 20 happyReduction_47
 happyReduction_47 (_ `HappyStk`
 	(HappyAbsSyn26  happy_var_4) `HappyStk`
 	_ `HappyStk`
+	(HappyTerminal (TOKEN_BEZEICHNER happy_var_2)) `HappyStk`
 	_ `HappyStk`
-	(HappyTerminal happy_var_1) `HappyStk`
 	happyRest)
 	 = HappyAbsSyn20
-		 (New (happy_var_1, happy_var_4)
+		 (New (happy_var_2, happy_var_4)
 	) `HappyStk` happyRest
 
 happyReduce_48 = happyReduce 6 20 happyReduction_48
@@ -1214,7 +1214,7 @@ happyReduce_57 = happySpecReduce_2  24 happyReduction_57
 happyReduction_57 (HappyTerminal (TOKEN_BEZEICHNER happy_var_2))
 	(HappyAbsSyn21  happy_var_1)
 	 =  HappyAbsSyn24
-		 ((happy_var_1, happy_var_2)
+		 (happy_var_1, happy_var_2
 	)
 happyReduction_57 _ _  = notHappyAtAll 
 
@@ -1453,11 +1453,11 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 parser :: String -> Class
-parser =  classPars . scan
+parser =  defaultConst . classPars . scan
 
 defaultConst :: Class -> Class
-defaultConst Class(modi, name, fields, [], meth) = Class(modi, name, fields, [], meth)
-defaultConst _ = _
+defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([Public], "", name, [], Block [])], meth)
+defaultConst c = c
 
 main = do
   s <- getContents

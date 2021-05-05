@@ -12,7 +12,8 @@ emptyAbstractSyntax =
             "", 
             "Empty", 
             [], 
-            Block [])],
+            Block []
+        )],
         []
     )
 

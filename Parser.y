@@ -77,8 +77,8 @@ konstModifier: Pub { Public:[] }
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
 
-methode: methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, $2 $3, $5, Block $8) }
-methode: methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, "void" $3, $5, Block $8) }
+methode: methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, $2, $3, $5, Block $8) }
+methode: methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, "void", $3, $5, Block $8) }
 
 attribute: { [] }
 attribute: attribut attribute { $1:$2 }
@@ -121,8 +121,8 @@ expressionCore: Thi { This }
         | Bezeichner { LocalOrFieldVar $1 }
         | expression Akzessor Bezeichner { InstVar ($1, $3) }
 
-stmtExpr: Bezeichner Zuweisung literal { Assign($1,$3) }
-        | Neww Bezeichner Klaauf_Rund params Klazu_Rund { New ($1, $4) }
+stmtExpr: Bezeichner Zuweisung literal { Assign(LocalOrFieldVar $1,$3) }
+        | Neww Bezeichner Klaauf_Rund params Klazu_Rund { New ($2, $4) }
         | expression Akzessor Bezeichner Klaauf_Rund params Klazu_Rund { MethodCall ($1, $3, $5) }
 
 typ: Integer { "int" }
@@ -136,7 +136,7 @@ methodDeclParams: methodDeclParamss { $1 }
 methodDeclParamss: methodDeclParam { $1:[] }
 methodDeclParamss: methodDeclParam Komma methodDeclParamss { $1:$3 }
 
-methodDeclParam: typ Bezeichner { ($1, $2) }
+methodDeclParam: typ Bezeichner { $1, $2 }
 
 literal: expression { $1 }
 
@@ -173,11 +173,11 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 parser :: String -> Class
-parser =  classPars . scan
+parser =  defaultConst . classPars . scan
 
 defaultConst :: Class -> Class
-defaultConst Class(modi, name, fields, [], meth) = Class(modi, name, fields, [], meth)
-defaultConst _ = _
+defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([Public], "", name, [], Block [])], meth)
+defaultConst c = c
 
 main = do
   s <- getContents
