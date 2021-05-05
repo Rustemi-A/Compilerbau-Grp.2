@@ -1,5 +1,6 @@
 module TypeCheckStmt where
 
+import Data.List
 import ScannerParser.AbstrakteSyntax2
 import qualified TypedAST as T
 
@@ -154,6 +155,18 @@ arithBinaryAbstractSyntax =
     )
 
 x = typeCheckClass [] [] emptyClass
+
+as :: [Int]
+as = []
+
+aa :: [String]
+aa = []
+
+y :: [String]
+y = aa ++ concatMap f as
+
+f :: Int -> [String]
+f _ = []
 
 --main = do
 --  s <- readFile "fst.stmt"
