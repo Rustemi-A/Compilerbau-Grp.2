@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.ArithBinary where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 arithBinaryAbstractSyntax = 
     Class(

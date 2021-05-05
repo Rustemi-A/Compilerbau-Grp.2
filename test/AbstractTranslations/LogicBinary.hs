@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.LogicBinary where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 logicBinaryAbstractSyntax = 
     Class(

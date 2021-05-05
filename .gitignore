@@ -25,3 +25,4 @@ cabal.project.local~
 JavaParser_mit_Typen.*
 *.stmt
 Main.hs
+T

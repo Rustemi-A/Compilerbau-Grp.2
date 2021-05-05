@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.FinalAttri where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 finalAttriAbstractSyntax = 
     Class(
@@ -13,10 +13,10 @@ finalAttriAbstractSyntax =
                  "x"
             )
         ],
+        [],
         [Method (
-            -- stimmt der Konstruktor so?!
             [Public ], 
-            "void", 
+            "", 
             "FinalAttri", 
             [],
             Block [

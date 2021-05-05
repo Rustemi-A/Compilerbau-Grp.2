@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.MethodIntZeroReturn where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 methodIntZeroReturnAbstractSyntax = 
     Class(

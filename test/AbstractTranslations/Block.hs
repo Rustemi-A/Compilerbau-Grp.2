@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.Block where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 blockAbstractSyntax = 
     Class(

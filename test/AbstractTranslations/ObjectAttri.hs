@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.ObjectAttri where
 
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 
 objectAttriAbstractSyntax = 
     Class(

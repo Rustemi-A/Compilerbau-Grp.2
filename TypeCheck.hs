@@ -1,7 +1,6 @@
 module TypeCheckStmt where
 
-import Data.List
-import ScannerParser.AbstrakteSyntax2
+import ScannerParser.AbstrakteSyntax
 import qualified TypedAST as T
 
 getAST (T.Typed _ ast) = ast
@@ -128,12 +127,13 @@ instance TypeCheckable Expr where
   getType (TypedExpr (_, typ)) = typ
 -}
 
-emptyClass = Class ([Public], "Empty", [], [])
+emptyClass = Class ([Public], "Empty", [], [], [])
 
 arithBinaryAbstractSyntax =
   Class
     ( [Public],
       "ArithBinary",
+      [],
       [],
       [ Method
           ( [],
