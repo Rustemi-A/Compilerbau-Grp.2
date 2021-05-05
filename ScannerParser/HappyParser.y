@@ -50,18 +50,20 @@ import ScannerParser.AbstrakteSyntax2
         Kleiner {TOKEN_KLEINER}
         Groesser_Gleich {TOKEN_GROESSER_GLEICH}
         Kleiner_Gleich {TOKEN_KLEINER_GLEICH}
-        Kommentar {TOKEN_KOMMENTAR $$}
         Ungleich {TOKEN_UNGLEICH}
         Final {TOKEN_FINAL}
         Null {TOKEN_NULL}
         Not {TOKEN_NOT}
+        Komma {TOKEN_KOMMA}
+        Thi {TOKEN_THIS}
 %%
 class : classModifier Klasse Bezeichner Klaauf_Gesch attribute maybeKonstruktor methoden Klazu_Gesch { Class($1, $3, $5, $6:$7) }
 
 classModifier: Public { Public:[] }
         | Public Final { Public:Final:[] }
 
-attriModifier: Public { Public:[] }
+attriModifier: { [] }
+        | Public { Public:[] }
         | Private { Private:[] }
         | Public Final { Public:Final:[] }
         | Public Static { Public:Static:[] }
@@ -70,10 +72,16 @@ attriModifier: Public { Public:[] }
         | Private Static {Private:Static:[] }
         | Private Final Static { Private:Final:Static:[] }
 
+methodModifier: { [] }
+        | Public { Public:[] }
+        | Private { Private:[] }
+        | Public Static { Public:Static:[] }
+        | Private Static { Private:Static:[] }
+
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
 
-methode: 
+methode: methodModifier typ Bezeichner Klaauf_Rund methodParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, $2 $3, $5, Block $8) }
 
 attribute: { [] }
 attribute: attribut attribute { $1:$2 }
@@ -100,11 +108,21 @@ statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | typ Bezeichner Semikolon { LocalVarDecl ($1,$2) }
         | If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { If ($3, Block $6, Nothing) }
         | If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch{ If ($3, Block $6, Just (Block $10)) }
-        | stmtExpr { StmtExprStmt $1 }
+        | stmtExpr Semikolon { StmtExprStmt $1 }
 
-expression: 
+expression: Thi { This }
+        | Bezeichner { LocalOrFieldVar $1 }
+        | expression Akzessor Bezeichner { InstVar ($1, $3) }
+        | unaryOp expression { Unary ($1, $2) }
+        | expression binaryOp expression { Binary ($2, $1, $3) }
+        | Integer_Literal { Integer $1 }
+        | Bool_Literal { Bool $1 }
+        | Char_Literal { Char $1 }
+        | String_Literal { String $1 }
+        | Null { Jnull }
+        | stmtExpr { StmtExprExpr $1 }
 
-stmtExpr: Bezeichner Zuweisung expression { Assign($1,$3) }
+stmtExpr: Bezeichner Zuweisung literal { Assign($1,$3) }
         | New Bezeichner Klaauf_Rund params Klazu_Rund { New ($1, $4) }
         | expression Akzessor Bezeichner Klaauf_Rund params Klazu_Rund { MethodCall ($1, $3, $5) }
 
@@ -113,7 +131,18 @@ typ: Integer { "int" }
         | Bool { "boolean" }
         | Bezeichner { $1 }
 
-params: 
+-- [(Type, String)] Typ bon methodParams
+methodParams: 
+
+literal: expression
+
+params: { [] }
+params: paramss { $1 }
+
+paramss: param { $1:[] }
+paramss: param Komma paramss { $1:$3 }
+
+param: expression
 
 binaryOp: Vergleich { Equals }
         | Kleiner { LT }

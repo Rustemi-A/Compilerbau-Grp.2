@@ -50,6 +50,7 @@ data Token = TOKEN_KLASSE --
            | TOKEN_DO
            | TOKEN_NULL
            | TOKEN_NOT
+           | TOKEN_THIS
   deriving (Eq,Show)
 
 lexer :: String -> [Token]
@@ -129,6 +130,7 @@ lexChars cs =
       ("final",rest)  -> TOKEN_FINAL : lexer rest
       ("do",rest)  -> TOKEN_DO : lexer rest
       ("null",rest)  -> TOKEN_NULL : lexer rest
+      ("this",rest)  -> TOKEN_THIS : lexer rest
       (var,rest)   -> TOKEN_BEZEICHNER var : lexer rest
 
 -- main = do
