@@ -1,6 +1,6 @@
 {
 module Parser where
-import Lexer
+import Scanner
 import ScannerParser.AbstrakteSyntax
 }
 
@@ -97,11 +97,10 @@ konstruktoren: konstruktor konstruktoren { $1:$2 }
 
 konstruktor: 
 
-defaultKonstruktor: {}
-
 statements: { [] }
 statements: statement statements { $1:$2 }
-        		   
+
+-- Empty noch hinzufügen oder umgehen?!	   
 statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | Return Semikolon { Return Nothing}
         | Return expression Semikolon { Return (Just ($2))}
@@ -110,6 +109,7 @@ statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { If ($3, Block $6, Nothing) }
         | If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch{ If ($3, Block $6, Just (Block $10)) }
         | stmtExpr Semikolon { StmtExprStmt $1 }
+        | Semikolon { Empty }
 
 expression: Thi { This }
         | Bezeichner { LocalOrFieldVar $1 }
@@ -168,8 +168,12 @@ unaryOp: Not { Negation }
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
-parser :: String -> Klasse_
-parser = class . lexer
+parser :: String -> Class
+parser = constuctor . class . scan
+
+constructor :: Class -> Class
+constructor Class (Modi, Name, Fields, [], Methoden) = Class (Modi, Name, Fields, [MethodDecl([Public], "", Name, [], Block [])] ,Methoden)
+constructor x = x
 
 main = do
   s <- getContents

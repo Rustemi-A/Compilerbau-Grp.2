@@ -72,7 +72,7 @@ typeCheckStmt symtab cls (While (cond, stmt)) =
 typeCheckStmt symtab cls (LocalVarDecl (typ, name)) =
   error "Todo"
 --Empty
---typeCheckStmt symtab cls Empty = T.Typed "void" T.Empty
+typeCheckStmt symtab cls Empty = T.Typed "void" T.Empty
 -- StmtExprExpr
 typeCheckStmt symtab cls (StmtExprStmt expr) =
   error "Todo"
@@ -128,12 +128,13 @@ instance TypeCheckable Expr where
   getType (TypedExpr (_, typ)) = typ
 -}
 
-emptyClass = Class ([Public], "Empty", [], [])
+emptyClass = Class ([Public], "Empty", [], [] ,[])
 
 arithBinaryAbstractSyntax =
   Class
     ( [Public],
       "ArithBinary",
+      [],
       [],
       [ Method
           ( [],

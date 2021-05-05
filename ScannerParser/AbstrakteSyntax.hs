@@ -14,7 +14,7 @@ where
 
 type Type = String
 
-newtype Class = Class ([Modifier], Type, [FieldDecl], [MethodDecl]) -- public class A{}
+newtype Class = Class ([Modifier], Type, [FieldDecl], [MethodDecl], [MethodDecl]) -- public class A{}
   deriving (Eq, Show)
 
 newtype FieldDecl = FieldDecl ([Modifier], Type, String) -- int v
@@ -47,6 +47,7 @@ data Stmt
   = Block [Stmt] -- {}
   | Return (Maybe Expr) -- return x
 --  | Break
+  | Empty
   | While (Expr, Stmt) -- while(boolean) {...}
   | LocalVarDecl (Type, String) -- int i;
   | If (Expr, Stmt, Maybe Stmt) -- if(boolean){...}else {...}
