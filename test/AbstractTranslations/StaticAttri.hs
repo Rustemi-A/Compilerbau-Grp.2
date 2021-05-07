@@ -22,7 +22,7 @@ staticAttriAbstractSyntax =
             "x"
         )],
         [Method (
-            [Public], 
+            [], 
             "", 
             "StaticAttri", 
             [], 

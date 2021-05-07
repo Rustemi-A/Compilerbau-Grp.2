@@ -8,7 +8,7 @@ localVarDeclAbstractSyntax =
         "LocalVarDecl", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "LocalVarDecl", 
             [], 

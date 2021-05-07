@@ -12,7 +12,7 @@ methodCallAbstractSyntax =
             "o"
         )],
         [Method (
-            [Public], 
+            [], 
             "", 
             "MethodCall", 
             [], 

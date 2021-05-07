@@ -8,7 +8,7 @@ finalClassAbstractSyntax =
         "FinalClass", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "FinalClass", 
             [], 

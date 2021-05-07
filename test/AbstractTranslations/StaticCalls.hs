@@ -8,7 +8,7 @@ staticCallsAbstractSyntax =
         "StaticCalls", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "StaticCalls", 
             [], 

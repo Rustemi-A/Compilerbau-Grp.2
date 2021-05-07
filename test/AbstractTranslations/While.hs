@@ -8,7 +8,7 @@ whileAbstractSyntax =
         "While", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "While", 
             [], 

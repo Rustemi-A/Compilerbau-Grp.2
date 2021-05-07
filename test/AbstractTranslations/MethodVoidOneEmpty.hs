@@ -8,7 +8,7 @@ methodVoidOneEmptyAbstractSyntax =
         "MethodVoidOneEmpty", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "MethodVoidOneEmpty", 
             [], 

@@ -8,7 +8,7 @@ methodIntReferenceParamReturnAbstractSyntax =
         "MethodIntReferenceParamReturn", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "MethodIntReferenceParamReturn", 
             [], 

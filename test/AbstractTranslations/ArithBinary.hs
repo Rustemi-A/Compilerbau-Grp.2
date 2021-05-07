@@ -8,7 +8,7 @@ arithBinaryAbstractSyntax =
         "ArithBinary", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "ArithBinary", 
             [], 

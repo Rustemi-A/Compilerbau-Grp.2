@@ -8,7 +8,7 @@ logicBinaryAbstractSyntax =
         "LogicBinary", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "LogicalBinary", 
             [], 

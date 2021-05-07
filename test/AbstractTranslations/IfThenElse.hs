@@ -8,7 +8,7 @@ ifThenElsenAbstractSyntax =
         "IfThenElse", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "IfThenElse", 
             [], 

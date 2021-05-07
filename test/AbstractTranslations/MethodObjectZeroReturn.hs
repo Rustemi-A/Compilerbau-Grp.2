@@ -8,7 +8,7 @@ methodObjectZeroReturnAbstractSyntax =
         "MethodObjectZeroReturn", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "MethodObjectZeroReturn", 
             [], 

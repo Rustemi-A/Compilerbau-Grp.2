@@ -8,7 +8,7 @@ arithUnaryAbstractSyntax =
         "ArithUnary", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "ArithUnary", 
             [], 

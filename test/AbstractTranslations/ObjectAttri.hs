@@ -17,7 +17,7 @@ objectAttriAbstractSyntax =
             "y"
         )],
         [Method (
-            [Public], 
+            [], 
             "", 
             "ObjectAttri", 
             [], 

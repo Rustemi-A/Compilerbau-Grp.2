@@ -8,7 +8,7 @@ blockAbstractSyntax =
         "Block", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "Block", 
             [], 

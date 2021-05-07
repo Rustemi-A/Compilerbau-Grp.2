@@ -24,7 +24,7 @@ attrisAbstractSyntax =
             )
         ],
         [Method (
-            [Public], 
+            [], 
             "", 
             "Attris", 
             [], 

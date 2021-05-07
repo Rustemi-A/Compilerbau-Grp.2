@@ -14,7 +14,7 @@ finalAttriAbstractSyntax =
             )
         ],
         [Method (
-            [Public], 
+            [], 
             "", 
             "FinalAttri", 
             [], 

@@ -8,7 +8,7 @@ negUnaryAbstractSyntax =
         "NegUnary", 
         [],
         [Method (
-            [Public], 
+            [], 
             "", 
             "NegUnary", 
             [], 
