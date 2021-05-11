@@ -990,14 +990,14 @@ happyReduction_8 _
 happyReduce_9 = happySpecReduce_1  6 happyReduction_9
 happyReduction_9 _
 	 =  HappyAbsSyn6
-		 (Final:[]
+		 (Public:Final:[]
 	)
 
 happyReduce_10 = happySpecReduce_2  6 happyReduction_10
 happyReduction_10 _
 	_
 	 =  HappyAbsSyn6
-		 (Final:Static:[]
+		 (Public:Final:Static:[]
 	)
 
 happyReduce_11 = happySpecReduce_1  7 happyReduction_11
@@ -1024,7 +1024,7 @@ happyReduction_13 _
 happyReduce_14 = happySpecReduce_1  7 happyReduction_14
 happyReduction_14 _
 	 =  HappyAbsSyn7
-		 (Static:[]
+		 (Public:Static:[]
 	)
 
 happyReduce_15 = happySpecReduce_1  8 happyReduction_15
@@ -1041,7 +1041,7 @@ happyReduction_16 _
 
 happyReduce_17 = happySpecReduce_0  8 happyReduction_17
 happyReduction_17  =  HappyAbsSyn8
-		 ([]
+		 (Public:[]
 	)
 
 happyReduce_18 = happySpecReduce_0  9 happyReduction_18
@@ -1657,7 +1657,7 @@ parser :: String -> Class
 parser =  defaultConst . classPars . scan
 
 defaultConst :: Class -> Class
-defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([], "", name, [], Block [])], meth)
+defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([Public], "", name, [], Block [])], meth)
 defaultConst c = c
 
 main = do

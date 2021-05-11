@@ -76,8 +76,8 @@ methodModifier: konstModifier { $1 }
 --ToDo des Empty macht 10 R:R Conflicts
 konstModifier: Pub { Public:[] }
         | Priv { Private:[] }
-        |  { Public:[] }
-
+        | { Public:[] }
+        
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
 
