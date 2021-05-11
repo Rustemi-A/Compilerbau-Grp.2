@@ -8,13 +8,16 @@ staticMethodAbstractSyntax =
         "StaticMethod", 
         [],
         [Method (
-            [], 
+            [Public], 
             "", 
             "StaticMethod", 
             [], 
             Block [])],
         [Method (
-            [Static], 
+            [
+                Public,
+                Static
+            ], 
             "void", 
             "foo", 
             [], 

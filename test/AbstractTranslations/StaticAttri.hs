@@ -7,22 +7,31 @@ staticAttriAbstractSyntax =
         [Public], 
         "StaticAttri", 
         [FieldDecl (
-            [Static], 
+            [
+                Public,
+                Static
+            ], 
             "int", 
             "i"
         ),
         FieldDecl (
-            [Static], 
+            [
+                Public,
+                Static
+            ], 
             "char", 
             "c"
         ),
         FieldDecl (
-            [Static], 
+            [
+                Public,
+                Static
+            ], 
             "boolean", 
             "x"
         )],
         [Method (
-            [], 
+            [Public], 
             "", 
             "StaticAttri", 
             [], 

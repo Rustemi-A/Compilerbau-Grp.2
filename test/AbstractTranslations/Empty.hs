@@ -8,7 +8,7 @@ emptyAbstractSyntax =
         "Empty", 
         [],
         [Method (
-            [], 
+            [Public], 
             "", 
             "Empty", 
             [], 

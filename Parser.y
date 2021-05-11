@@ -65,15 +65,18 @@ attriModifier: methodModifier { $1 }
         | Pub Fin Stat { Public:Final:Static:[] }
         | Priv Fin { Private:Final:[] }
         | Priv Fin Stat { Private:Final:Static:[] }
+        | Fin { Public:Final:[] }
+        | Fin Stat { Public:Final:Static:[] }
 
 methodModifier: konstModifier { $1 }
         | Pub Stat { Public:Static:[] }
         | Priv Stat { Private:Static:[] }
+        | Stat { Public:Static:[] }
 
 --ToDo des Empty macht 10 R:R Conflicts
 konstModifier: Pub { Public:[] }
         | Priv { Private:[] }
-        |  { [] }
+        |  { Public:[] }
 
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
@@ -172,7 +175,7 @@ parser :: String -> Class
 parser =  defaultConst . classPars . scan
 
 defaultConst :: Class -> Class
-defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([], "", name, [], Block [])], meth)
+defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([Public], "", name, [], Block [])], meth)
 defaultConst c = c
 
 main = do

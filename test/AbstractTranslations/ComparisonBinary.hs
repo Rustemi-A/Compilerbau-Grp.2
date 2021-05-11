@@ -8,13 +8,13 @@ comparisonBinaryAbstractSyntax =
         "ComparisonBinary", 
         [],
         [Method (
-            [], 
+            [Public], 
             "", 
             "ComparisonBinary", 
             [], 
             Block [])],
         [Method(
-            [], 
+            [Public], 
             "void", 
             "foo", 
             [

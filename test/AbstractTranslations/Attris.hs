@@ -8,23 +8,23 @@ attrisAbstractSyntax =
         "Attris", 
         [
             FieldDecl(
-                [], 
+                [Public], 
                 "int", 
                 "i"
             ),
             FieldDecl(
-                [], 
+                [Public], 
                 "char", 
                 "c"
             ),
             FieldDecl(
-                [], 
+                [Public], 
                 "boolean", 
                 "x"
             )
         ],
         [Method (
-            [], 
+            [Public], 
             "", 
             "Attris", 
             [], 

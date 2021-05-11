@@ -7,18 +7,18 @@ methodCallAbstractSyntax =
         [Public], 
         "MethodCall", 
         [FieldDecl (
-            [],
+            [Public],
             "MethodIntZeroReturn", 
             "o"
         )],
         [Method (
-            [], 
+            [Public], 
             "", 
             "MethodCall", 
             [], 
             Block [])],
         [Method (
-            [], 
+            [Public], 
             "int", 
             "foo", 
             [], 

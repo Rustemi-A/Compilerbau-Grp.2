@@ -7,14 +7,17 @@ finalAttriAbstractSyntax =
         [Public], 
         "FinalAttri", 
         [
-            FieldDecl ([
-                Final],
+            FieldDecl (
+                [
+                    Public,
+                    Final
+                ],
                  "int", 
                  "x"
             )
         ],
         [Method (
-            [], 
+            [Public], 
             "", 
             "FinalAttri", 
             [], 

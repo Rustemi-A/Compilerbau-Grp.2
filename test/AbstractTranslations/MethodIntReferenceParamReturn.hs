@@ -8,13 +8,13 @@ methodIntReferenceParamReturnAbstractSyntax =
         "MethodIntReferenceParamReturn", 
         [],
         [Method (
-            [], 
+            [Public], 
             "", 
             "MethodIntReferenceParamReturn", 
             [], 
             Block [])],
         [Method (
-            [], 
+            [Public], 
             "int", 
             "foo", 
             [

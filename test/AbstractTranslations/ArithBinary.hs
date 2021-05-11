@@ -8,13 +8,13 @@ arithBinaryAbstractSyntax =
         "ArithBinary", 
         [],
         [Method (
-            [], 
+            [Public], 
             "", 
             "ArithBinary", 
             [], 
             Block [])],
         [Method(
-            [], 
+            [Public], 
             "int", 
             "foo", 
             [

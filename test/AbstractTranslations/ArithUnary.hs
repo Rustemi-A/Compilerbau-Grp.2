@@ -8,13 +8,13 @@ arithUnaryAbstractSyntax =
         "ArithUnary", 
         [],
         [Method (
-            [], 
+            [Public], 
             "", 
             "ArithUnary", 
             [], 
             Block [])],
         [Method(
-            [], 
+            [Public], 
             "int", 
             "foo", 
             [

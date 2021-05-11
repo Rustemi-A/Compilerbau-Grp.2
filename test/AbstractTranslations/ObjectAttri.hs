@@ -7,17 +7,17 @@ objectAttriAbstractSyntax =
         [Public], 
         "ObjectAttri", 
         [FieldDecl (
-            [], 
+            [Public], 
             "Object", 
             "x"
         ),
         FieldDecl (
-            [], 
+            [Public], 
             "String", 
             "y"
         )],
         [Method (
-            [], 
+            [Public], 
             "", 
             "ObjectAttri", 
             [], 
