@@ -1,4 +1,4 @@
-module ScannerParser.AbstrakteSyntax
+module AbstrakteSyntax
   ( Class (..),
     FieldDecl (..),
     MethodDecl (..),
@@ -63,8 +63,8 @@ data Modifier
 
 data BinaryOp
   = Equals -- ==
-  | LT -- <
-  | GT -- >
+  | LessT -- <
+  | GreaterT -- >
   | GE -- >=
   | LE -- <=
   | Plus -- +

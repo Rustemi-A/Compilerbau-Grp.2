@@ -9,7 +9,7 @@ module TypedAST
   )
 where
 
-import qualified ScannerParser.AbstrakteSyntax as U
+import qualified AbstrakteSyntax as U
 
 data Typed ast = Typed U.Type ast
   deriving (Eq, Show)

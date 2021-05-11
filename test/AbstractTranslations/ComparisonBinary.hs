@@ -1,14 +1,20 @@
 module Test.AbstractTranslations.ComparisonBinary where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 comparisonBinaryAbstractSyntax = 
     Class(
         [Public], 
         "ComparisonBinary", 
         [],
-        [Method(
+        [Method (
+            [Public], 
+            "", 
+            "ComparisonBinary", 
             [], 
+            Block [])],
+        [Method(
+            [Public], 
             "void", 
             "foo", 
             [

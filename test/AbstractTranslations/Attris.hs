@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.Attris where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 attrisAbstractSyntax = 
     Class(
@@ -8,21 +8,27 @@ attrisAbstractSyntax =
         "Attris", 
         [
             FieldDecl(
-                [], 
+                [Public], 
                 "int", 
                 "i"
             ),
             FieldDecl(
-                [], 
+                [Public], 
                 "char", 
                 "c"
             ),
             FieldDecl(
-                [], 
+                [Public], 
                 "boolean", 
                 "x"
             )
         ],
+        [Method (
+            [Public], 
+            "", 
+            "Attris", 
+            [], 
+            Block [])],
         [])
 
 -- attrisAbstractTypedSyntax

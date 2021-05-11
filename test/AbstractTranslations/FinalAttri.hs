@@ -1,19 +1,27 @@
 module Test.AbstractTranslations.FinalAttri where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 finalAttriAbstractSyntax = 
     Class(
         [Public], 
         "FinalAttri", 
         [
-            FieldDecl ([
-                Final],
+            FieldDecl (
+                [
+                    Public,
+                    Final
+                ],
                  "int", 
                  "x"
             )
         ],
-        [],
+        [Method (
+            [Public], 
+            "", 
+            "FinalAttri", 
+            [], 
+            Block [])],
         [Method (
             [Public ], 
             "", 

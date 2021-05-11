@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.StaticMethod where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 staticMethodAbstractSyntax = 
     Class(
@@ -8,7 +8,16 @@ staticMethodAbstractSyntax =
         "StaticMethod", 
         [],
         [Method (
-            [Static], 
+            [Public], 
+            "", 
+            "StaticMethod", 
+            [], 
+            Block [])],
+        [Method (
+            [
+                Public,
+                Static
+            ], 
             "void", 
             "foo", 
             [], 

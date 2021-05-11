@@ -1,14 +1,20 @@
 module Test.AbstractTranslations.Block where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 blockAbstractSyntax = 
     Class(
         [Public], 
         "Block", 
         [],
-        [Method(
+        [Method (
+            [Public], 
+            "", 
+            "Block", 
             [], 
+            Block [])],
+        [Method(
+            [Public], 
             "void", 
             "foo", 
             [],

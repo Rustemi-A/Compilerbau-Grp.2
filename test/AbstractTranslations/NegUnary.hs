@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.NegUnary where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 negUnaryAbstractSyntax = 
     Class(
@@ -8,7 +8,13 @@ negUnaryAbstractSyntax =
         "NegUnary", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "NegUnary", 
             [], 
+            Block [])],
+        [Method (
+            [Public], 
             "void", 
             "foo", 
             [

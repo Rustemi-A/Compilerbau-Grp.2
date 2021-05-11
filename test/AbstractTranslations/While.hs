@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.While where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 whileAbstractSyntax = 
     Class(
@@ -8,7 +8,13 @@ whileAbstractSyntax =
         "While", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "While", 
             [], 
+            Block [])],
+        [Method (
+            [Public], 
             "void", 
             "foo", 
             [], 

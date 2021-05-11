@@ -1,18 +1,24 @@
 module Test.AbstractTranslations.MethodCall where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 methodCallAbstractSyntax = 
     Class(
         [Public], 
         "MethodCall", 
         [FieldDecl (
-            [],
+            [Public],
             "MethodIntZeroReturn", 
             "o"
         )],
         [Method (
+            [Public], 
+            "", 
+            "MethodCall", 
             [], 
+            Block [])],
+        [Method (
+            [Public], 
             "int", 
             "foo", 
             [], 

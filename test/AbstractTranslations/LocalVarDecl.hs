@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.LocalVarDecl where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 localVarDeclAbstractSyntax = 
     Class(
@@ -8,7 +8,13 @@ localVarDeclAbstractSyntax =
         "LocalVarDecl", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "LocalVarDecl", 
             [], 
+            Block [])],
+        [Method (
+            [Public], 
             "void", 
             "foo", 
             [], 

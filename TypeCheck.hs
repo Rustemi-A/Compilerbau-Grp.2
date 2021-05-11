@@ -1,8 +1,8 @@
 module TypeCheckStmt where
 
+import AbstrakteSyntax
 import Control.Monad
 import Control.Monad.Except
-import ScannerParser.AbstrakteSyntax
 import qualified TypedAST as T
 
 getAST (T.Typed _ ast) = ast

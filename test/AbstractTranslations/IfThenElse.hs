@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.IfThenElse where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 ifThenElsenAbstractSyntax = 
     Class(
@@ -8,7 +8,13 @@ ifThenElsenAbstractSyntax =
         "IfThenElse", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "IfThenElse", 
             [], 
+            Block [])],
+        [Method (
+            [Public], 
             "void", 
             "foo", 
             [],

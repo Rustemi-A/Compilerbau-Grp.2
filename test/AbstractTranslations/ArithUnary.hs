@@ -1,14 +1,20 @@
 module Test.AbstractTranslations.ArithUnary where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 arithUnaryAbstractSyntax = 
     Class(
         [Public], 
         "ArithUnary", 
         [],
-        [Method(
+        [Method (
+            [Public], 
+            "", 
+            "ArithUnary", 
             [], 
+            Block [])],
+        [Method(
+            [Public], 
             "int", 
             "foo", 
             [

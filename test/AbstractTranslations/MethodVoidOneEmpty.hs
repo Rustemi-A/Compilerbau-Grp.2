@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.MethodVoidOneEmpty where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 methodVoidOneEmptyAbstractSyntax = 
     Class(
@@ -8,7 +8,13 @@ methodVoidOneEmptyAbstractSyntax =
         "MethodVoidOneEmpty", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "MethodVoidOneEmpty", 
             [], 
+            Block [])],
+        [Method (
+            [Public], 
             "void", 
             "foo", 
             [

@@ -1,26 +1,41 @@
 module Test.AbstractTranslations.StaticAttri where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 staticAttriAbstractSyntax = 
     Class(
         [Public], 
         "StaticAttri", 
         [FieldDecl (
-            [Static], 
+            [
+                Public,
+                Static
+            ], 
             "int", 
             "i"
         ),
         FieldDecl (
-            [Static], 
+            [
+                Public,
+                Static
+            ], 
             "char", 
             "c"
         ),
         FieldDecl (
-            [Static], 
+            [
+                Public,
+                Static
+            ], 
             "boolean", 
             "x"
         )],
+        [Method (
+            [Public], 
+            "", 
+            "StaticAttri", 
+            [], 
+            Block [])],
         []
     )
 

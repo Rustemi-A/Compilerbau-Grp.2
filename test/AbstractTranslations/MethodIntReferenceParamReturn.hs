@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.MethodIntReferenceParamReturn where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 methodIntReferenceParamReturnAbstractSyntax = 
     Class(
@@ -8,7 +8,13 @@ methodIntReferenceParamReturnAbstractSyntax =
         "MethodIntReferenceParamReturn", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "MethodIntReferenceParamReturn", 
             [], 
+            Block [])],
+        [Method (
+            [Public], 
             "int", 
             "foo", 
             [

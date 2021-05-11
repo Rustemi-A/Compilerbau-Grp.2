@@ -1,10 +1,10 @@
 {
-module Parser where
+module Parser (parser) where
+import AbstrakteSyntax
 import Scanner
-import ScannerParser.AbstrakteSyntax
 }
 
-%name class 
+%name classPars 
 %tokentype { Token }
 %error { parseError }
   
@@ -29,18 +29,17 @@ import ScannerParser.AbstrakteSyntax
         O {TOKEN_OR}
         BitOR {TOKEN_BITOR}
         BitAND {TOKEN_BITAND}
-        LogischerOperator {TOKEN_LOGISCHEROPERATOR $$}
         String_Literal {TOKEN_STRING_LITERAL $$}
         Integer {TOKEN_INTEGER}
         Integer_Literal {TOKEN_INTEGER_LITERAL $$}
         Char {TOKEN_CHAR}
         Char_Literal {TOKEN_CHAR_LITERAL $$}
-        Public {TOKEN_PUBLIC}
-        Private {TOKEN_PRIVATE}
-        Static {TOKEN_STATIC}
-        Final {TOKEN_FINAL}
+        Pub {TOKEN_PUBLIC}
+        Priv {TOKEN_PRIVATE}
+        Stat {TOKEN_STATIC}
+        Fin {TOKEN_FINAL}
         Void {TOKEN_VOID}
-        New {TOKEN_NEW}
+        Neww {TOKEN_NEW}
         Return {TOKEN_RETURN}
         Akzessor {TOKEN_AKZESSOR}
         Bool {TOKEN_BOOL}
@@ -50,57 +49,54 @@ import ScannerParser.AbstrakteSyntax
         Kleiner {TOKEN_KLEINER}
         Groesser_Gleich {TOKEN_GROESSER_GLEICH}
         Kleiner_Gleich {TOKEN_KLEINER_GLEICH}
-        Ungleich {TOKEN_UNGLEICH}
-        Final {TOKEN_FINAL}
         Null {TOKEN_NULL}
         Not {TOKEN_NOT}
         Komma {TOKEN_KOMMA}
         Thi {TOKEN_THIS}
 %%
-class : classModifier Klasse Bezeichner Klaauf_Gesch attribute maybeKonstruktor methoden Klazu_Gesch { Class($1, $3, $5, $6:$7) }
+--Shift Reduce: Weiß nicht wenn Public oder Private gelesen wird, ob des von attribuet leer und dann ein Konstruktor ist oder ob des ein Attribut selber ist
+classPars : classModifier Klasse Bezeichner Klaauf_Gesch attribute konstruktoren methoden Klazu_Gesch { Class($1, $3, $5, $6, $7) }
 
-classModifier: Public { Public:[] }
-        | Public Final { Public:Final:[] }
+classModifier: Pub { Public:[] }
+        | Pub Fin { Public:Final:[] }
 
-attriModifier: { [] }
-        | Public { Public:[] }
-        | Private { Private:[] }
-        | Public Final { Public:Final:[] }
-        | Public Static { Public:Static:[] }
-        | Public Final Static { Public:Final:Static:[] }
-        | Private Final { Private:Final:[] }
-        | Private Static {Private:Static:[] }
-        | Private Final Static { Private:Final:Static:[] }
+attriModifier: methodModifier { $1 }
+        | Pub Fin { Public:Final:[] }
+        | Pub Fin Stat { Public:Final:Static:[] }
+        | Priv Fin { Private:Final:[] }
+        | Priv Fin Stat { Private:Final:Static:[] }
+        | Fin { Public:Final:[] }
+        | Fin Stat { Public:Final:Static:[] }
 
-methodModifier: { [] }
-        | Public { Public:[] }
-        | Private { Private:[] }
-        | Public Static { Public:Static:[] }
-        | Private Static { Private:Static:[] }
+methodModifier: konstModifier { $1 }
+        | Pub Stat { Public:Static:[] }
+        | Priv Stat { Private:Static:[] }
+        | Stat { Public:Static:[] }
+
+--ToDo des Empty macht 10 R:R Conflicts
+konstModifier: Pub { Public:[] }
+        | Priv { Private:[] }
+        |  { Public:[] }
 
 methoden: { [] }
 methoden: methode methoden { $1:$2 }
 
-methode: methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, $2 $3, $5, Block $8) }
-methode: methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { MethodDecl($1, "void" $3, $5, Block $8) }
+methode: methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, $2, $3, $5, Block $8) }
+methode: methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, "void", $3, $5, Block $8) }
 
 attribute: { [] }
 attribute: attribut attribute { $1:$2 }
 
-attribut: 
+attribut: attriModifier typ Bezeichner Semikolon { FieldDecl ($1, $2, $3) }
 
-maybeKonstruktor: defaultKonstruktor { $1 }
-        | konstruktoren { $1 }
-
-konstruktoren: konstruktor { $1 }
+konstruktoren: { [] }
 konstruktoren: konstruktor konstruktoren { $1:$2 }
 
-konstruktor: 
+konstruktor: konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, "", $2, $4, Block $7) }
 
 statements: { [] }
 statements: statement statements { $1:$2 }
-
--- Empty noch hinzufügen oder umgehen?!	   
+   
 statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | Return Semikolon { Return Nothing}
         | Return expression Semikolon { Return (Just ($2))}
@@ -109,22 +105,24 @@ statement: Klaauf_Gesch statements Klazu_Gesch { Block $2 }
         | If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { If ($3, Block $6, Nothing) }
         | If Klaauf_Rund expression Klazu_Rund Klaauf_Gesch statements Klazu_Gesch Else Klaauf_Gesch statements Klazu_Gesch{ If ($3, Block $6, Just (Block $10)) }
         | stmtExpr Semikolon { StmtExprStmt $1 }
-        | Semikolon { Empty }
+        | Semikolon { Empty }        
 
-expression: Thi { This }
-        | Bezeichner { LocalOrFieldVar $1 }
-        | expression Akzessor Bezeichner { InstVar ($1, $3) }
+expression: expressionCore { $1 }
+        | expressionCore binaryOp expression { Binary ($2, $1, $3) }
         | unaryOp expression { Unary ($1, $2) }
-        | expression binaryOp expression { Binary ($2, $1, $3) }
+
+ expressionCore: Thi { This }
         | Integer_Literal { Integer $1 }
         | Bool_Literal { Bool $1 }
         | Char_Literal { Char $1 }
         | String_Literal { String $1 }
         | Null { Jnull }
         | stmtExpr { StmtExprExpr $1 }
+        | Bezeichner { LocalOrFieldVar $1 }
+        | expression Akzessor Bezeichner { InstVar ($1, $3) }
 
-stmtExpr: Bezeichner Zuweisung literal { Assign($1,$3) }
-        | New Bezeichner Klaauf_Rund params Klazu_Rund { New ($1, $4) }
+stmtExpr: Bezeichner Zuweisung literal { Assign(LocalOrFieldVar $1,$3) }
+        | Neww Bezeichner Klaauf_Rund params Klazu_Rund { New ($2, $4) }
         | expression Akzessor Bezeichner Klaauf_Rund params Klazu_Rund { MethodCall ($1, $3, $5) }
 
 typ: Integer { "int" }
@@ -132,10 +130,15 @@ typ: Integer { "int" }
         | Bool { "boolean" }
         | Bezeichner { $1 }
 
--- [(Type, String)] Typ bon methodDeclParams
-methodDeclParams:
+methodDeclParams: { [] }
+methodDeclParams: methodDeclParamss { $1 }
 
-literal: expression
+methodDeclParamss: methodDeclParam { $1:[] }
+methodDeclParamss: methodDeclParam Komma methodDeclParamss { $1:$3 }
+
+methodDeclParam: typ Bezeichner { $1, $2 }
+
+literal: expression { $1 }
 
 params: { [] }
 params: paramss { $1 }
@@ -143,15 +146,13 @@ params: paramss { $1 }
 paramss: param { $1:[] }
 paramss: param Komma paramss { $1:$3 }
 
-param: expression
+param: expression { $1 }
 
 binaryOp: Vergleich { Equals }
-        | Kleiner { LT }
-        | Groesser { GT }
+        | Kleiner { LessT }
+        | Groesser { GreaterT }
         | Groesser_Gleich { GE }
         | Kleiner_Gleich { LE }
-        | Plu { Plus }
-        | Minu { Minus }
         | Mal { Mult }
         | Geteilt { Div }
         | Modul { Modulo }
@@ -159,21 +160,23 @@ binaryOp: Vergleich { Equals }
         | O { OR }
         | BitOR { BitwiseOR }
         | BitAND { BitwiseAND }
+        | Plu { Plus }
+        | Minu { Minus }
 
 unaryOp: Not { Negation }
-        | Plus { Positiv }
-        | Minus { Negativ }
+        | Plu { Positiv }
+        | Minu { Negativ }
 
 {
 parseError :: [Token] -> a
-parseError _ = error "Parse error"
+parseError _ = error "Parse error!"
 
 parser :: String -> Class
-parser = constuctor . class . scan
+parser =  defaultConst . classPars . scan
 
-constructor :: Class -> Class
-constructor Class (Modi, Name, Fields, [], Methoden) = Class (Modi, Name, Fields, [MethodDecl([Public], "", Name, [], Block [])] ,Methoden)
-constructor x = x
+defaultConst :: Class -> Class
+defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([Public], "", name, [], Block [])], meth)
+defaultConst c = c
 
 main = do
   s <- getContents

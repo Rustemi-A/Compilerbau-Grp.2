@@ -1,6 +1,6 @@
 module Test.AbstractTranslations.MethodObjectZeroReturn where
 
-import ScannerParser.AbstrakteSyntax
+import AbstrakteSyntax
 
 methodObjectZeroReturnAbstractSyntax = 
     Class(
@@ -8,7 +8,13 @@ methodObjectZeroReturnAbstractSyntax =
         "MethodObjectZeroReturn", 
         [],
         [Method (
+            [Public], 
+            "", 
+            "MethodObjectZeroReturn", 
             [], 
+            Block [])],
+        [Method (
+            [Public], 
             "Object", 
             "foo", 
             [], 
