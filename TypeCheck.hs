@@ -3,11 +3,28 @@ module TypeCheckStmt where
 import AbstrakteSyntax
 import Control.Monad
 import Control.Monad.Except
+import Data.List
 import qualified TypedAST as T
 
 getAST (T.Typed _ ast) = ast
 
 getType (T.Typed typ _) = typ
+
+getClassName (Class (_, name, _, _, _)) = name
+
+getConstructors (Class (_, _, _, _, constrs)) = constrs
+
+getMethods (Class (_, _, _, methods, _)) = methods
+
+getMethodName (Method (_, _, name, _, _)) = name
+
+getMethodType (Method (_, typ, _, _, _)) = typ
+
+getParams (Method (_, _, _, params, _)) = params
+
+orThrow :: Maybe a -> e -> Either e a
+orThrow (Just a) _ = Right a
+orThrow Nothing e = Left e
 
 type TypeChecker u t = [(Type, String)] -> [Class] -> u -> Either String (T.Typed t)
 
@@ -86,7 +103,7 @@ typeCheckStmt symtab cls (LocalVarDecl (typ, name)) =
     then throwError "Variable mit diesem Namen bereits deklariert"
     else return $ T.Typed typ (T.LocalVarDecl typ name)
 --
---Empty
+-- Empty
 typeCheckStmt symtab cls Empty = return $ T.Typed "void" T.Empty
 --
 -- StmtExprExpr
@@ -99,10 +116,46 @@ typeCheckStmt symtab cls (StmtExprStmt expr) = do
 --
 --
 typeCheckStmtExpr :: TypeChecker StmtExpr T.StmtExpr
---typeCheckStmtExpr _ _ _ = throwError "todo"
-typeCheckStmtExpr symtab cls (Assign (exprLeft, exprRight)) = throwError "Todo: assign"
-typeCheckStmtExpr symtab cls (New (typ, params)) = throwError "todo: new"
-typeCheckStmtExpr symtab cls (MethodCall (exprLeft, name, params)) = throwError "todo: method"
+--
+-- Assign
+typeCheckStmtExpr symtab cls (Assign (exprLeft, exprRight)) = do
+  tExprL <- typeCheckExpr symtab cls exprLeft
+  tExprR <- typeCheckExpr symtab cls exprRight
+  let leftType = getType tExprL
+      rightType = getType tExprR
+  if leftType == rightType
+    then return $ T.Typed (getType tExprL) $ T.Assign tExprL tExprR
+    else throwError $ "Kann " ++ rightType ++ " nicht " ++ leftType ++ " zuweisen"
+--
+-- New
+typeCheckStmtExpr symtab cls (New (typ, params)) =
+  case find ((typ ==) . getClassName) cls of
+    Just newClass -> do
+      typedArgs <- mapM (typeCheckExpr symtab cls) params
+      if any (matchParams typedArgs . getParams) (getConstructors newClass)
+        then return $ T.Typed typ (T.New typ typedArgs)
+        else throwError $ "Kein Konstruktor in Klasse " ++ typ ++ " mit Parametern " ++ show params ++ " gefunden"
+    Nothing -> throwError $ "Klasse " ++ typ ++ " nicht gefunden"
+--
+-- MethodCall
+typeCheckStmtExpr symtab cls (MethodCall (exprLeft, name, params)) = do
+  tExprL <- typeCheckExpr symtab cls exprLeft
+  typedArgs <- mapM (typeCheckExpr symtab cls) params
+  methClass <- case find ((getType tExprL ==) . getClassName) cls of
+    Just clazz -> return clazz
+    Nothing -> throwError $ "Klasse " ++ getType tExprL ++ " nicht gefunden"
+  let methodsWithSameName = filter ((name ==) . getMethodName) $ getMethods methClass
+  case find (matchParams typedArgs . getParams) methodsWithSameName of
+    Just method -> return $ T.Typed (getMethodType method) (T.MethodCall tExprL name typedArgs)
+    Nothing -> throwError $ "Methode " ++ name ++ " mit Parametern " ++ show params ++ " nicht gefunden"
+
+--
+--
+matchParams :: [T.Typed a] -> [(Type, String)] -> Bool
+matchParams args params = sameLength && sameTypes
+  where
+    sameLength = length args == length params
+    sameTypes = and (zipWith (\typed (typ, _) -> typ == getType typed) args params)
 
 --
 --
@@ -111,54 +164,10 @@ typeCheckStmtExpr symtab cls (MethodCall (exprLeft, name, params)) = throwError 
 typeCheckExpr :: TypeChecker Expr T.Expr
 typeCheckExpr _ _ _ = throwError "todo"
 
-{-
-instance TypeCheckable Stmt T.TStmt (*) where
-  typeCheckStmt (If (be, ifs, Nothing)) symtab cls =
-    let bexp = typeCheckStmt be symtab cls
-        ifstmt = typeCheckStmt ifs symtab cls
-     in if getType bexp == "boolean"
-          then TypedStmt (If (bexp, ifstmt, Nothing), getType ifstmt)
-          else throwError "boolean expected"
-  typeCheckStmt (If (be, ifs, Just elses)) symtab cls =
-    let bexp = typeCheckStmt be symtab cls
-        ifstmt = typeCheckStmt ifs symtab cls
-        elsestmt = typeCheckStmt elses symtab cls
-     in if getType bexp == "boolean"
-          then
-            if getType ifstmt == getType elsestmt
-              then TypedStmt (If (bexp, ifstmt, Just elsestmt), getType elsestmt)
-              else throwError "if und else unterschiedlich"
-          else throwError "boolean expected"
-  typeCheckStmt (While (be, s)) symtab cls =
-    let bexp = typeCheckStmt be symtab cls
-        stmt = typeCheckStmt s symtab cls
-     in if getType bexp == "boolean"
-          then TypedStmt (While (bexp, stmt), getType stmt)
-          else throwError "boolean expected"
-  typeCheckStmt (Block [s]) symtab cls = typeCheck s symtab cls
-  typeCheckStmt (Block (s : sts)) symtab cls =
-    let stmt = typeCheckStmt s symtab cls
-        stmts = typeCheckStmt (Block sts) symtab cls
-     in if getType stmt == getType stmts || getType stmt == "void"
-          then TypedStmt (Block (s : sts), getType stmts)
-          else throwError "wrong types in statements"
-  typeCheckStmt Empty symtab cls = TypedStmt (Empty, "void")
-  typeCheckStmt Return Nothing symtab cls = TypedStmt (Return Nothing, "void")
-  typeCheckStmt (Return (Just e)) symtab cls =
-    let typedexpr = typeCheckStmt e symtab cls
-     in TypedStmt (Return (Just typedexpr), getType typedexpr)
-
-  getType (TypedStmt (_, typ)) = typ
-
-instance TypeCheckable BExpr where
-  typeCheckStmt T symtab cls = TypedBExpr (T, "boolean")
-  getType (TypedBExpr (_, typ)) = typ
-
-instance TypeCheckable Expr where
-  typeCheckStmt One symtab cls = TypedExpr (One, "integer")
-  getType (TypedExpr (_, typ)) = typ
--}
-
+--
+--
+--
+--
 emptyClass = Class ([Public], "Empty", [], [], [])
 
 arithBinaryAbstractSyntax :: Class
