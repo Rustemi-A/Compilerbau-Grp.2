@@ -14,7 +14,7 @@ import qualified ScannerParser.AbstrakteSyntax as U
 data Typed ast = Typed U.Type ast
   deriving (Eq, Show)
 
-data Class = Class [U.Modifier] U.Type [Typed Field] [Typed Method] -- public class A{}
+data Class = Class [U.Modifier] U.Type [Typed Field] [Typed Method] [Typed Method] -- public class A{}
   deriving (Eq, Show)
 
 data Field = Field [U.Modifier] U.Type String -- int v
@@ -47,7 +47,7 @@ data Stmt
   = Block [Typed Stmt] -- {}
   | Return (Maybe (Typed Expr)) -- return x
   | While (Typed Expr) (Typed Stmt) -- while(boolean) {...}
-  | LocalVarDecl U.Type String -- int i = 1;
+  | LocalVarDecl U.Type String -- int i;
   | If (Typed Expr) (Typed Stmt) (Maybe (Typed Stmt)) -- if(boolean){...}else {...}
   | Empty
   | StmtExprStmt (Typed StmtExpr) -- StmtExpr zu Stmt "casten"
