@@ -1,4 +1,4 @@
-module Test.JavaAbstractSyntax.Empty where
+module Test.AbstractTranslations.Empty where
 
 import AbstrakteSyntax
 
