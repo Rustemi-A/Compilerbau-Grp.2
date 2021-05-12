@@ -1,16 +1,4 @@
-module AbstrakteSyntax
-  ( Class (..),
-    FieldDecl (..),
-    MethodDecl (..),
-    Expr (..),
-    StmtExpr (..),
-    Stmt (..),
-    Modifier (..),
-    BinaryOp (..),
-    UnaryOp (..),
-    Type,
-  )
-where
+module AbstrakteSyntax where
 
 type Type = String
 
@@ -82,4 +70,11 @@ data UnaryOp
   = Negation -- !
   | Positiv -- +
   | Negativ -- -
+  deriving (Eq, Show)
+
+newtype ClassHybrid = ClassHybrid ([Modifier], Type, [FieldOrMethod])
+  deriving (Eq, Show)
+
+data FieldOrMethod = F FieldDecl
+  | M MethodDecl
   deriving (Eq, Show)

@@ -10,7 +10,7 @@ logicBinaryAbstractSyntax =
         [Method (
             [Public], 
             "", 
-            "LogicalBinary", 
+            "LogicBinary", 
             [], 
             Block [])],
         [Method (

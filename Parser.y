@@ -54,46 +54,40 @@ import Scanner
         Komma {TOKEN_KOMMA}
         Thi {TOKEN_THIS}
 %%
---Shift Reduce: Weiß nicht wenn Public oder Private gelesen wird, ob des von attribuet leer und dann ein Konstruktor ist oder ob des ein Attribut selber ist
-classPars : classModifier Klasse Bezeichner Klaauf_Gesch attribute konstruktoren methoden Klazu_Gesch { Class($1, $3, $5, $6, $7) }
+classPars : classModifier Klasse Bezeichner Klaauf_Gesch methodOrAttris Klazu_Gesch { ClassHybrid($1, $3, $5) }
 
 classModifier: Pub { Public:[] }
         | Pub Fin { Public:Final:[] }
 
-attriModifier: methodModifier { $1 }
-        | Pub Fin { Public:Final:[] }
-        | Pub Fin Stat { Public:Final:Static:[] }
-        | Priv Fin { Private:Final:[] }
-        | Priv Fin Stat { Private:Final:Static:[] }
-        | Fin { Public:Final:[] }
-        | Fin Stat { Public:Final:Static:[] }
+attriModifier: Pub Fin { [Public,Final] }
+        | Pub Fin Stat { [Public,Final,Static] }
+        | Pub Stat Fin { [Public,Static,Final] }
+        | Priv Fin { [Private,Final] }
+        | Priv Fin Stat { [Private,Final,Static] }
+        | Priv Stat Fin { [Private,Static,Final] }
+        | Fin { [Public,Final] }
+        | Fin Stat { [Public,Final,Static] }
+        | Stat Fin { [Public,Static,Final] }
 
 methodModifier: konstModifier { $1 }
-        | Pub Stat { Public:Static:[] }
-        | Priv Stat { Private:Static:[] }
-        | Stat { Public:Static:[] }
+        | Pub Stat { [Public,Static] }
+        | Priv Stat { [Private,Static] }
+        | Stat { [Public,Static] }
 
---ToDo des Empty macht 10 R:R Conflicts
-konstModifier: Pub { Public:[] }
-        | Priv { Private:[] }
-        | { Public:[] }
+konstModifier: Pub { [Public] }
+        | Priv { [Private] }
+        | { [Public] }
+
+methodOrAttris: { [] }
+        | methodOrAttri methodOrAttris { $1:$2 }
+
+methodOrAttri: attriModifier typ Bezeichner Semikolon { F(FieldDecl ($1, $2, $3)) } 
+        | methodModifier typ Bezeichner Semikolon { F(FieldDecl ($1, $2, $3)) } 
+        | methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, $2, $3, $5, Block $8)) } --Methode
+        | methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, "void", $3, $5, Block $8)) } -- Methode
+--        | konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, "", $2, $4, Block $7)) } --Konstruktor
+-- ToDo kann nicht mit Klassen als Typ umgehen -> wegen Konstruktor
         
-methoden: { [] }
-methoden: methode methoden { $1:$2 }
-
-methode: methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, $2, $3, $5, Block $8) }
-methode: methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, "void", $3, $5, Block $8) }
-
-attribute: { [] }
-attribute: attribut attribute { $1:$2 }
-
-attribut: attriModifier typ Bezeichner Semikolon { FieldDecl ($1, $2, $3) }
-
-konstruktoren: { [] }
-konstruktoren: konstruktor konstruktoren { $1:$2 }
-
-konstruktor: konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { Method($1, "", $2, $4, Block $7) }
-
 statements: { [] }
 statements: statement statements { $1:$2 }
    
@@ -172,13 +166,38 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error!"
 
 parser :: String -> Class
-parser =  defaultConst . classPars . scan
+parser =  defaultConst . hybridClassToClass . classPars . scan
+
+testparse:: String -> ClassHybrid
+testparse = classPars . scan
+
+hybridClassToClass:: ClassHybrid -> Class
+hybridClassToClass (ClassHybrid(modi, name, methOrAttri)) = Class(modi, name, getAttris methOrAttri, getKonst methOrAttri, getMethod methOrAttri)
 
 defaultConst :: Class -> Class
 defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([Public], "", name, [], Block [])], meth)
 defaultConst c = c
 
+getAttris:: [FieldOrMethod] -> [FieldDecl]
+getAttris [] = []
+getAttris ((F f):x) = f : (getAttris x)
+getAttris (y:x) = getAttris x
+
+getKonst:: [FieldOrMethod] -> [MethodDecl]
+getKonst [] = []
+getKonst (M (Method(m, "", kname, args, stmt)):x) = (Method(m, "", kname, args, stmt)) : (getKonst x)
+getKonst (y:x) = getKonst x
+
+getMethod:: [FieldOrMethod] -> [MethodDecl]
+getMethod [] = []
+getMethod (M (Method(m, typ, kname, args, stmt)):x) 
+        | typ /= "" = (Method(m, typ, kname, args, stmt)) : (getMethod x)
+        | otherwise = getMethod x
+getMethod (y:x) = getMethod x
+
 main = do
   s <- getContents
-  print (parser s)
+  print (scan s)
+--  print (parser s)
+  print (testparse s)
 }

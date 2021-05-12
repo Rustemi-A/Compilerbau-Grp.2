@@ -17,12 +17,6 @@ finalAttriAbstractSyntax =
             )
         ],
         [Method (
-            [Public], 
-            "", 
-            "FinalAttri", 
-            [], 
-            Block [])],
-        [Method (
             [Public ], 
             "", 
             "FinalAttri", 
@@ -31,11 +25,12 @@ finalAttriAbstractSyntax =
                 StmtExprStmt (
                     Assign (
                         LocalOrFieldVar "x",
-                        Integer 1
+                        Integer 42
                     )
                 )
             ]
-        )]
+        )],
+        []
     )
 
 -- finalAttriAbstractTypedSyntax

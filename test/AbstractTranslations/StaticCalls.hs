@@ -21,7 +21,7 @@ staticCallsAbstractSyntax =
             Block [
                 StmtExprStmt (
                     MethodCall (
-                        String "StaticMethod", 
+                        LocalOrFieldVar "StaticMethod", 
                         "foo", 
                         []
                     )
@@ -29,7 +29,7 @@ staticCallsAbstractSyntax =
                 Return (
                     Just(
                         InstVar (
-                            String "StaticAttri", 
+                            LocalOrFieldVar "StaticAttri", 
                             "i")
                     )
                 )

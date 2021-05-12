@@ -24,7 +24,7 @@ arithUnaryAbstractSyntax =
                 Return(
                     Just (
                         Unary (
-                            Negation,
+                            Negativ,
                             LocalOrFieldVar "x"
                         )
                     )
