@@ -60,7 +60,7 @@ main = do
      staticMethodClass <- readFile "Test/JavaClasses/StaticMethod.java"
      whileClass <- readFile "Test/JavaClasses/While.java"
 
-     print "Abstraket Syntax Tests:"
+     print "Abstrakte Syntax Tests:"
      print $ "ArithBinary:                   " ++ checkIfAbstractIsSame arithBinaryClass arithBinaryAbstractSyntax 
      print $ "ArithUnary:                    " ++ checkIfAbstractIsSame arithUnaryClass arithUnaryAbstractSyntax 
      print $ "Attris:                        " ++ checkIfAbstractIsSame attrisClass attrisAbstractSyntax 

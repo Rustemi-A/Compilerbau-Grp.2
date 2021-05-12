@@ -163,14 +163,21 @@ unaryOp: Not { Negation }
         | Minu { Negativ }
 
 {
+newtype ClassHybrid = ClassHybrid ([Modifier], Type, [FieldOrMethod])
+  deriving (Eq, Show)
+
+data FieldOrMethod = F FieldDecl
+  | M MethodDecl
+  deriving (Eq, Show)
+
 parseError :: [Token] -> a
 parseError _ = error "Parse error!"
 
 parser :: String -> Class
 parser =  defaultConst . hybridClassToClass . classPars . scan
 
-testparse:: String -> ClassHybrid
-testparse = classPars . scan
+--testparse:: String -> ClassHybrid
+--testparse = classPars . scan
 
 hybridClassToClass:: ClassHybrid -> Class
 hybridClassToClass (ClassHybrid(modi, name, methOrAttri)) = Class(modi, name, getAttris methOrAttri, getKonst methOrAttri, getMethod methOrAttri)
@@ -196,9 +203,9 @@ getMethod (M (Method(m, typ, kname, args, stmt)):x)
         | otherwise = getMethod x
 getMethod (y:x) = getMethod x
 
-main = do
-  s <- getContents
-  print (scan s)
+--main = do
+--  s <- getContents
+--  print (scan s)
 --  print (parser s)
-  print (testparse s)
+--  print (testparse s)
 }

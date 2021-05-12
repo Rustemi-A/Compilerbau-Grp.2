@@ -2,7 +2,7 @@ module AbstrakteSyntax where
 
 type Type = String
 
-newtype Class = Class ([Modifier], Type, [FieldDecl], [MethodDecl], [MethodDecl]) -- public class A{}
+newtype Class = Class ([Modifier], Type, [FieldDecl], [MethodDecl], [MethodDecl]) -- public class A{} -- zweite List an MethodDecl sind Konstruktoren
   deriving (Eq, Show)
 
 newtype FieldDecl = FieldDecl ([Modifier], Type, String) -- int v
@@ -70,11 +70,4 @@ data UnaryOp
   = Negation -- !
   | Positiv -- +
   | Negativ -- -
-  deriving (Eq, Show)
-
-newtype ClassHybrid = ClassHybrid ([Modifier], Type, [FieldOrMethod])
-  deriving (Eq, Show)
-
-data FieldOrMethod = F FieldDecl
-  | M MethodDecl
   deriving (Eq, Show)

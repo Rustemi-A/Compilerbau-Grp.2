@@ -1,4 +1,4 @@
-module TypeCheckStmt where
+module TypeCheck where
 
 import AbstrakteSyntax
 import Control.Monad
@@ -12,9 +12,9 @@ getType (T.Typed typ _) = typ
 
 getClassName (Class (_, name, _, _, _)) = name
 
-getConstructors (Class (_, _, _, _, constrs)) = constrs
+getConstructors (Class (_, _, _, constrs, _)) = constrs
 
-getMethods (Class (_, _, _, methods, _)) = methods
+getMethods (Class (_, _, _, _, methods)) = methods
 
 getMethodName (Method (_, _, name, _, _)) = name
 
