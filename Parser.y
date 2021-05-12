@@ -69,8 +69,7 @@ attriModifier: Pub Fin { [Public,Final] }
         | Fin Stat { [Public,Final,Static] }
         | Stat Fin { [Public,Static,Final] }
 
-methodModifier: konstModifier { $1 }
-        | Pub Stat { [Public,Static] }
+methodModifier: Pub Stat { [Public,Static] }
         | Priv Stat { [Private,Static] }
         | Stat { [Public,Static] }
 
@@ -83,10 +82,12 @@ methodOrAttris: { [] }
 
 methodOrAttri: attriModifier typ Bezeichner Semikolon { F(FieldDecl ($1, $2, $3)) } 
         | methodModifier typ Bezeichner Semikolon { F(FieldDecl ($1, $2, $3)) } 
-        | methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, $2, $3, $5, Block $8)) } --Methode
-        | methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, "void", $3, $5, Block $8)) } -- Methode
---        | konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, "", $2, $4, Block $7)) } --Konstruktor
--- ToDo kann nicht mit Klassen als Typ umgehen -> wegen Konstruktor
+        | konstModifier typ Bezeichner Semikolon { F(FieldDecl ($1, $2, $3)) } 
+        | methodModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, $2, $3, $5, Block $8)) }
+        | methodModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, "void", $3, $5, Block $8)) }
+        | konstModifier typ Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, $2, $3, $5, Block $8)) }
+        | konstModifier Void Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, "void", $3, $5, Block $8)) }
+        | konstModifier Bezeichner Klaauf_Rund methodDeclParams Klazu_Rund Klaauf_Gesch statements Klazu_Gesch { M(Method($1, "", $2, $4, Block $7)) }
         
 statements: { [] }
 statements: statement statements { $1:$2 }

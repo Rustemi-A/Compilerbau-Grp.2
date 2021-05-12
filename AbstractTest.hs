@@ -67,7 +67,7 @@ main = do
      print $ "Block:                         " ++ checkIfAbstractIsSame blockClass blockAbstractSyntax 
      print $ "ComparisonBinary:              " ++ checkIfAbstractIsSame comparisonBinaryClass comparisonBinaryAbstractSyntax 
      print $ "Empty:                         " ++ checkIfAbstractIsSame emptyClass emptyAbstractSyntax
-     --print $ "FinalAttri:                    " ++ checkIfAbstractIsSame finalAttriClass finalAttriAbstractSyntax  
+     print $ "FinalAttri:                    " ++ checkIfAbstractIsSame finalAttriClass finalAttriAbstractSyntax  
      print $ "FinalClass:                    " ++ checkIfAbstractIsSame finalClass finalClassAbstractSyntax 
      print $ "IfThen:                        " ++ checkIfAbstractIsSame ifThenClass ifThenAbstractSyntax 
      print $ "IfThenElse:                    " ++ checkIfAbstractIsSame ifThenElseClass ifThenElsenAbstractSyntax 
