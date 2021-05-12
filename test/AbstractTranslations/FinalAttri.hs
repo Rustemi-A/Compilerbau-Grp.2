@@ -18,7 +18,7 @@ finalAttriAbstractSyntax =
         ],
         [Method (
             [Public ], 
-            "", 
+            "void", 
             "FinalAttri", 
             [],
             Block [

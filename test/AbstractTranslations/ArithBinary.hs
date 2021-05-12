@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.ArithBinary where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 arithBinaryAbstractSyntax = 
     Class(
@@ -9,7 +10,7 @@ arithBinaryAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "ArithBinary", 
             [], 
             Block [])],

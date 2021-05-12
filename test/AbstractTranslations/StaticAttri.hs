@@ -32,7 +32,7 @@ staticAttriAbstractSyntax =
         )],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "StaticAttri", 
             [], 
             Block [])],

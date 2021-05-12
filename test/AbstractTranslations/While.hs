@@ -9,7 +9,7 @@ whileAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "While", 
             [], 
             Block [])],

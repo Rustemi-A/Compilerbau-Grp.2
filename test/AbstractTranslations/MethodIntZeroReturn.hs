@@ -9,7 +9,7 @@ methodIntZeroReturnAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "MethodIntZeroReturn", 
             [], 
             Block [])],

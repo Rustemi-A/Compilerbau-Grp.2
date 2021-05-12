@@ -9,7 +9,7 @@ arithUnaryAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "ArithUnary", 
             [], 
             Block [])],

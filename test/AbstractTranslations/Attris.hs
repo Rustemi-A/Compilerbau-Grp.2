@@ -25,7 +25,7 @@ attrisAbstractSyntax =
         ],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "Attris", 
             [], 
             Block [])],

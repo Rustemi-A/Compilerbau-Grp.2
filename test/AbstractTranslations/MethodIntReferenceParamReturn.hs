@@ -9,7 +9,7 @@ methodIntReferenceParamReturnAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "MethodIntReferenceParamReturn", 
             [], 
             Block [])],

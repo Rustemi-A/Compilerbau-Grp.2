@@ -9,7 +9,7 @@ methodVoidOneEmptyAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "MethodVoidOneEmpty", 
             [], 
             Block [])],

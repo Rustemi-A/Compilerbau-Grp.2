@@ -18,7 +18,7 @@ objectAttriAbstractSyntax =
         )],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "ObjectAttri", 
             [], 
             Block [])],

@@ -9,7 +9,7 @@ staticCallsAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "StaticCalls", 
             [], 
             Block [])],

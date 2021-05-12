@@ -9,7 +9,7 @@ ifThenElsenAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "IfThenElse", 
             [], 
             Block [])],

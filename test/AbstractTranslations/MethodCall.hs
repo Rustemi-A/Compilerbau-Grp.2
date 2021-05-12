@@ -13,7 +13,7 @@ methodCallAbstractSyntax =
         )],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "MethodCall", 
             [], 
             Block [])],

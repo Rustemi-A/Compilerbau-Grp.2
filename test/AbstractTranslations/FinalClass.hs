@@ -12,7 +12,7 @@ finalClassAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "FinalClass", 
             [], 
             Block [])],

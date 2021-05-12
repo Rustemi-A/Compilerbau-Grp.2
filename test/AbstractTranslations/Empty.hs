@@ -9,7 +9,7 @@ emptyAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "Empty", 
             [], 
             Block []
