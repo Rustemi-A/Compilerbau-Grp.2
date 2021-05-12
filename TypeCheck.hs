@@ -170,31 +170,31 @@ typeCheckExpr _ _ _ = throwError "todo"
 --
 emptyClass = Class ([Public], "Empty", [], [], [])
 
-arithBinaryAbstractSyntax :: Class
-arithBinaryAbstractSyntax =
-  Class
-    ( [Public],
-      "ArithBinary",
-      [],
-      [],
-      [ Method
-          ( [],
-            "int",
-            "foo",
-            [ ("int", "x"),
-              ("int", "y")
-            ],
-            Return
-              ( Just $
-                  Binary
-                    ( Plus,
-                      LocalOrFieldVar "x",
-                      LocalOrFieldVar "y"
-                    )
-              )
-          )
-      ]
-    )
+--arithBinaryAbstractSyntax :: Class
+--arithBinaryAbstractSyntax =
+--  Class
+--    ( [Public],
+--      "ArithBinary",
+--      [],
+--      [],
+--      [ Method
+--          ( [],
+--            "int",
+--            "foo",
+--            [ ("int", "x"),
+--              ("int", "y")
+--            ],
+--            Return
+--              ( Just $
+--                  Binary
+--                    ( Plus,
+--                      LocalOrFieldVar "x",
+--                      LocalOrFieldVar "y"
+--                    )
+--              )
+--          )
+--      ]
+--    )
 
 x = typeCheckClass [] [] emptyClass
 

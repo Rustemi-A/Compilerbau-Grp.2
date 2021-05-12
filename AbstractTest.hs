@@ -28,10 +28,18 @@ import Test.AbstractTranslations.StaticMethod
 import Test.AbstractTranslations.While
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 import Parser
+import TypeCheck
 
 checkIfAbstractIsSame:: String -> Class -> String 
 checkIfAbstractIsSame loadedClass testClass = show $ testClass == parser loadedClass
+
+checkIfAbstractTypedIsSame:: T.Typed T.Class -> Class -> String 
+checkIfAbstractTypedIsSame testTypedClass abstractClass = show (testTypedClass == extract  (typeCheckClass [] [] abstractClass))
+
+extract (Right r) = r
+extract (Left e) = error e 
 
 main = do
      arithBinaryClass <- readFile "Test/JavaClasses/ArithBinary.java"
@@ -86,4 +94,32 @@ main = do
      print $ "StaticCalls:                   " ++ checkIfAbstractIsSame staticCallsClass staticCallsAbstractSyntax 
      print $ "StaticMethod:                  " ++ checkIfAbstractIsSame staticMethodClass staticMethodAbstractSyntax 
      print $ "While:                         " ++ checkIfAbstractIsSame whileClass whileAbstractSyntax 
+
+     print ""
+     print "Abstrakte getypte Syntax Tests:"
+     print $ "ArithBinary:                   " ++ checkIfAbstractTypedIsSame arithBinaryAbstractTypedSyntax arithBinaryAbstractSyntax 
+     print $ "ArithUnary:                    " ++ checkIfAbstractTypedIsSame arithUnaryAbstractTypedSyntax arithUnaryAbstractSyntax 
+     print $ "Attris:                        " ++ checkIfAbstractTypedIsSame attrisAbstractTypedSyntax attrisAbstractSyntax 
+     print $ "Block:                         " ++ checkIfAbstractTypedIsSame blockAbstractTypedSyntax blockAbstractSyntax 
+     print $ "ComparisonBinary:              " ++ checkIfAbstractTypedIsSame comparisonBinaryAbstractTypedSyntax comparisonBinaryAbstractSyntax 
+     print $ "Empty:                         " ++ checkIfAbstractTypedIsSame emptyAbstractTypedSyntax emptyAbstractSyntax
+     print $ "FinalAttri:                    " ++ checkIfAbstractTypedIsSame finalAttriAbstractTypedSyntax finalAttriAbstractSyntax  
+     print $ "FinalClass:                    " ++ checkIfAbstractTypedIsSame finalClassAbstractTypedSyntax finalClassAbstractSyntax 
+     print $ "IfThen:                        " ++ checkIfAbstractTypedIsSame ifThenAbstractTypedSyntax ifThenAbstractSyntax 
+     print $ "IfThenElse:                    " ++ checkIfAbstractTypedIsSame ifThenElseAbstractTypedSyntax ifThenElsenAbstractSyntax 
+     print $ "LocalVarDecl:                  " ++ checkIfAbstractTypedIsSame localVarDeclAbstractTypedSyntax localVarDeclAbstractSyntax  
+     print $ "LogicBinary:                   " ++ checkIfAbstractTypedIsSame logicBinaryAbstractTypedSyntax logicBinaryAbstractSyntax 
+     print $ "MethodCall:                    " ++ checkIfAbstractTypedIsSame methodCallAbstractTypedSyntax methodCallAbstractSyntax 
+     print $ "MethodIntReferenceParamReturn: " ++ checkIfAbstractTypedIsSame methodIntReferenceParamReturnAbstractTypedSyntax methodIntReferenceParamReturnAbstractSyntax 
+     print $ "MethodIntZeroReturn:           " ++ checkIfAbstractTypedIsSame methodIntZeroReturnAbstractTypedSyntax methodIntZeroReturnAbstractSyntax 
+     print $ "MethodObjectZeroReturn:        " ++ checkIfAbstractTypedIsSame methodObjectZeroReturnAbstractTypedSyntax methodObjectZeroReturnAbstractSyntax  
+     print $ "MethodVoidOneEmpty:            " ++ checkIfAbstractTypedIsSame methodVoidOneEmptyAbstractTypedSyntax methodVoidOneEmptyAbstractSyntax 
+     print $ "MethodVoidTwoEmpty:            " ++ checkIfAbstractTypedIsSame methodVoidTwoEmptyAbstractTypedSyntax methodVoidTwoEmptyAbstractSyntax 
+     print $ "MethodVoidZeroEmpty:           " ++ checkIfAbstractTypedIsSame methodVoidZeroEmptyAbstractTypedSyntax methodVoidZeroEmptyAbstractSyntax 
+     print $ "NegUnary:                      " ++ checkIfAbstractTypedIsSame negUnaryAbstractTypedSyntax negUnaryAbstractSyntax 
+     print $ "ObjectAttri:                   " ++ checkIfAbstractTypedIsSame objectAttriAbstractTypedSyntax objectAttriAbstractSyntax  
+     print $ "StaticAttri:                   " ++ checkIfAbstractTypedIsSame staticAttriAbstractTypedSyntax staticAttriAbstractSyntax 
+     print $ "StaticCalls:                   " ++ checkIfAbstractTypedIsSame staticCallsAbstractTypedSyntax staticCallsAbstractSyntax 
+     print $ "StaticMethod:                  " ++ checkIfAbstractTypedIsSame staticMethodAbstractTypedSyntax staticMethodAbstractSyntax 
+     print $ "While:                         " ++ checkIfAbstractTypedIsSame whileAbstractTypedSyntax whileAbstractSyntax 
      

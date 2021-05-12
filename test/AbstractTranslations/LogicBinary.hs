@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.LogicBinary where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 logicBinaryAbstractSyntax = 
     Class(
@@ -33,6 +34,19 @@ logicBinaryAbstractSyntax =
         )]
     )
 
--- logicBinaryAbstractTypedSyntax
+logicBinaryAbstractTypedSyntax = 
+    T.Typed "Empty" (T.Class
+        [Public] 
+        "Empty" 
+        []
+        [T.Typed "void" (T.Method
+            [Public] 
+            "void" 
+            "Empty" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
+        []
+    )
 
 -- logicBinaryAbstractByteCode

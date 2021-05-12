@@ -1775,7 +1775,6 @@ getAttris [] = []
 getAttris ((F f):x) = f : (getAttris x)
 getAttris (y:x) = getAttris x
 
---ToDo
 getKonst:: [FieldOrMethod] -> [MethodDecl]
 getKonst [] = []
 getKonst (M (Method(m, "", kname, args, stmt)):x) = (Method(m, "void", kname, args, stmt)) : (getKonst x)
@@ -1790,9 +1789,9 @@ getMethod (y:x) = getMethod x
 
 --main = do
 --  s <- getContents
---  print (scan s)
+  --print (scan s)
 --  print (parser s)
---  print (testparse s)
+  --print (testparse s)
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- $Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp $
 
