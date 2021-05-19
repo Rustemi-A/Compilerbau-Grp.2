@@ -6,10 +6,6 @@ import Control.Monad.Except
 import Data.List
 import qualified TypedAST as T
 
-getAST (T.Typed _ ast) = ast
-
-getType (T.Typed typ _) = typ
-
 getClassName (Class (_, name, _, _, _)) = name
 
 getConstructors (Class (_, _, _, constrs, _)) = constrs
@@ -25,6 +21,17 @@ getParams (Method (_, _, _, params, _)) = params
 orThrow :: Maybe a -> e -> Either e a
 orThrow (Just a) _ = Right a
 orThrow Nothing e = Left e
+
+getAST (T.Typed _ ast) = ast
+
+getType (T.Typed typ _) = typ
+
+(~=) :: Type -> Type -> Bool
+"null" ~= typ
+  | typ == "void" || typ == "int" || typ == "char" || typ == "boolean" = False
+  | otherwise = True
+typ ~= "null" = "null" ~= typ
+typ ~= typ2 = typ == typ2
 
 typeCheck :: Class -> [Class] -> T.Typed T.Class
 typeCheck cls classes = case typeCheckClass [] classes cls of
@@ -50,7 +57,7 @@ typeCheckMethod symtab classes (Method (modifier, typ, name, args, stmt)) =
   let syms = symtab ++ args --Todo replace existing entries
    in do
         tstmt <- typeCheckStmt syms classes stmt
-        if getType tstmt == typ
+        if getType tstmt ~= typ
           then return $ T.Typed typ $ T.Method modifier typ name args tstmt
           else throwError $ "Returntyp und Methodentyp stimmen nicht überein. Erwartet: " ++ typ ++ " Gefunden: " ++ getType tstmt
 
@@ -68,7 +75,7 @@ typeCheckStmt symtab classes (Block (us : uss)) = do
   ts <- typeCheckStmt symtab classes us
   T.Typed ttyp ~(T.Block tss) <- typeCheckStmt symtab classes $ Block uss
   let htyp = getType ts
-  if htyp == ttyp || htyp == "void"
+  if htyp ~= ttyp || htyp ~= "void"
     then return $ T.Typed ttyp $ T.Block (ts : tss)
     else throwError "Typen der Statements stimmen nicht überein"
 typeCheckStmt _ _ (Block []) = return $ T.Typed "void" $ T.Block []
@@ -84,11 +91,11 @@ typeCheckStmt symtab cls (If (cond, ifs, maybeElses)) = do
   tcond <- typeCheckExpr symtab cls cond
   tifs <- typeCheckStmt symtab cls ifs
   let iftyp = getType tifs
-  if getType tcond == "boolean"
+  if getType tcond ~= "boolean"
     then case maybeElses of
       Just elses -> do
         telse <- typeCheckStmt symtab cls elses
-        if getType telse == iftyp
+        if getType telse ~= iftyp
           then return $ T.Typed iftyp $ T.If tcond tifs $ Just telse
           else throwError "If und Else haben verschiedene Typen"
       Nothing -> return $ T.Typed iftyp $ T.If tcond tifs Nothing
@@ -98,7 +105,7 @@ typeCheckStmt symtab cls (If (cond, ifs, maybeElses)) = do
 typeCheckStmt symtab cls (While (cond, stmt)) = do
   tcond <- typeCheckExpr symtab cls cond
   tstmt <- typeCheckStmt symtab cls stmt
-  if getType tcond == "boolean"
+  if getType tcond ~= "boolean"
     then return $ T.Typed (getType tstmt) $ T.While tcond tstmt
     else throwError "While-Bedingung muss boolean sein"
 --
@@ -128,7 +135,7 @@ typeCheckStmtExpr symtab cls (Assign (exprLeft, exprRight)) = do
   tExprR <- typeCheckExpr symtab cls exprRight
   let leftType = getType tExprL
       rightType = getType tExprR
-  if leftType == rightType
+  if leftType ~= rightType
     then return $ T.Typed (getType tExprL) $ T.Assign tExprL tExprR
     else throwError $ "Kann " ++ rightType ++ " nicht " ++ leftType ++ " zuweisen"
 --
@@ -160,7 +167,7 @@ matchParams :: [T.Typed a] -> [(Type, String)] -> Bool
 matchParams args params = sameLength && sameTypes
   where
     sameLength = length args == length params
-    sameTypes = and (zipWith (\typed (typ, _) -> typ == getType typed) args params)
+    sameTypes = and (zipWith (\typed (typ, _) -> typ ~= getType typed) args params)
 
 --
 --
