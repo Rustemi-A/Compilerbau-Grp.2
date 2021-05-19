@@ -8,14 +8,17 @@ buildClassFile :: Class -> ClassFile
 buildClassFile (Class modifier typ fields methods) =
 	let
 		constPool = buildConstPool(Class modifier typ fields methods)
-		constPoolCount = getSize(constPool)
+		constPoolCount = getSize(constPool) + 1
 		fieldInfos = transformFields(constPool, fields)
 		fiCount = getSize(fieldInfos)
-		methodInfos = transformMethod(constPool, methods)
+		methodInfos = transformMethod(constPool, typ, methods)
 		methodCount = getSize(methodInfos)
 		accFlg = cAF(modifier)
+		this = findClassInCp(constPool, typ)
+		super = findClassInCp(constPool, "java/lang/Object")
 	in 
-		ClassFile Magic (MinorVersion(0)) (MajorVersion(48)) constPoolCount constPool accFlg (ThisClass(0)) (SuperClass(0)) 0 [] fiCount fieldInfos methodCount methodInfos 0 []
+		ClassFile Magic (MinorVersion(0)) (MajorVersion(48)) constPoolCount constPool accFlg (ThisClass(this)) (SuperClass(super)) 0 [] fiCount fieldInfos methodCount methodInfos 0 []
+
 
 
 getSize ::[a] -> Int
@@ -54,15 +57,34 @@ findInCpRek (((Utf8_Info _ _ name _) :cs), x, y)
 	| otherwise = findInCpRek (cs, x, y + 1)
 findInCpRek (x,y,z) = -1
 
-
-transformMethod :: ([CP_Info], [Typed Method]) -> [Method_Info]
-transformMethod(_, []) = []
-transformMethod(constPool, (c:cs)) = 
-	let
-		info = buildMethodInfo(constPool, c)
-		rest = transformMethod(constPool, cs)
+findClassInCp :: ([CP_Info], String) -> Int
+findClassInCp (x,y)=
+	let 
+		index = findInCp(x,y)
 	in 
-		(info: rest)
+		findClassInCpRek(x, index, 0)
+
+findClassInCpRek :: ([CP_Info], Int, Int) -> Int
+findClassInCpRek ([],x,y) = 0
+findClassInCpRek (((Class_Info _ name _) :cs), x, y)
+	| name == x = y
+	| otherwise = findClassInCpRek (cs, x, y + 1)
+findClassInCpRek (x,y,z) = -1
+
+
+transformMethod :: ([CP_Info], String, [Typed Method]) -> [Method_Info]
+transformMethod(_, _, []) = []
+transformMethod(constPool, name, (c:cs)) = 
+	let
+		defconst = getConstr((c:cs), name , constPool)
+		info = buildMethodInfo(constPool, c)
+		rest = transformMethod(constPool, name, cs)
+	in 
+		constr(defconst, (info : rest))
+
+constr :: (Maybe Method_Info, [Method_Info]) -> [Method_Info]
+constr(Nothing, x) = x
+constr(Just x, y) = (x:y)
 
 
 buildMethodInfo :: ([CP_Info], Typed Method) -> Method_Info
@@ -100,3 +122,30 @@ createAF (U.Final:cs) =
 	let
 		rest = createAF(cs)
 	in (16 : rest)
+
+getConstr :: ([Typed Method], String, [CP_Info]) -> (Maybe Method_Info)
+getConstr ([], name, cInfos) =  
+	let 
+		constructor = createDefaultConstructor(cInfos)
+	in 
+		Just constructor
+getConstr(((Typed _ (Method _ _ name _ _ )):cs), className, cInfos)
+	| name == className = Nothing
+	| otherwise = getConstr(cs, className, cInfos)
+
+createDefaultConstructor :: ([CP_Info]) -> (Method_Info)
+createDefaultConstructor (cInfos) = 
+	let
+		firstId = findInCp(cInfos, "")
+		secondId = findInCp(cInfos, "()V")
+		code = codeConstr(cInfos)
+	in 
+		Method_Info (AccessFlags[1]) firstId secondId 1 [code]
+
+codeConstr :: ([CP_Info]) -> Attribute_Info
+codeConstr (cInfos) = 
+	let 
+		id = findInCp(cInfos, "Code")
+	in 
+		AttributeCode id 17 1 1 5 [42, 183, 0, 1, 177] 0 [] 0 []
+
