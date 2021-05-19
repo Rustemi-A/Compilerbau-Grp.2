@@ -26,10 +26,15 @@ orThrow :: Maybe a -> e -> Either e a
 orThrow (Just a) _ = Right a
 orThrow Nothing e = Left e
 
+typeCheck :: Class -> [Class] -> T.Typed T.Class
+typeCheck cls classes = case typeCheckClass [] classes cls of
+  Right typed -> typed
+  Left e -> error e
+
 type TypeChecker u t = [(Type, String)] -> [Class] -> u -> Either String (T.Typed t)
 
 typeCheckClass :: TypeChecker Class T.Class
-typeCheckClass symtab classes (Class (modifier, typ, fields, methods, constrs)) =
+typeCheckClass symtab classes (Class (modifier, typ, fields, constrs, methods)) =
   let syms =
         symtab
           ++ map (\(FieldDecl (_, ftyp, fname)) -> (ftyp, fname)) fields
@@ -47,7 +52,7 @@ typeCheckMethod symtab classes (Method (modifier, typ, name, args, stmt)) =
         tstmt <- typeCheckStmt syms classes stmt
         if getType tstmt == typ
           then return $ T.Typed typ $ T.Method modifier typ name args tstmt
-          else throwError "Returntyp und Methodentyp stimmen nicht überein"
+          else throwError $ "Returntyp und Methodentyp stimmen nicht überein. Erwartet: " ++ typ ++ " Gefunden: " ++ getType tstmt
 
 typeCheckField :: TypeChecker FieldDecl T.Field
 typeCheckField _ _ (FieldDecl (modifier, typ, name)) = return $ T.Typed typ $ T.Field modifier typ name
