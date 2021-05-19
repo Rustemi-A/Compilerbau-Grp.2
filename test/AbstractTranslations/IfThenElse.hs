@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.IfThenElse where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 ifThenElsenAbstractSyntax = 
     Class(
@@ -9,7 +10,7 @@ ifThenElsenAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "IfThenElse", 
             [], 
             Block [])],
@@ -30,6 +31,19 @@ ifThenElsenAbstractSyntax =
         )]
     )
 
--- ifThenElseAbstractTypedSyntax
+ifThenElseAbstractTypedSyntax = 
+    T.Typed "Empty" (T.Class
+        [Public] 
+        "Empty" 
+        []
+        [T.Typed "void" (T.Method
+            [Public] 
+            "void" 
+            "Empty" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
+        []
+    )
 
 -- ifThenElseAbstractByteCode

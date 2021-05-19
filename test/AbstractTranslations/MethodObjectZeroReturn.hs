@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.MethodObjectZeroReturn where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 methodObjectZeroReturnAbstractSyntax = 
     Class(
@@ -9,7 +10,7 @@ methodObjectZeroReturnAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "MethodObjectZeroReturn", 
             [], 
             Block [])],
@@ -32,6 +33,19 @@ methodObjectZeroReturnAbstractSyntax =
         )]
     )
 
--- methodObjectZeroReturnAbstractTypedSyntax
+methodObjectZeroReturnAbstractTypedSyntax = 
+    T.Typed "Empty" (T.Class
+        [Public] 
+        "Empty" 
+        []
+        [T.Typed "void" (T.Method
+            [Public] 
+            "void" 
+            "Empty" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
+        []
+    )
 
 -- methodObjectZeroReturnAbstractByteCode

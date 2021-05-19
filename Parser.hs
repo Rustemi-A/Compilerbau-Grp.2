@@ -1767,7 +1767,7 @@ hybridClassToClass:: ClassHybrid -> Class
 hybridClassToClass (ClassHybrid(modi, name, methOrAttri)) = Class(modi, name, getAttris methOrAttri, getKonst methOrAttri, getMethod methOrAttri)
 
 defaultConst :: Class -> Class
-defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([Public], "", name, [], Block [])], meth)
+defaultConst (Class(modi, name, fields, [], meth)) = Class(modi, name, fields, [Method([Public], "void", name, [], Block [])], meth)
 defaultConst c = c
 
 getAttris:: [FieldOrMethod] -> [FieldDecl]
@@ -1777,7 +1777,7 @@ getAttris (y:x) = getAttris x
 
 getKonst:: [FieldOrMethod] -> [MethodDecl]
 getKonst [] = []
-getKonst (M (Method(m, "", kname, args, stmt)):x) = (Method(m, "", kname, args, stmt)) : (getKonst x)
+getKonst (M (Method(m, "", kname, args, stmt)):x) = (Method(m, "void", kname, args, stmt)) : (getKonst x)
 getKonst (y:x) = getKonst x
 
 getMethod:: [FieldOrMethod] -> [MethodDecl]
@@ -1789,9 +1789,9 @@ getMethod (y:x) = getMethod x
 
 --main = do
 --  s <- getContents
---  print (scan s)
+  --print (scan s)
 --  print (parser s)
---  print (testparse s)
+  --print (testparse s)
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- $Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp $
 

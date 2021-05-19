@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.Attris where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 attrisAbstractSyntax = 
     Class(
@@ -25,12 +26,25 @@ attrisAbstractSyntax =
         ],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "Attris", 
             [], 
             Block [])],
         [])
 
--- attrisAbstractTypedSyntax
+attrisAbstractTypedSyntax = 
+    T.Typed "Empty" (T.Class
+        [Public] 
+        "Empty" 
+        []
+        [T.Typed "void" (T.Method
+            [Public] 
+            "void" 
+            "Empty" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
+        []
+    )
 
 -- attrisAbstractByteCode

@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.While where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 whileAbstractSyntax = 
     Class(
@@ -9,7 +10,7 @@ whileAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "While", 
             [], 
             Block [])],
@@ -26,6 +27,19 @@ whileAbstractSyntax =
         )]
     )
 
--- whileAbstractTypedSyntax
+whileAbstractTypedSyntax = 
+    T.Typed "Empty" (T.Class
+        [Public] 
+        "Empty" 
+        []
+        [T.Typed "void" (T.Method
+            [Public] 
+            "void" 
+            "Empty" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
+        []
+    )
 
 -- whileAbstractByteCode

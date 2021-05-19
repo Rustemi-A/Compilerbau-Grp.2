@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.StaticAttri where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 staticAttriAbstractSyntax = 
     Class(
@@ -32,13 +33,26 @@ staticAttriAbstractSyntax =
         )],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "StaticAttri", 
             [], 
             Block [])],
         []
     )
 
--- staticAttriAbstractTypedSyntax
+staticAttriAbstractTypedSyntax = 
+    T.Typed "Empty" (T.Class
+        [Public] 
+        "Empty" 
+        []
+        [T.Typed "void" (T.Method
+            [Public] 
+            "void" 
+            "Empty" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
+        []
+    )
 
 -- staticAttriAbstractByteCode

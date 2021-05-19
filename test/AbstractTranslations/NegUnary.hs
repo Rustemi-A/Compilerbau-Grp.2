@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.NegUnary where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 negUnaryAbstractSyntax = 
     Class(
@@ -9,7 +10,7 @@ negUnaryAbstractSyntax =
         [],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "NegUnary", 
             [], 
             Block [])],
@@ -31,6 +32,19 @@ negUnaryAbstractSyntax =
         )]
     )
 
--- negUnaryAbstractTypedSyntax
+negUnaryAbstractTypedSyntax = 
+    T.Typed "Empty" (T.Class
+        [Public] 
+        "Empty" 
+        []
+        [T.Typed "void" (T.Method
+            [Public] 
+            "void" 
+            "Empty" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
+        []
+    )
 
 -- negUnaryAbstractByteCode

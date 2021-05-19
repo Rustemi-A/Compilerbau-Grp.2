@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.MethodCall where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 methodCallAbstractSyntax = 
     Class(
@@ -13,7 +14,7 @@ methodCallAbstractSyntax =
         )],
         [Method (
             [Public], 
-            "", 
+            "void", 
             "MethodCall", 
             [], 
             Block [])],
@@ -48,6 +49,19 @@ methodCallAbstractSyntax =
         )]
     )
 
--- methodCallAbstractTypedSyntax
+methodCallAbstractTypedSyntax = 
+    T.Typed "Empty" (T.Class
+        [Public] 
+        "Empty" 
+        []
+        [T.Typed "void" (T.Method
+            [Public] 
+            "void" 
+            "Empty" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
+        []
+    )
 
 -- methodCallAbstractByteCode

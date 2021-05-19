@@ -1,6 +1,7 @@
 module Test.AbstractTranslations.FinalAttri where
 
 import AbstrakteSyntax
+import qualified TypedAST as T
 
 finalAttriAbstractSyntax = 
     Class(
@@ -18,7 +19,7 @@ finalAttriAbstractSyntax =
         ],
         [Method (
             [Public ], 
-            "", 
+            "void", 
             "FinalAttri", 
             [],
             Block [
@@ -33,6 +34,19 @@ finalAttriAbstractSyntax =
         []
     )
 
--- finalAttriAbstractTypedSyntax
+finalAttriAbstractTypedSyntax = 
+    T.Typed "Empty" (T.Class
+        [Public] 
+        "Empty" 
+        []
+        [T.Typed "void" (T.Method
+            [Public] 
+            "void" 
+            "Empty" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
+        []
+    )
 
 -- finalAttriAbstractByteCode
