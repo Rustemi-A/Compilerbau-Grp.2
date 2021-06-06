@@ -36,7 +36,7 @@ checkIfAbstractIsSame:: String -> Class -> String
 checkIfAbstractIsSame loadedClass testClass = show $ testClass == parser loadedClass
 
 checkIfAbstractTypedIsSame:: T.Typed T.Class -> Class -> String 
-checkIfAbstractTypedIsSame testTypedClass abstractClass = show (testTypedClass == extract  (typeCheckClass [] [] abstractClass))
+checkIfAbstractTypedIsSame testTypedClass abstractClass = show (testTypedClass == extract  (typeCheckClass [] [arithBinaryAbstractSyntax, arithUnaryAbstractSyntax, attrisAbstractSyntax, blockAbstractSyntax, comparisonBinaryAbstractSyntax, emptyAbstractSyntax, finalAttriAbstractSyntax, finalClassAbstractSyntax, ifThenAbstractSyntax, ifThenElsenAbstractSyntax, localVarDeclAbstractSyntax, logicBinaryAbstractSyntax, methodCallAbstractSyntax, methodIntReferenceParamReturnAbstractSyntax, methodIntZeroReturnAbstractSyntax, methodObjectZeroReturnAbstractSyntax, methodVoidOneEmptyAbstractSyntax, methodVoidTwoEmptyAbstractSyntax, methodVoidZeroEmptyAbstractSyntax, negUnaryAbstractSyntax, objectAttriAbstractSyntax, staticAttriAbstractSyntax, staticCallsAbstractSyntax, staticMethodAbstractSyntax, whileAbstractSyntax] abstractClass))
 
 extract (Right r) = r
 extract (Left e) = error e 
@@ -74,8 +74,8 @@ main = do
      print $ "Attris:                        " ++ checkIfAbstractIsSame attrisClass attrisAbstractSyntax 
      print $ "Block:                         " ++ checkIfAbstractIsSame blockClass blockAbstractSyntax 
      print $ "ComparisonBinary:              " ++ checkIfAbstractIsSame comparisonBinaryClass comparisonBinaryAbstractSyntax 
-     print $ "Empty:                         " ++ checkIfAbstractIsSame emptyClass emptyAbstractSyntax
-     print $ "FinalAttri:                    " ++ checkIfAbstractIsSame finalAttriClass finalAttriAbstractSyntax  
+     print $ "Empty:                         " ++ checkIfAbstractIsSame emptyClass emptyAbstractSyntax 
+     print $ "FinalAttri:                    " ++ checkIfAbstractIsSame finalAttriClass finalAttriAbstractSyntax 
      print $ "FinalClass:                    " ++ checkIfAbstractIsSame finalClass finalClassAbstractSyntax 
      print $ "IfThen:                        " ++ checkIfAbstractIsSame ifThenClass ifThenAbstractSyntax 
      print $ "IfThenElse:                    " ++ checkIfAbstractIsSame ifThenElseClass ifThenElsenAbstractSyntax 
@@ -84,7 +84,7 @@ main = do
      print $ "MethodCall:                    " ++ checkIfAbstractIsSame methodCallClass methodCallAbstractSyntax 
      print $ "MethodIntReferenceParamReturn: " ++ checkIfAbstractIsSame methodIntReferenceParamReturnClass methodIntReferenceParamReturnAbstractSyntax 
      print $ "MethodIntZeroReturn:           " ++ checkIfAbstractIsSame methodIntZeroReturnClass methodIntZeroReturnAbstractSyntax 
-     print $ "MethodObjectZeroReturn:        " ++ checkIfAbstractIsSame methodObjectZeroReturnClass methodObjectZeroReturnAbstractSyntax  
+     print $ "MethodObjectZeroReturn:        " ++ checkIfAbstractIsSame methodObjectZeroReturnClass methodObjectZeroReturnAbstractSyntax 
      print $ "MethodVoidOneEmpty:            " ++ checkIfAbstractIsSame methodVoidOneEmptyClass methodVoidOneEmptyAbstractSyntax 
      print $ "MethodVoidTwoEmpty:            " ++ checkIfAbstractIsSame methodVoidTwoEmptyClass methodVoidTwoEmptyAbstractSyntax 
      print $ "MethodVoidZeroEmpty:           " ++ checkIfAbstractIsSame methodVoidZeroEmptyClass methodVoidZeroEmptyAbstractSyntax 
