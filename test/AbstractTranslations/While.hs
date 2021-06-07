@@ -28,18 +28,27 @@ whileAbstractSyntax =
     )
 
 whileAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "While" (T.Class
         [Public] 
-        "Empty" 
+        "While" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "While" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [
+            T.Typed "void" (T.Method 
+            [Public] 
+            "void" 
+            "foo" 
+            [] 
+            (T.Typed "void" (T.Block [
+                T.Typed "void" (T.While (T.Typed "boolean" (T.Bool True)) (T.Typed "void" (T.Block [])))
+            ])))
+        ]
     )
 
 -- whileAbstractByteCode

@@ -35,18 +35,27 @@ localVarDeclAbstractSyntax =
     )
 
 localVarDeclAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "LocalVarDecl" (T.Class
         [Public] 
-        "Empty" 
+        "LocalVarDecl" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "LocalVarDecl" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "void" (T.Method 
+            [Public] 
+            "void" 
+            "foo" 
+            [] 
+            (T.Typed "void" (T.Block [
+                T.Typed "int" (T.LocalVarDecl "int" "x"),
+                T.Typed "int" (T.StmtExprStmt (T.Typed "int" (T.Assign (T.Typed "int" (T.LocalOrFieldVar "x")) (T.Typed "int" (T.Int 42)))))
+            ])))
+        ]
     )
 
 -- localVarDeclAbstractByteCode

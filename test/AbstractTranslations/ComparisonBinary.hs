@@ -36,18 +36,33 @@ comparisonBinaryAbstractSyntax =
     )
 
 comparisonBinaryAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "ComparisonBinary" (T.Class
         [Public] 
-        "Empty" 
+        "ComparisonBinary" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "ComparisonBinary" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "void" (T.Method 
+            [Public] 
+            "void" 
+            "foo" 
+            [
+                ("int", "x"),
+                ("int", "y")
+            ] 
+            (T.Typed "void" (T.Block [
+                T.Typed "void" (T.If 
+                (T.Typed "void" (T.Binary (T.Typed "int" (T.LocalOrFieldVar "x")) Equals  (T.Typed "int" (T.LocalOrFieldVar "y")))) 
+                (T.Typed "void" (T.Block [])) 
+                Nothing)
+                
+            ])) 
+        )]
     )
 
 -- comparisonBinaryAbstractByteCode

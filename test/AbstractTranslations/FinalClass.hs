@@ -21,14 +21,14 @@ finalClassAbstractSyntax =
     )
 
 finalClassAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
-        [Public] 
-        "Empty" 
+    T.Typed "FinalClass" (T.Class
+        [Public, Final] 
+        "FinalClass" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "FinalClass" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]

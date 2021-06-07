@@ -26,18 +26,26 @@ blockAbstractSyntax =
     )
 
 blockAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "Block" (T.Class
         [Public] 
-        "Empty" 
+        "Block" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "Block" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "void" (T.Method 
+            [Public] 
+            "void" 
+            "foo" 
+            [] 
+            (T.Typed "void" (T.Block [
+                T.Typed "void" (T.Block [])
+            ])))
+        ]
     )
 
 -- blockAbstractByteCode

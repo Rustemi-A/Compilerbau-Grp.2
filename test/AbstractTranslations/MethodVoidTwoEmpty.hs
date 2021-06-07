@@ -27,18 +27,26 @@ methodVoidTwoEmptyAbstractSyntax =
     )
 
 methodVoidTwoEmptyAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "MethodVoidTwoEmpty" (T.Class
         [Public] 
-        "Empty" 
+        "MethodVoidTwoEmpty" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "MethodVoidTwoEmpty" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "void" (T.Method 
+            [Public] 
+            "void" 
+            "foo" 
+            [
+                ("int", "x"),
+                ("char", "c")
+            ] 
+            (T.Typed "void" (T.Block [])))]
     )
 
 -- methodVoidTwoEmptyAbstractByteCode

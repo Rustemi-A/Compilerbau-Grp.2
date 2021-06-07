@@ -27,18 +27,25 @@ staticMethodAbstractSyntax =
     )
 
 staticMethodAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "StaticMethod" (T.Class
         [Public] 
-        "Empty" 
+        "StaticMethod" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "StaticMethod" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [
+            T.Typed "void" (T.Method 
+            [Public, Static] 
+            "void" 
+            "foo" 
+            [] 
+            (T.Typed "void" (T.Block [])))
+        ]
     )
 
 -- staticMethodAbstractByteCode

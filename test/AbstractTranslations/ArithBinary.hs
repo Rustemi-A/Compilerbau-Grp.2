@@ -37,18 +37,28 @@ arithBinaryAbstractSyntax =
     )
 
 arithBinaryAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "ArithBinary" (T.Class
         [Public] 
-        "Empty" 
+        "ArithBinary" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "ArithBinary" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "int" (
+            T.Method 
+            [Public] 
+            "int" 
+            "foo" 
+            [("int", "x"), 
+            ("int", "y")] 
+            (T.Typed "int" (T.Block [
+                T.Typed "int" (T.Return (Just (T.Typed "int" (T.Binary (T.Typed "int" (T.LocalOrFieldVar "x")) Plus (T.Typed "int" (T.LocalOrFieldVar "y"))))))
+            ]))
+        )]
     )
     
 

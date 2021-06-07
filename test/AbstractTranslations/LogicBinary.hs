@@ -35,18 +35,36 @@ logicBinaryAbstractSyntax =
     )
 
 logicBinaryAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "LogicBinary" (T.Class
         [Public] 
-        "Empty" 
+        "LogicBinary" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "LogicBinary" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "void" (T.Method 
+            [Public] 
+            "void" 
+            "foo" 
+            [
+                ("boolean", "x"),
+                ("boolean", "y")
+            ] 
+            (T.Typed "void" (T.Block [
+                T.Typed "void" (T.If 
+                (T.Typed "boolean" (T.Binary 
+                    (T.Typed "boolean" (T.LocalOrFieldVar "x")) 
+                    AND 
+                    (T.Typed "boolean" (T.LocalOrFieldVar "y"))
+                ))
+                (T.Typed "void" (T.Block []))
+                Nothing)
+            ]))
+        )]
     )
 
 -- logicBinaryAbstractByteCode

@@ -33,14 +33,29 @@ attrisAbstractSyntax =
         [])
 
 attrisAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "Attris" (T.Class
         [Public] 
-        "Empty" 
-        []
+        "Attris" 
+        [
+            T.Typed "int" (T.Field
+                [Public] 
+                "int" 
+                "i"
+            ),
+            T.Typed "char" (T.Field
+                [Public] 
+                "char" 
+                "c"
+            ),
+            T.Typed "boolean" (T.Field
+                [Public] 
+                "boolean" 
+                "x"
+            )]
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "Attris" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]

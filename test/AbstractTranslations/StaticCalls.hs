@@ -39,18 +39,28 @@ staticCallsAbstractSyntax =
     )
 
 staticCallsAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "StaticCalls" (T.Class
         [Public] 
-        "Empty" 
+        "StaticCalls" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "StaticCalls" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [
+            T.Typed "int" (T.Method 
+            [Public] 
+            "int" 
+            "foo" 
+            [] 
+            (T.Typed "int" (T.Block [
+                T.Typed "void" (T.StmtExprStmt (T.Typed "void" (T.MethodCall (T.Typed "StaticMethod" (T.LocalOrFieldVar "StaticMethod")) "foo" []))),
+                T.Typed "int" (T.Return (Just (T.Typed "int" (T.InstVar (T.Typed "StaticAttri" (T.LocalOrFieldVar "StaticAttri")) "i"))))
+            ])))
+        ]
     )
 
 -- staticCallsAbstractByteCode

@@ -41,14 +41,30 @@ staticAttriAbstractSyntax =
     )
 
 staticAttriAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "StaticAttri" (T.Class
         [Public] 
-        "Empty" 
-        []
+        "StaticAttri" 
+        [
+            T.Typed "int" (T.Field
+                [Public, Static] 
+                "int" 
+                "i"
+            ),
+            T.Typed "char" (T.Field
+                [Public, Static] 
+                "char" 
+                "c"
+            ),
+            T.Typed "boolean" (T.Field
+                [Public, Static] 
+                "boolean" 
+                "x"
+            )
+        ]
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "StaticAttri" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]

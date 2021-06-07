@@ -34,18 +34,25 @@ methodIntReferenceParamReturnAbstractSyntax =
     )
 
 methodIntReferenceParamReturnAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "MethodIntReferenceParamReturn" (T.Class
         [Public] 
-        "Empty" 
+        "MethodIntReferenceParamReturn" 
         []
-        [T.Typed "void" (T.Method
+        [T.Typed "MethodIntReferenceParamReturn" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "MethodIntReferenceParamReturn" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "void" (T.Method 
+            [Public] 
+            "int" 
+            "foo" 
+            [("Attris", "att")] 
+            (T.Typed "int" (T.Block [
+                T.Typed "int" (T.Return (Just (T.Typed "int" (T.InstVar (T.Typed "Attris" (T.LocalOrFieldVar "att")) "i"))))
+            ])))]
     )
 
 -- methodIntReferenceParamReturnAbstractByteCode

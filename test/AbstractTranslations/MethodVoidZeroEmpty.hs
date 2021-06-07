@@ -24,18 +24,23 @@ methodVoidZeroEmptyAbstractSyntax =
     )
 
 methodVoidZeroEmptyAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "MethodVoidZeroEmpty" (T.Class
         [Public] 
-        "Empty" 
+        "MethodVoidZeroEmpty" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "MethodVoidZeroEmpty" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "void" (T.Method 
+            [Public] 
+            "void" 
+            "foo" 
+            [] 
+            (T.Typed "void" (T.Block [])))]
     )
 
 -- methodVoidZeroEmptyAbstractByteCode

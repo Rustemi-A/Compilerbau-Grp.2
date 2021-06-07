@@ -27,14 +27,25 @@ objectAttriAbstractSyntax =
     )
 
 objectAttriAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "ObjectAttri" (T.Class
         [Public] 
-        "Empty" 
-        []
+        "ObjectAttri" 
+        [
+            T.Typed "int" (T.Field
+                [Public] 
+                "Object" 
+                "x"
+            ),
+            T.Typed "char" (T.Field
+                [Public] 
+                "String" 
+                "y"
+            )
+        ]
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "ObjectAttri" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]

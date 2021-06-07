@@ -30,18 +30,29 @@ ifThenAbstractSyntax =
     )
 
 ifThenAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "IfThen" (T.Class
         [Public] 
-        "Empty" 
+        "IfThen" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "IfThen" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "void" (T.Method 
+            [Public] 
+            "void" 
+            "foo" 
+            []
+            (T.Typed "void" (T.Block [
+            T.Typed "void" (T.If 
+                (T.Typed "boolean" (T.Bool True)) 
+                (T.Typed "void" (T.Block []))
+                Nothing)
+            ])))
+        ]
     )
 
 -- ifThenAbstractByteCode

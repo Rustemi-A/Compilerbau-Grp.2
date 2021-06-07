@@ -34,18 +34,25 @@ methodObjectZeroReturnAbstractSyntax =
     )
 
 methodObjectZeroReturnAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "MethodObjectZeroReturn" (T.Class
         [Public] 
-        "Empty" 
+        "MethodObjectZeroReturn" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "MethodObjectZeroReturn" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "Object" (T.Method 
+            [Public] 
+            "Object" 
+            "foo" 
+            [] 
+            (T.Typed "Object" (T.Block [
+                T.Typed "Object" (T.Return (Just (T.Typed "Object" (T.StmtExprExpr (T.Typed "Object" (T.New "Object" []))))))
+            ])))]
     )
 
 -- methodObjectZeroReturnAbstractByteCode

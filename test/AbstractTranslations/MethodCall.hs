@@ -50,18 +50,30 @@ methodCallAbstractSyntax =
     )
 
 methodCallAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "MethodCall" (T.Class
         [Public] 
-        "Empty" 
-        []
+        "MethodCall" 
+        [T.Typed "int" (T.Field
+                [Public] 
+                "MethodIntZeroReturn" 
+                "o"
+            )]
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "MethodCall" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "int" (T.Method 
+            [Public] 
+            "int" 
+            "foo" 
+            [] 
+            (T.Typed "int" (T.Block [
+                T.Typed "MethodIntZeroReturn" (T.StmtExprStmt (T.Typed "MethodIntZeroReturn" (T.Assign (T.Typed "MethodIntZeroReturn" (T.LocalOrFieldVar "o")) (T.Typed "MethodIntZeroReturn" (T.StmtExprExpr (T.Typed "MethodIntZeroReturn" (T.New "MethodIntZeroReturn" []))))))),
+                T.Typed "int" (T.Return (Just (T.Typed "int" (T.StmtExprExpr (T.Typed "int" (T.MethodCall (T.Typed "MethodIntZeroReturn" (T.LocalOrFieldVar "o")) "foo" []))))))
+            ])))]
     )
 
 -- methodCallAbstractByteCode

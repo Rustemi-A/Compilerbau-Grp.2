@@ -35,18 +35,27 @@ arithUnaryAbstractSyntax =
     )
 
 arithUnaryAbstractTypedSyntax = 
-    T.Typed "Empty" (T.Class
+    T.Typed "ArithUnary" (T.Class
         [Public] 
-        "Empty" 
+        "ArithUnary" 
         []
         [T.Typed "void" (T.Method
             [Public] 
             "void" 
-            "Empty" 
+            "ArithUnary" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        []
+        [T.Typed "int" (
+            T.Method 
+            [Public] 
+            "int" 
+            "foo" 
+            [("int", "x")] 
+            (T.Typed "int" (T.Block [
+                T.Typed "int" (T.Return (Just (T.Typed "int" (T.Unary Negation (T.Typed "int" (T.LocalOrFieldVar "x"))))))
+            ])))
+        ]
     )
 
 -- arithUnaryAbstractByteCode
