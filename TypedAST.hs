@@ -1,17 +1,8 @@
-module TypedAST
-  ( Typed (..),
-    Class (..),
-    Field (..),
-    Method (..),
-    Expr (..),
-    StmtExpr (..),
-    Stmt (..),
-  )
-where
+module TypedAST where
 
 import qualified AbstrakteSyntax as U
 
-data Typed ast = Typed U.Type ast
+data Typed ast = Typed U.Type ast -- [U.Modifier]
   deriving (Eq, Show)
 
 data Class = Class [U.Modifier] U.Type [Typed Field] [Typed Method] [Typed Method] -- public class A{}

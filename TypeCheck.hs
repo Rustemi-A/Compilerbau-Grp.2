@@ -1,23 +1,32 @@
 {-# LANGUAGE MultiWayIf #-}
 
-module TypeCheck where
+module TypeCheck (typeCheck) where
 
 import AbstrakteSyntax
 import Control.Applicative
+import Control.Arrow ((&&&))
 import Control.Monad
 import Control.Monad.Except
+import Data.Functor ((<&>))
 import Data.List
+import Data.Maybe (fromMaybe)
 import qualified TypedAST as T
+
+-- Hilfsfunktionen ungetypter AST
 
 getClassName (Class (_, name, _, _, _)) = name
 
 getConstructors (Class (_, _, _, constrs, _)) = constrs
+
+findField field = find ((field ==) . (getFieldType &&& getFieldName)) . getFields
 
 getFields (Class (_, _, fields, _, _)) = fields
 
 getFieldType (FieldDecl (_, typ, _)) = typ
 
 getFieldName (FieldDecl (_, _, name)) = name
+
+getFieldMods (FieldDecl (mods, _, _)) = mods
 
 getMethods (Class (_, _, _, _, methods)) = methods
 
@@ -27,13 +36,13 @@ getMethodType (Method (_, typ, _, _, _)) = typ
 
 getParams (Method (_, _, _, params, _)) = params
 
-orThrow :: Maybe a -> e -> Either e a
-orThrow (Just a) _ = Right a
-orThrow Nothing e = Left e
-
 getAST (T.Typed _ ast) = ast
 
 getType (T.Typed typ _) = typ
+
+-- getMods (T.Typed _ _ mods) = mods
+
+-- Hilfstypen /-funktionen für type check
 
 (~=) :: Type -> Type -> Bool
 "null" ~= typ
@@ -41,6 +50,10 @@ getType (T.Typed typ _) = typ
   | otherwise = True
 typ ~= "null" = "null" ~= typ
 typ ~= typ2 = typ == typ2
+
+(?:) = flip fromMaybe
+
+infixr 0 ?:
 
 type ClsList = (Class, [Class])
 
@@ -55,55 +68,40 @@ findClass name = find ((==) name . getClassName) . allClss
 
 typeCheck :: Class -> [Class] -> T.Typed T.Class
 typeCheck cls classes =
-  let allClss = (cls, java'lang'Object : classes)
+  let allClss = (cls, java'lang'String : java'lang'Object : classes)
    in case typeCheckClass [] allClss cls of
         Right typed -> typed
         Left e -> error e
 
 type TypeChecker u t = [(Type, String)] -> ClsList -> u -> Either String (T.Typed t)
 
+-- Semantische Analyse
+
 typeCheckClass :: TypeChecker Class T.Class
 typeCheckClass symtab classes (Class (modifier, typ, fields, constrs, methods)) =
-  let syms =
-        symtab
-          ++ map (\(FieldDecl (_, ftyp, fname)) -> (ftyp, fname)) fields
-          ++ map (\(Method (_, mtyp, mname, _, _)) -> (mtyp, mname)) methods
-   in do
-        tfields <- mapM (typeCheckField syms classes) fields
-        tmeths <- mapM (typeCheckMethod syms classes) methods
-        tconstrs <- mapM (typeCheckMethod syms classes) constrs
-        return $ T.Typed typ (T.Class modifier typ tfields tconstrs tmeths)
+  do
+    tfields <- mapM (typeCheckField symtab classes) fields
+    tmeths <- mapM (typeCheckMethod symtab classes) methods
+    tconstrs <- mapM (typeCheckMethod symtab classes) constrs
+    return $ T.Typed typ (T.Class modifier typ tfields tconstrs tmeths)
 
 typeCheckMethod :: TypeChecker MethodDecl T.Method
 typeCheckMethod symtab classes (Method (modifier, mType, name, args, stmt)) =
-  let syms = symtab ++ args --Todo replace existing entries
-   in typeCheckStmt syms classes stmt >>= \tstmt ->
-        let innerType = getType tstmt
-            {-typeFits =
-              if mType == "void" && innerType /= "void"
-                then case stmt of
-                  Block stmts -> case last stmts of --last stmt will work because empty Block has type void
-                    Return _ -> throwError "Kein return Statement in einer void erwartet."
-                    _ -> return $ T.Typed "void" $ T.Method modifier mType name args tstmt
-                  _ -> throwError "undefined"
-                else throwError "undefined"-}
-
-            isEqual =
-              if innerType ~= mType
-                then return $ T.Typed mType $ T.Method modifier mType name args tstmt
-                else throwError $ "Returntyp und Methodentyp stimmen nicht überein. Erwartet: " ++ mType ++ ". Gefunden: " ++ innerType
-         in isEqual
+  typeCheckStmt (args ++ symtab) classes stmt >>= \tstmt ->
+    let innerType = getType tstmt
+     in if innerType ~= mType
+          then return $ T.Typed mType $ T.Method modifier mType name args tstmt
+          else throwError $ "Returntyp und Methodentyp stimmen nicht überein. Erwartet: " ++ mType ++ ". Gefunden: " ++ innerType
 
 typeCheckField :: TypeChecker FieldDecl T.Field
 typeCheckField _ _ (FieldDecl (modifier, typ, name)) = return $ T.Typed typ $ T.Field modifier typ name
 
 --
 --
---
 typeCheckStmt :: TypeChecker Stmt T.Stmt
 --
 -- Block
----
+--
 mightReturn :: T.Stmt -> Bool
 mightReturn (T.Block _) = True
 mightReturn (T.Return _) = True
@@ -111,7 +109,6 @@ mightReturn T.If {} = True
 mightReturn T.While {} = True
 mightReturn _ = False
 
---
 willReturn :: T.Stmt -> Bool
 willReturn (T.Block []) = False
 willReturn (T.Block [s]) = willReturn $ getAST s
@@ -164,7 +161,7 @@ typeCheckStmt symtab cls (If (cond, ifs, maybeElses)) = do
           then return $ T.Typed iftyp $ T.If tcond tifs $ Just telse
           else throwError "If und Else haben verschiedene Typen"
       Nothing -> return $ T.Typed iftyp $ T.If tcond tifs Nothing
-    else throwError $ "If-Bedingung muss boolean sein. Aktuell: " ++ getType tcond
+    else throwError $ "If-Bedingung muss vom Typ boolean sein. Aktuell: " ++ getType tcond
 --
 -- While
 typeCheckStmt symtab cls (While (cond, stmt)) = do
@@ -172,12 +169,12 @@ typeCheckStmt symtab cls (While (cond, stmt)) = do
   tstmt <- typeCheckStmt symtab cls stmt
   if getType tcond ~= "boolean"
     then return $ T.Typed (getType tstmt) $ T.While tcond tstmt
-    else throwError "While-Bedingung muss boolean sein"
+    else throwError $ "While-Bedingung muss vom Typ boolean sein. Aktuell: " ++ getType tcond
 --
 -- LocalVarDecl
 typeCheckStmt symtab cls (LocalVarDecl (typ, name)) =
   if any ((name ==) . snd) symtab
-    then throwError "Variable mit diesem Namen bereits deklariert"
+    then throwError $ "Variable " ++ name ++ " bereits deklariert"
     else return $ T.Typed typ (T.LocalVarDecl typ name)
 --
 -- Empty
@@ -200,9 +197,20 @@ typeCheckStmtExpr symtab cls (Assign (exprLeft, exprRight)) = do
   tExprR <- typeCheckExpr symtab cls exprRight
   let leftType = getType tExprL
       rightType = getType tExprR
-  if leftType ~= rightType
-    then return $ T.Typed (getType tExprL) $ T.Assign tExprL tExprR
-    else throwError $ "Kann " ++ rightType ++ " nicht " ++ leftType ++ " zuweisen"
+      mods = case tExprL of
+        (T.Typed varType (T.LocalOrFieldVar var)) ->
+          if (varType, var) `elem` symtab
+            then []
+            else getFieldMods <$> findField (varType, var) (this cls) ?: []
+        (T.Typed varType (T.InstVar clsExpr var)) -> (findClass varType cls >>= findField (varType, var)) <&> getFieldMods ?: []
+        _ -> []
+
+  if Final `elem` mods
+    then throwError "Finalem Ausdruck kann nichts zugewiesen werden"
+    else
+      if leftType ~= rightType
+        then return $ T.Typed leftType $ T.Assign tExprL tExprR
+        else throwError $ "Kann " ++ rightType ++ " nicht " ++ leftType ++ " zuweisen"
 --
 -- New
 typeCheckStmtExpr symtab cls (New (typ, params)) =
@@ -248,7 +256,7 @@ typeCheckExpr symtab cls (Bool b) = return $ T.Typed "boolean" $ T.Bool b
 --
 typeCheckExpr symtab cls (Char c) = return $ T.Typed "char" $ T.Char c
 --
-typeCheckExpr symtab cls (String s) = return $ T.Typed "java.lang.String" $ T.String s
+typeCheckExpr symtab cls (String s) = return $ T.Typed "String" $ T.String s
 --
 typeCheckExpr symtab cls This = return $ T.Typed (getClassName $ this cls) T.This
 --
@@ -285,12 +293,16 @@ typeCheckExpr symtab cls (Binary (op, left, right)) = do
 --
 typeCheckExpr symtab clss (InstVar (expr, name)) = typeCheckExpr symtab clss expr >>= checkVar
   where
+    nameAndMods (FieldDecl (mods, typ, _)) = (typ, filter (`elem` [Final, Static]) mods)
+
     checkVar :: T.Typed T.Expr -> Either String (T.Typed T.Expr)
     checkVar typedExpr = case findClass (getType typedExpr) clss of
       Just cls -> case getFieldType <$> find ((name ==) . getFieldName) (getFields cls) of
-        Just varType -> return $ T.Typed varType $ T.InstVar typedExpr name
+        Just varType -> return $ T.Typed varType (T.InstVar typedExpr name)
         Nothing -> throwError $ "Feld " ++ name ++ " existiert nicht in Klasse " ++ getType typedExpr
       Nothing -> throwError $ "Klasse " ++ getType typedExpr ++ " nicht gefunden."
+
+-- java.lang Klassen
 
 java'lang'Object :: Class
 java'lang'Object =
@@ -306,5 +318,15 @@ java'lang'Object =
             Block []
           )
       ],
+      []
+    )
+
+java'lang'String :: Class
+java'lang'String =
+  Class
+    ( [Public],
+      "String",
+      [],
+      [],
       []
     )

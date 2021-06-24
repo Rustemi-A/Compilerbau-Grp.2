@@ -1,34 +1,28 @@
 module Compiler where
 
-import Parser
-import TypeCheck ( typeCheckClass )
-import Jvm.Data.ClassFormat
-import TypedAST
-import System.Directory
-import Data.List
 import qualified AbstrakteSyntax as AS
+import Data.List
+-- import Jvm.Data.ClassFormat
+import Parser
+import System.Directory
+import TypeCheck
+import TypedAST
 
-parseToTypedSyntax:: String -> [AS.Class] -> Typed Class
-parseToTypedSyntax s classes =  extract . typeCheckClass [] classes $ parser s
-    
-parseFiles:: [String] -> [AS.Class]
-parseFiles [] = []
-parseFiles s = map parser s
+parseToTypedSyntax :: String -> [AS.Class] -> Typed Class
+parseToTypedSyntax s = typeCheck (parser s)
+
+parseFiles :: [String] -> [AS.Class]
+parseFiles = map parser
 
 readFiles :: [FilePath] -> [IO String]
 readFiles = map readFile
 
-extract (Right r) = r
-extract (Left e) = error e 
-
-
 main = do
-    s <- getContents
-    fileNames <- getDirectoryContents "."
-    let filtered = filter (isSuffixOf "java") fileNames
-    fileContents <- traverse readFile filtered
-    let classes = parseFiles fileContents
-    
-    let abstractTypedClass =  parseToTypedSyntax s classes
-    print abstractTypedClass
+  s <- getContents
+  fileNames <- getDirectoryContents "."
+  let filtered = filter (isSuffixOf "java") fileNames
+  fileContents <- traverse readFile filtered
+  let classes = parseFiles fileContents
 
+  let abstractTypedClass = parseToTypedSyntax s classes
+  print abstractTypedClass

@@ -1,13 +1,14 @@
 module CF where
-import ClassFormat 
+
+import Jvm.Data.ClassFormat
 import TypedAST
 import ConstPool
 import qualified AbstrakteSyntax as U
 
 buildClassFile :: Class -> ClassFile
-buildClassFile (Class modifier typ fields methods) =
+buildClassFile (Class modifier typ fields constructors methods) =
 	let
-		constPool = buildConstPool(Class modifier typ fields methods)
+		constPool = buildConstPool(Class modifier typ fields constructors methods)
 		constPoolCount = getSize(constPool) + 1
 		fieldInfos = transformFields(constPool, fields)
 		fiCount = getSize(fieldInfos)
@@ -16,7 +17,7 @@ buildClassFile (Class modifier typ fields methods) =
 		accFlg = cAF(modifier)
 		this = findClassInCp(constPool, typ)
 		super = findClassInCp(constPool, "java/lang/Object")
-	in 
+	in
 		ClassFile Magic (MinorVersion(0)) (MajorVersion(48)) constPoolCount constPool accFlg (ThisClass(this)) (SuperClass(super)) 0 [] fiCount fieldInfos methodCount methodInfos 0 []
 
 
@@ -29,21 +30,21 @@ getSize (_:tail) = 1 + getSize (tail)
 transformFields :: ([CP_Info], [Typed Field]) -> [Field_Info]
 transformFields(_, []) = []
 transformFields(constPool, (c:cs)) =
-	let 
+	let
 		info = buildFieldInfo(constPool, c)
 		rest = transformFields(constPool, cs)
-	in 
+	in
 		(info: rest)
 
 
 
 buildFieldInfo :: ([CP_Info], Typed Field) -> Field_Info
 buildFieldInfo(constPool, (Typed _ (Field modifier typ name))) =
-	let 
+	let
 		id = findInCp(constPool, name)
 		typeId = findInCp(constPool, typ)
 		accFlg = cAF(modifier)
-	in 
+	in
 		Field_Info accFlg id typeId 0 []
 
 
@@ -59,9 +60,9 @@ findInCpRek (x,y,z) = -1
 
 findClassInCp :: ([CP_Info], String) -> Int
 findClassInCp (x,y)=
-	let 
+	let
 		index = findInCp(x,y)
-	in 
+	in
 		findClassInCpRek(x, index, 0)
 
 findClassInCpRek :: ([CP_Info], Int, Int) -> Int
@@ -74,12 +75,12 @@ findClassInCpRek (x,y,z) = -1
 
 transformMethod :: ([CP_Info], String, [Typed Method]) -> [Method_Info]
 transformMethod(_, _, []) = []
-transformMethod(constPool, name, (c:cs)) = 
+transformMethod(constPool, name, (c:cs)) =
 	let
 		defconst = getConstr((c:cs), name , constPool)
 		info = buildMethodInfo(constPool, c)
 		rest = transformMethod(constPool, name, cs)
-	in 
+	in
 		constr(defconst, (info : rest))
 
 constr :: (Maybe Method_Info, [Method_Info]) -> [Method_Info]
@@ -93,7 +94,7 @@ buildMethodInfo(constPool, (Typed _ (Method modifier typ name x statment))) =
 		id = findInCp(constPool, name)
 		typeId = findInCp(constPool, typ)
 		accFlg = cAF(modifier)
-	in 
+	in
 		Method_Info accFlg id typeId 1 []
 
 cAF :: ([U.Modifier]) -> AccessFlags
@@ -124,28 +125,27 @@ createAF (U.Final:cs) =
 	in (16 : rest)
 
 getConstr :: ([Typed Method], String, [CP_Info]) -> (Maybe Method_Info)
-getConstr ([], name, cInfos) =  
-	let 
+getConstr ([], name, cInfos) =
+	let
 		constructor = createDefaultConstructor(cInfos)
-	in 
+	in
 		Just constructor
 getConstr(((Typed _ (Method _ _ name _ _ )):cs), className, cInfos)
 	| name == className = Nothing
 	| otherwise = getConstr(cs, className, cInfos)
 
 createDefaultConstructor :: ([CP_Info]) -> (Method_Info)
-createDefaultConstructor (cInfos) = 
+createDefaultConstructor (cInfos) =
 	let
 		firstId = findInCp(cInfos, "")
 		secondId = findInCp(cInfos, "()V")
 		code = codeConstr(cInfos)
-	in 
+	in
 		Method_Info (AccessFlags[1]) firstId secondId 1 [code]
 
 codeConstr :: ([CP_Info]) -> Attribute_Info
-codeConstr (cInfos) = 
-	let 
+codeConstr (cInfos) =
+	let
 		id = findInCp(cInfos, "Code")
-	in 
+	in
 		AttributeCode id 17 1 1 5 [42, 183, 0, 1, 177] 0 [] 0 []
-

@@ -3,47 +3,47 @@ module Test.AbstractTranslations.StaticMethod where
 import AbstrakteSyntax
 import qualified TypedAST as T
 
-staticMethodAbstractSyntax = 
+staticMethodAbstractSyntax =
     Class(
-        [Public], 
-        "StaticMethod", 
+        [Public],
+        "StaticMethod",
         [],
         [Method (
-            [Public], 
-            "void", 
-            "StaticMethod", 
-            [], 
+            [Public],
+            "void",
+            "StaticMethod",
+            [],
             Block [])],
         [Method (
             [
                 Public,
                 Static
-            ], 
-            "void", 
-            "foo", 
-            [], 
+            ],
+            "void",
+            "foo",
+            [],
             Block []
         )]
     )
 
-staticMethodAbstractTypedSyntax = 
+staticMethodAbstractTypedSyntax =
     T.Typed "StaticMethod" (T.Class
-        [Public] 
-        "StaticMethod" 
+        [Public]
+        "StaticMethod"
         []
         [T.Typed "void" (T.Method
-            [Public] 
-            "void" 
-            "StaticMethod" 
-            [] 
+            [Public]
+            "void"
+            "StaticMethod"
+            []
             (T.Typed "void" (T.Block [])))
         ]
         [
-            T.Typed "void" (T.Method 
-            [Public, Static] 
-            "void" 
-            "foo" 
-            [] 
+            T.Typed "void" (T.Method
+            [Public, Static]
+            "void"
+            "foo"
+            []
             (T.Typed "void" (T.Block [])))
         ]
     )

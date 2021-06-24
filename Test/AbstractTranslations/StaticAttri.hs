@@ -3,69 +3,69 @@ module Test.AbstractTranslations.StaticAttri where
 import AbstrakteSyntax
 import qualified TypedAST as T
 
-staticAttriAbstractSyntax = 
+staticAttriAbstractSyntax =
     Class(
-        [Public], 
-        "StaticAttri", 
+        [Public],
+        "StaticAttri",
         [FieldDecl (
             [
                 Public,
                 Static
-            ], 
-            "int", 
+            ],
+            "int",
             "i"
         ),
         FieldDecl (
             [
                 Public,
                 Static
-            ], 
-            "char", 
+            ],
+            "char",
             "c"
         ),
         FieldDecl (
             [
                 Public,
                 Static
-            ], 
-            "boolean", 
+            ],
+            "boolean",
             "x"
         )],
         [Method (
-            [Public], 
-            "void", 
-            "StaticAttri", 
-            [], 
+            [Public],
+            "void",
+            "StaticAttri",
+            [],
             Block [])],
         []
     )
 
-staticAttriAbstractTypedSyntax = 
+staticAttriAbstractTypedSyntax =
     T.Typed "StaticAttri" (T.Class
-        [Public] 
-        "StaticAttri" 
+        [Public]
+        "StaticAttri"
         [
             T.Typed "int" (T.Field
-                [Public, Static] 
-                "int" 
+                [Public, Static]
+                "int"
                 "i"
             ),
             T.Typed "char" (T.Field
-                [Public, Static] 
-                "char" 
+                [Public, Static]
+                "char"
                 "c"
             ),
             T.Typed "boolean" (T.Field
-                [Public, Static] 
-                "boolean" 
+                [Public, Static]
+                "boolean"
                 "x"
             )
         ]
         [T.Typed "void" (T.Method
-            [Public] 
-            "void" 
-            "StaticAttri" 
-            [] 
+            [Public]
+            "void"
+            "StaticAttri"
+            []
             (T.Typed "void" (T.Block [])))
         ]
         []
