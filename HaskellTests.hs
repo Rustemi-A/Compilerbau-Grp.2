@@ -1,4 +1,4 @@
-module AbstractTest where
+module HaskellTests where
 
 import AbstrakteSyntax
 import Parser
