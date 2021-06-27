@@ -40,14 +40,14 @@ methodIntReferenceParamReturnAbstractTypedSyntax =
         [Public] 
         "MethodIntReferenceParamReturn" 
         []
-        [T.Typed "MethodIntReferenceParamReturn" (T.Method
+        [T.Typed "void" (T.Method
             [Public] 
             "void" 
             "MethodIntReferenceParamReturn" 
             [] 
             (T.Typed "void" (T.Block [])))
         ]
-        [T.Typed "void" (T.Method 
+        [T.Typed "int" (T.Method 
             [Public] 
             "int" 
             "foo" 

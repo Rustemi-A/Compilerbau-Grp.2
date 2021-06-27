@@ -55,7 +55,7 @@ methodCallAbstractTypedSyntax =
     T.Typed "MethodCall" (T.Class
         [Public] 
         "MethodCall" 
-        [T.Typed "int" (T.Field
+        [T.Typed "MethodIntZeroReturn" (T.Field
                 [Public] 
                 "MethodIntZeroReturn" 
                 "o"

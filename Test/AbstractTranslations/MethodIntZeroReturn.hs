@@ -35,7 +35,7 @@ methodIntZeroReturnAbstractTypedSyntax =
         [Public] 
         "MethodIntZeroReturn" 
         []
-        [T.Typed "MethodIntZeroReturn" (T.Method
+        [T.Typed "void" (T.Method
             [Public] 
             "void" 
             "MethodIntZeroReturn" 

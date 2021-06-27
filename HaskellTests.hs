@@ -127,7 +127,7 @@ main = do
   print $ "ComparisonBinary:              " ++ checkIfAbstractTypedIsSame comparisonBinaryAbstractTypedSyntax comparisonBinaryAbstractSyntax
   print $ "Empty:                         " ++ checkIfAbstractTypedIsSame emptyAbstractTypedSyntax emptyAbstractSyntax
   -- Final test should crash because final attribut cannot be reassigned
-  --  print $ "FinalAttri:                    " ++ checkIfAbstractTypedIsSame finalAttriAbstractTypedSyntax finalAttriAbstractSyntax
+  --print $ "FinalAttri:                    " ++ checkIfAbstractTypedIsSame finalAttriAbstractTypedSyntax finalAttriAbstractSyntax
   print $ "FinalClass:                    " ++ checkIfAbstractTypedIsSame finalClassAbstractTypedSyntax finalClassAbstractSyntax
   print $ "IfThen:                        " ++ checkIfAbstractTypedIsSame ifThenAbstractTypedSyntax ifThenAbstractSyntax
   print $ "IfThenElse:                    " ++ checkIfAbstractTypedIsSame ifThenElseAbstractTypedSyntax ifThenElsenAbstractSyntax

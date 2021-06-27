@@ -33,12 +33,12 @@ objectAttriAbstractTypedSyntax =
         [Public] 
         "ObjectAttri" 
         [
-            T.Typed "int" (T.Field
+            T.Typed "Object" (T.Field
                 [Public] 
                 "Object" 
                 "x"
             ),
-            T.Typed "char" (T.Field
+            T.Typed "String" (T.Field
                 [Public] 
                 "String" 
                 "y"
