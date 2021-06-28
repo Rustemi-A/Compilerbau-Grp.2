@@ -5,24 +5,24 @@ import qualified TypedAST as T
 import Jvm.Data.ClassFormat
 import Data.ByteString.Lazy.Internal as B
 
-finalAttriAbstractSyntax = 
+finalAttriAbstractSyntax =
     Class(
-        [Public], 
-        "FinalAttri", 
+        [Public],
+        "FinalAttri",
         [
             FieldDecl (
                 [
                     Public,
                     Final
                 ],
-                 "int", 
+                 "int",
                  "x"
             )
         ],
         [Method (
-            [Public ], 
-            "void", 
-            "FinalAttri", 
+            [Public ],
+            "void",
+            "FinalAttri",
             [],
             Block [
                 StmtExprStmt (
@@ -36,20 +36,20 @@ finalAttriAbstractSyntax =
         []
     )
 
-finalAttriAbstractTypedSyntax = 
+finalAttriAbstractTypedSyntax =
     T.Typed "FinalAttri" (T.Class
-        [Public] 
-        "FinalAttri" 
+        [Public]
+        "FinalAttri"
         [T.Typed "int" (T.Field
-                [Public, Final] 
-                "int" 
+                [Public, Final]
+                "int"
                 "x"
             )]
         [T.Typed "void" (T.Method
-            [Public] 
-            "void" 
-            "Empty" 
-            [] 
+            [Public]
+            "void"
+            "FinalAttri"
+            []
             (T.Typed "void" (T.Block [
                 T.Typed "int" (T.StmtExprStmt (
                     T.Typed "int" (T.Assign (T.Typed "int" (T.LocalOrFieldVar "x")) (T.Typed "int" (T.Int 42)))

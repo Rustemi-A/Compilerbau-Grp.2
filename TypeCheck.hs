@@ -34,6 +34,8 @@ getMethodName (Method (_, _, name, _, _)) = name
 
 getMethodType (Method (_, typ, _, _, _)) = typ
 
+getMethodMods (Method (mods, _, _, _, _)) = mods
+
 getParams (Method (_, _, _, params, _)) = params
 
 getAST (T.Typed _ ast) = ast
@@ -66,35 +68,39 @@ findClass :: String -> ClsList -> Maybe Class
 findClass "this" = Just . this
 findClass name = find ((==) name . getClassName) . allClss
 
+data Context = Static' | Constructor | Instance deriving (Eq)
+
 typeCheck :: Class -> [Class] -> T.Typed T.Class
 typeCheck cls classes =
   let allClss = (cls, java'lang'String : java'lang'Object : classes)
-   in case typeCheckClass [] allClss cls of
+   in case typeCheckClass [] allClss Instance cls of
         Right typed -> typed
         Left e -> error e
 
-type TypeChecker u t = [(Type, String)] -> ClsList -> u -> Either String (T.Typed t)
+type TypeChecker u t = [(Type, String)] -> ClsList -> Context -> u -> Either String (T.Typed t)
 
 -- Semantische Analyse
 
 typeCheckClass :: TypeChecker Class T.Class
-typeCheckClass symtab classes (Class (modifier, typ, fields, constrs, methods)) =
+typeCheckClass symtab classes ctx (Class (modifier, typ, fields, constrs, methods)) =
   do
-    tfields <- mapM (typeCheckField symtab classes) fields
-    tmeths <- mapM (typeCheckMethod symtab classes) methods
-    tconstrs <- mapM (typeCheckMethod symtab classes) constrs
+    tfields <- mapM (typeCheckField symtab classes ctx) fields
+    tmeths <- mapM (\m -> typeCheckMethod symtab classes (getMethodContext m) m) methods
+    tconstrs <- mapM (typeCheckMethod symtab classes Constructor) constrs
     return $ T.Typed typ (T.Class modifier typ tfields tconstrs tmeths)
+  where
+    getMethodContext m = if Static `elem` getMethodMods m then Static' else Instance
 
 typeCheckMethod :: TypeChecker MethodDecl T.Method
-typeCheckMethod symtab classes (Method (modifier, mType, name, args, stmt)) =
-  typeCheckStmt (args ++ symtab) classes stmt >>= \tstmt ->
+typeCheckMethod symtab classes ctx (Method (modifier, mType, name, args, stmt)) =
+  typeCheckStmt (args ++ symtab) classes ctx stmt >>= \tstmt ->
     let innerType = getType tstmt
      in if innerType ~= mType
           then return $ T.Typed mType $ T.Method modifier mType name args tstmt
           else throwError $ "Returntyp und Methodentyp stimmen nicht überein. Erwartet: " ++ mType ++ ". Gefunden: " ++ innerType
 
 typeCheckField :: TypeChecker FieldDecl T.Field
-typeCheckField _ _ (FieldDecl (modifier, typ, name)) = return $ T.Typed typ $ T.Field modifier typ name
+typeCheckField _ _ _ (FieldDecl (modifier, typ, name)) = return $ T.Typed typ $ T.Field modifier typ name
 
 --
 --
@@ -117,24 +123,23 @@ willReturn (T.Return _) = True
 willReturn _ = False
 
 --
---
-typeCheckStmt _ _ (Block []) = return $ T.Typed "void" $ T.Block []
+typeCheckStmt _ _ _ (Block []) = return $ T.Typed "void" $ T.Block []
 -- Block only has a type /= void if last statement is return or other block
-typeCheckStmt symtab classes (Block [stmt]) = toBlock <$> typeCheckStmt symtab classes stmt
+typeCheckStmt symtab classes ctx (Block [stmt]) = toBlock <$> typeCheckStmt symtab classes ctx stmt
   where
     toBlock stmt =
       if mightReturn $ getAST stmt
         then T.Typed (getType stmt) $ T.Block [stmt]
         else T.Typed "void" $ T.Block [stmt]
 --
-typeCheckStmt symtab classes (Block (head : tail)) = typeCheckStmt symtab classes head >>= checkTail
+typeCheckStmt symtab classes ctx (Block (head : tail)) = typeCheckStmt symtab classes ctx head >>= checkTail
   where
     checkTail typedHead =
       let newSymTab = case getAST typedHead of
             (T.LocalVarDecl varType varName) -> symtab ++ [(varType, varName)]
             _ -> symtab
        in do
-            T.Typed tailType ~(T.Block typedTail) <- typeCheckStmt newSymTab classes $ Block tail
+            T.Typed tailType ~(T.Block typedTail) <- typeCheckStmt newSymTab classes ctx $ Block tail
             let headType = getType typedHead
             if
                 | willReturn $ getAST typedHead -> throwError "Return Statement nur als letzte Anweisung erwartet"
@@ -143,20 +148,20 @@ typeCheckStmt symtab classes (Block (head : tail)) = typeCheckStmt symtab classe
                 | otherwise -> return $ T.Typed tailType $ T.Block (typedHead : typedTail)
 --
 -- Return
-typeCheckStmt _ _ (Return Nothing) = return $ T.Typed "void" (T.Return Nothing)
-typeCheckStmt symtab cls (Return (Just e)) = do
-  texpr <- typeCheckExpr symtab cls e
+typeCheckStmt _ _ ctx (Return Nothing) = return $ T.Typed "void" (T.Return Nothing)
+typeCheckStmt symtab cls ctx (Return (Just e)) = do
+  texpr <- typeCheckExpr symtab cls ctx e
   return $ T.Typed (getType texpr) (T.Return $ Just texpr)
 --
 -- If
-typeCheckStmt symtab cls (If (cond, ifs, maybeElses)) = do
-  tcond <- typeCheckExpr symtab cls cond
-  tifs <- typeCheckStmt symtab cls ifs
+typeCheckStmt symtab cls ctx (If (cond, ifs, maybeElses)) = do
+  tcond <- typeCheckExpr symtab cls ctx cond
+  tifs <- typeCheckStmt symtab cls ctx ifs
   let iftyp = getType tifs
   if getType tcond ~= "boolean"
     then case maybeElses of
       Just elses -> do
-        telse <- typeCheckStmt symtab cls elses
+        telse <- typeCheckStmt symtab cls ctx elses
         if getType telse ~= iftyp
           then return $ T.Typed iftyp $ T.If tcond tifs $ Just telse
           else throwError "If und Else haben verschiedene Typen"
@@ -164,24 +169,24 @@ typeCheckStmt symtab cls (If (cond, ifs, maybeElses)) = do
     else throwError $ "If-Bedingung muss vom Typ boolean sein. Aktuell: " ++ getType tcond
 --
 -- While
-typeCheckStmt symtab cls (While (cond, stmt)) = do
-  tcond <- typeCheckExpr symtab cls cond
-  tstmt <- typeCheckStmt symtab cls stmt
+typeCheckStmt symtab cls ctx (While (cond, stmt)) = do
+  tcond <- typeCheckExpr symtab cls ctx cond
+  tstmt <- typeCheckStmt symtab cls ctx stmt
   if getType tcond ~= "boolean"
     then return $ T.Typed (getType tstmt) $ T.While tcond tstmt
     else throwError $ "While-Bedingung muss vom Typ boolean sein. Aktuell: " ++ getType tcond
 --
 -- LocalVarDecl
-typeCheckStmt symtab cls (LocalVarDecl (typ, name)) =
+typeCheckStmt symtab cls _ (LocalVarDecl (typ, name)) =
   if any ((name ==) . snd) symtab
     then throwError $ "Variable " ++ name ++ " bereits deklariert"
     else return $ T.Typed typ (T.LocalVarDecl typ name)
 --
 -- Empty
-typeCheckStmt symtab cls Empty = return $ T.Typed "void" T.Empty
+typeCheckStmt _ _ _ Empty = return $ T.Typed "void" T.Empty
 --
 -- StmtExprExpr
-typeCheckStmt symtab cls (StmtExprStmt expr) = toStmtExpr <$> typeCheckStmtExpr symtab cls expr
+typeCheckStmt symtab cls ctx (StmtExprStmt expr) = toStmtExpr <$> typeCheckStmtExpr symtab cls ctx expr
   where
     toStmtExpr tstmExpr = T.Typed (getType tstmExpr) $ T.StmtExprStmt tstmExpr
 
@@ -192,9 +197,9 @@ typeCheckStmt symtab cls (StmtExprStmt expr) = toStmtExpr <$> typeCheckStmtExpr 
 typeCheckStmtExpr :: TypeChecker StmtExpr T.StmtExpr
 --
 -- Assign
-typeCheckStmtExpr symtab cls (Assign (exprLeft, exprRight)) = do
-  tExprL <- typeCheckExpr symtab cls exprLeft
-  tExprR <- typeCheckExpr symtab cls exprRight
+typeCheckStmtExpr symtab cls ctx (Assign (exprLeft, exprRight)) = do
+  tExprL <- typeCheckExpr symtab cls ctx exprLeft
+  tExprR <- typeCheckExpr symtab cls ctx exprRight
   let leftType = getType tExprL
       rightType = getType tExprR
       mods = case tExprL of
@@ -205,7 +210,7 @@ typeCheckStmtExpr symtab cls (Assign (exprLeft, exprRight)) = do
         (T.Typed varType (T.InstVar clsExpr var)) -> (findClass varType cls >>= findField (varType, var)) <&> getFieldMods ?: []
         _ -> []
 
-  if Final `elem` mods
+  if ctx /= Constructor && Final `elem` mods
     then throwError "Finalem Ausdruck kann nichts zugewiesen werden"
     else
       if leftType ~= rightType
@@ -213,25 +218,28 @@ typeCheckStmtExpr symtab cls (Assign (exprLeft, exprRight)) = do
         else throwError $ "Kann " ++ rightType ++ " nicht " ++ leftType ++ " zuweisen"
 --
 -- New
-typeCheckStmtExpr symtab cls (New (typ, params)) =
+typeCheckStmtExpr symtab cls ctx (New (typ, params)) =
   case findClass typ cls of
     Just newClass -> do
-      typedArgs <- mapM (typeCheckExpr symtab cls) params
+      typedArgs <- mapM (typeCheckExpr symtab cls ctx) params
       if any (matchParams typedArgs . getParams) (getConstructors newClass)
         then return $ T.Typed typ (T.New typ typedArgs)
         else throwError $ "Kein Konstruktor in Klasse " ++ typ ++ " mit Parametern " ++ show params ++ " gefunden"
     Nothing -> throwError $ "Klasse " ++ typ ++ " nicht gefunden"
 --
 -- MethodCall
-typeCheckStmtExpr symtab cls (MethodCall (exprLeft, name, params)) = do
-  tExprL <- typeCheckExpr symtab cls exprLeft
-  typedArgs <- mapM (typeCheckExpr symtab cls) params
+typeCheckStmtExpr symtab cls ctx (MethodCall (exprLeft, name, params)) = do
+  tExprL <- typeCheckExpr symtab cls ctx exprLeft
+  typedArgs <- mapM (typeCheckExpr symtab cls ctx) params
   methClass <- case findClass (getType tExprL) cls of
     Just clazz -> return clazz
     Nothing -> throwError $ "Klasse " ++ getType tExprL ++ " nicht gefunden"
   let methodsWithSameName = filter ((name ==) . getMethodName) $ getMethods methClass
   case find (matchParams typedArgs . getParams) methodsWithSameName of
-    Just method -> return $ T.Typed (getMethodType method) (T.MethodCall tExprL name typedArgs)
+    Just method -> case tExprL of
+        (T.Typed _ (T.StaticClass _)) | Static `notElem` getMethodMods method ->
+          throwError $ "Kann Instanzmethode " ++ name ++ " nicht aus einem statischen Kontext aufrufen"
+        _ -> return $ T.Typed (getMethodType method) (T.MethodCall tExprL name typedArgs)
     Nothing -> throwError $ "Methode " ++ name ++ " mit Parametern " ++ show params ++ " nicht gefunden"
 
 --
@@ -248,40 +256,29 @@ matchParams args params = sameLength && sameTypes
 --
 typeCheckExpr :: TypeChecker Expr T.Expr
 --
-typeCheckExpr symtab cls Jnull = return $ T.Typed "null" T.Jnull
+typeCheckExpr symtab cls ctx Jnull = return $ T.Typed "null" T.Jnull
 --
-typeCheckExpr symtab cls (Integer i) = return $ T.Typed "int" $ T.Int i
+typeCheckExpr symtab cls ctx (Integer i) = return $ T.Typed "int" $ T.Int i
 --
-typeCheckExpr symtab cls (Bool b) = return $ T.Typed "boolean" $ T.Bool b
+typeCheckExpr symtab cls ctx (Bool b) = return $ T.Typed "boolean" $ T.Bool b
 --
-typeCheckExpr symtab cls (Char c) = return $ T.Typed "char" $ T.Char c
+typeCheckExpr symtab cls ctx (Char c) = return $ T.Typed "char" $ T.Char c
 --
-typeCheckExpr symtab cls (String s) = return $ T.Typed "String" $ T.String s
+typeCheckExpr symtab cls ctx (String s) = return $ T.Typed "String" $ T.String s
 --
-typeCheckExpr symtab cls This = return $ T.Typed (getClassName $ this cls) T.This
+typeCheckExpr symtab cls ctx This = if ctx == Static'
+  then throwError "this kann nicht in einem statischen Kontext aufgerufen werden"
+  else return $ T.Typed (getClassName $ this cls) T.This
+
 --
-typeCheckExpr symtab cls (StmtExprExpr e) = toStmtExpr <$> typeCheckStmtExpr symtab cls e
+typeCheckExpr symtab cls ctx (StmtExprExpr e) = toStmtExpr <$> typeCheckStmtExpr symtab cls ctx e
   where
     toStmtExpr stmExpr = T.Typed (getType stmExpr) $ T.StmtExprExpr stmExpr
 --
 --
-typeCheckExpr symtab cls (LocalOrFieldVar name) = case local <|> field of
-  Just varType -> return $ T.Typed varType (T.LocalOrFieldVar name)
-  Nothing -> throwError $ "Variable " ++ name ++ " nicht gefunden"
-  where
-    local = fst <$> find ((name ==) . snd) symtab
-    field = getFieldType <$> find ((name ==) . getFieldName) (getFields $ this cls)
---
---
-typeCheckExpr symtab cls (Unary (op, expr)) = toTyped <$> typeCheckExpr symtab cls expr
-  where
-    toTyped e = T.Typed (getType e) $ T.Unary op e
-
---
---
-typeCheckExpr symtab cls (Binary (op, left, right)) = do
-  lTyped <- typeCheckExpr symtab cls left
-  rTyped <- typeCheckExpr symtab cls right
+typeCheckExpr symtab cls ctx (Binary (op, left, right)) = do
+  lTyped <- typeCheckExpr symtab cls ctx left
+  rTyped <- typeCheckExpr symtab cls ctx right
   let binaryType = case op of
         op | op `elem` [Equals, LessT, GreaterT, GE, LE, AND, OR, BitwiseAND, BitwiseOR] -> "boolean"
         _ -> getType rTyped
@@ -291,14 +288,37 @@ typeCheckExpr symtab cls (Binary (op, left, right)) = do
 
 --
 --
-typeCheckExpr symtab clss (InstVar (expr, name)) = typeCheckExpr symtab clss expr >>= checkVar
+typeCheckExpr symtab cls ctx (Unary (op, expr)) = toTyped <$> typeCheckExpr symtab cls ctx expr
   where
-    nameAndMods (FieldDecl (mods, typ, _)) = (typ, filter (`elem` [Final, Static]) mods)
+    toTyped e = T.Typed (getType e) $ T.Unary op e
 
+--
+--
+typeCheckExpr symtab cls ctx (LocalOrFieldVar name) = instanceField <|> staticClass
+  where
+    local = find ((name ==) . snd) symtab <&> (fst &&& const [Static]) --Static weil lokale Variablen auch in statischen Methoden vorkommen können
+    field = find ((name ==) . getFieldName) (getFields $ this cls) <&> (getFieldType &&& getFieldMods)
+    instanceField = case local <|> field of
+      Just (varType, varMods) ->
+        if ctx == Static' && notElem Static varMods
+          then throwError $ "Kann Instanzfeld " ++ name ++ " nicht aus einem statischen Kontext aufrufen"
+          else return $ T.Typed varType (T.LocalOrFieldVar name)
+      Nothing -> Left $ "Variable " ++ name ++ " nicht gefunden"
+    staticClass = case findClass name cls of
+      (Just c) -> return $ T.Typed name (T.StaticClass name)
+      Nothing -> throwError $ "Variable " ++ name ++ " nicht gefunden"
+--
+--
+typeCheckExpr symtab clss ctx (InstVar (expr, name)) = typeCheckExpr symtab clss ctx expr >>= checkVar
+  where
     checkVar :: T.Typed T.Expr -> Either String (T.Typed T.Expr)
     checkVar typedExpr = case findClass (getType typedExpr) clss of
-      Just cls -> case getFieldType <$> find ((name ==) . getFieldName) (getFields cls) of
-        Just varType -> return $ T.Typed varType (T.InstVar typedExpr name)
+      Just cls -> case (getFieldType &&& getFieldMods) <$> find ((name ==) . getFieldName) (getFields cls) of
+        Just (fieldType, mods) -> case typedExpr of
+          (T.Typed _ (T.StaticClass _))
+            | Static `notElem` mods ->
+              throwError $ "Kann Instanzfeld " ++ name ++ " nicht aus einem statischen Kontext aufrufen"
+          _ -> return $ T.Typed fieldType (T.InstVar typedExpr name)
         Nothing -> throwError $ "Feld " ++ name ++ " existiert nicht in Klasse " ++ getType typedExpr
       Nothing -> throwError $ "Klasse " ++ getType typedExpr ++ " nicht gefunden."
 

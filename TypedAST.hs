@@ -17,6 +17,7 @@ data Method = Method [U.Modifier] U.Type String [(U.Type, String)] (Typed Stmt) 
 data Expr
   = This
   | LocalOrFieldVar String -- i
+  | StaticClass U.Type -- Für Zugriff auf statische Methoden / Fields
   | InstVar (Typed Expr) String -- object.var
   | Unary U.UnaryOp (Typed Expr) -- !i
   | Binary (Typed Expr) U.BinaryOp (Typed Expr) -- i + j

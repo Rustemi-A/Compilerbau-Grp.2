@@ -5,34 +5,34 @@ import qualified TypedAST as T
 import Jvm.Data.ClassFormat
 import Data.ByteString.Lazy.Internal as B
 
-staticCallsAbstractSyntax = 
+staticCallsAbstractSyntax =
     Class(
-        [Public], 
-        "StaticCalls", 
+        [Public],
+        "StaticCalls",
         [],
         [Method (
-            [Public], 
-            "void", 
-            "StaticCalls", 
-            [], 
+            [Public],
+            "void",
+            "StaticCalls",
+            [],
             Block [])],
         [Method (
-            [Public], 
-            "int", 
-            "foo", 
-            [], 
+            [Public],
+            "int",
+            "foo",
+            [],
             Block [
                 StmtExprStmt (
                     MethodCall (
-                        LocalOrFieldVar "StaticMethod", 
-                        "foo", 
+                        LocalOrFieldVar "StaticMethod",
+                        "foo",
                         []
                     )
                 ),
                 Return (
                     Just(
                         InstVar (
-                            LocalOrFieldVar "StaticAttri", 
+                            LocalOrFieldVar "StaticAttri",
                             "i")
                     )
                 )
@@ -40,27 +40,27 @@ staticCallsAbstractSyntax =
         )]
     )
 
-staticCallsAbstractTypedSyntax = 
+staticCallsAbstractTypedSyntax =
     T.Typed "StaticCalls" (T.Class
-        [Public] 
-        "StaticCalls" 
+        [Public]
+        "StaticCalls"
         []
         [T.Typed "void" (T.Method
-            [Public] 
-            "void" 
-            "StaticCalls" 
-            [] 
+            [Public]
+            "void"
+            "StaticCalls"
+            []
             (T.Typed "void" (T.Block [])))
         ]
         [
-            T.Typed "int" (T.Method 
-            [Public] 
-            "int" 
-            "foo" 
-            [] 
+            T.Typed "int" (T.Method
+            [Public]
+            "int"
+            "foo"
+            []
             (T.Typed "int" (T.Block [
-                T.Typed "void" (T.StmtExprStmt (T.Typed "void" (T.MethodCall (T.Typed "StaticMethod" (T.LocalOrFieldVar "StaticMethod")) "foo" []))),
-                T.Typed "int" (T.Return (Just (T.Typed "int" (T.InstVar (T.Typed "StaticAttri" (T.LocalOrFieldVar "StaticAttri")) "i"))))
+                T.Typed "void" (T.StmtExprStmt (T.Typed "void" (T.MethodCall (T.Typed "StaticMethod" (T.StaticClass "StaticMethod")) "foo" []))),
+                T.Typed "int" (T.Return (Just (T.Typed "int" (T.InstVar (T.Typed "StaticAttri" (T.StaticClass "StaticAttri")) "i"))))
             ])))
         ]
     )
