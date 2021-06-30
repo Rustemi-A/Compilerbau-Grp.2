@@ -7,6 +7,7 @@ import Parser
 import System.Directory
 import TypeCheck
 import TypedAST
+import ConstPool
 
 parseToTypedSyntax :: String -> [AS.Class] -> Typed Class
 parseToTypedSyntax s = typeCheck (parser s)
@@ -24,5 +25,9 @@ main = do
   fileContents <- traverse readFile filtered
   let classes = parseFiles fileContents
 
-  let abstractTypedClass = parseToTypedSyntax s classes
+  let (Typed _ abstractTypedClass) = parseToTypedSyntax s classes
   print abstractTypedClass
+  let constPool = buildConstPool abstractTypedClass
+  mapM_ print constPool
+
+
