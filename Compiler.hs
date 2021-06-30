@@ -1,13 +1,14 @@
 module Compiler where
 
-import qualified AbstrakteSyntax as AS
 import Data.List
--- import Jvm.Data.ClassFormat
-import Parser
 import System.Directory
+import Parser
+import qualified AbstrakteSyntax as AS
 import TypeCheck
 import TypedAST
 import ConstPool
+import CF
+import Jvm.BinaryClass
 
 parseToTypedSyntax :: String -> [AS.Class] -> Typed Class
 parseToTypedSyntax s = typeCheck (parser s)
@@ -28,6 +29,8 @@ main = do
   let (Typed _ abstractTypedClass) = parseToTypedSyntax s classes
   print abstractTypedClass
   let constPool = buildConstPool abstractTypedClass
+      cf = buildClassFile abstractTypedClass
   mapM_ print constPool
+  print cf
 
-
+  encodeClassFile "out.class" cf
