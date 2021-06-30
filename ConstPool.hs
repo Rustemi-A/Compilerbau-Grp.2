@@ -71,6 +71,7 @@ findMethExpr (Typed _ (Unary _ expr)) cpInfos = findMethExpr expr cpInfos
 findMethExpr (Typed _ (Binary expr _ expr2)) cpInfos = (findMethExpr expr . findMethExpr expr2) cpInfos
 findMethExpr (Typed _ (StmtExprExpr stmtExpr))  cpInfos = findMethStmtExpr stmtExpr cpInfos
 findMethExpr (Typed typ (LocalOrFieldVar var)) cpInfos =  cpInfos
+findMethExpr _ cpInfos = cpInfos
 
 
 findMethStmt :: Typed Stmt -> CP_Infos -> CP_Infos
@@ -80,6 +81,7 @@ findMethStmt (Typed _ (Return Nothing)) = id
 findMethStmt (Typed _ (While expr stmt)) = findMethExpr expr . findMethStmt stmt
 findMethStmt (Typed _ (If expr stmt (Just stmt2))) = findMethExpr expr . findMethStmt stmt . findMethStmt stmt2
 findMethStmt (Typed _ (If expr stmt Nothing)) = findMethExpr expr . findMethStmt stmt
+findMethStmt (Typed _ (StmtExprStmt stmtExpr))  = findMethStmtExpr stmtExpr 
 findMethStmt _ = id
 
 
@@ -131,7 +133,7 @@ findMethStmtExpr (Typed returnTyp(MethodCall expr name args)) cpInfos =
         cpi = cpInfos ++[
             MethodRef_Info -- offset 1
                 { tag_cp = TagMethodRef
-                , index_name_cp = offset + 2
+                , index_name_cp = 2
                 , index_nameandtype_cp  = offset + 2
                 , desc = ""
                 }
@@ -143,14 +145,14 @@ findMethStmtExpr (Typed returnTyp(MethodCall expr name args)) cpInfos =
                 , desc = ""
                 }
             ,
-            genUtf8 name , genUtf8 methodTyp , -- offset 3 4
-            Class_Info  -- offset 5
-                { tag_cp = TagClass
-                , index_cp = offset + 6
-                , desc = ""
-                }
-            ,
-            genUtf8 $ getType expr -- offset 6
+            genUtf8 name , genUtf8 methodTyp  -- offset 3 4
+            -- Class_Info  -- offset 5
+            --     { tag_cp = TagClass
+            --     , index_cp = offset + 6
+            --     , desc = ""
+            --     }
+            -- ,
+            -- genUtf8 $ getType expr -- offset 6
             ]
     in
         (findMethExpr expr . foldr ((.) . findMethExpr) id args) cpi
@@ -234,8 +236,10 @@ findFieldExpr (Typed typ (LocalOrFieldVar var)) fields cpInfos =
     else cpInfos -- fieldref? es muss nachgeprüft werden, ob es sich um ein field handelt
   where
       isFieldVar :: [Typed Field] -> Bool
+      -- isFieldVar _ = True
       isFieldVar  ((Typed typ2 (Field _ _ name)) : xs) = (var == name) && (typ == typ2) || isFieldVar xs
       isFieldVar   [] = False
+findFieldExpr _ _ cpInfos = cpInfos
 
 findFieldStmt :: Typed Stmt -> [Typed Field] -> CP_Infos -> CP_Infos
 findFieldStmt (Typed a (Block (x:xs))) fields = findFieldStmt (Typed a {-geht das erstellen einer expr so? -} (Block xs)) fields . findFieldStmt x fields  -- ????  foldr ((.) . findFieldStmt) id block           -- foldr (findMethStmt ) block   -- es muss ein neuer block gemacht werden, der die statements enthält, die üblig sind 
@@ -245,6 +249,7 @@ findFieldStmt (Typed _ (Return Nothing)) fields = id
 findFieldStmt (Typed _ (While expr stmt)) fields = findFieldExpr expr fields . findFieldStmt stmt fields
 findFieldStmt (Typed _ (If expr stmt (Just stmt2))) fields = findFieldExpr expr fields . findFieldStmt stmt fields . findFieldStmt stmt2 fields
 findFieldStmt (Typed _ (If expr stmt Nothing)) fields = findFieldExpr expr fields . findFieldStmt stmt fields
+findFieldStmt (Typed _ (StmtExprStmt stmtExpr)) fields = findFieldStmtExpr stmtExpr fields
 findFieldStmt _ fields = id
 
 
@@ -279,10 +284,12 @@ genTypString "int" = "I"
 genTypString "boolean" = "Z"
 genTypString "void" = "V"
 genTypString "char" = "C"
+genTypString "Object" = genTypString "java/lang/Object"
 genTypString typ = "L" ++ typ ++ ";"
 
 
 genUtf8 :: String -> CP_Info
+genUtf8 "Object" = genUtf8 "java/lang/Object"
 genUtf8 string =
     Utf8_Info
         { tag_cp = TagUtf8
@@ -292,4 +299,3 @@ genUtf8 string =
         }
 
 
--- exampleClass = Class [] "Klasse1" [Typed "int" (Field [] "" "zahl")] [Typed "void" (Method [] "" "myMethod" [("int","a"),("char","b")] (Typed "void" (Block [])))] []
